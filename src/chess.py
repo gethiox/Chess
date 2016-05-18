@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 from string import ascii_letters, digits, ascii_lowercase
 from copy import deepcopy as copy
+import subprocess
+import threading
+from time import sleep
 
 
 class chess:
@@ -13,6 +16,7 @@ class chess:
         self.en_passant = None
         self.half_moves = 0
         self.moves = 1
+        self.moves_seq = []
 
     def _exec_move(self, pos_a, pos_b, promotion='q', debug=False, display=True):
         x1, y1 = self.coordinates_to_matrix(pos_a)
@@ -102,6 +106,8 @@ class chess:
                 self.history_seq += 1
                 self._save_history(self.history_seq)
 
+                self.moves_seq.append(pos_a + pos_b)
+
                 if display:
                     self.show_board()
 
@@ -118,7 +124,8 @@ class chess:
                              copy(self.castle),
                              copy(self.en_passant),
                              copy(self.half_moves),
-                             copy(self.moves))
+                             copy(self.moves),
+                             copy(self.moves_seq))
 
     def _clear_board(self):
         self.board = [[None for x in range(8)] for i in range(8)]
@@ -632,6 +639,7 @@ class chess:
 
             self.history = {}
             self.history_seq = 0
+            self.moves_seq = []
 
         print('New Game!\n')
 
@@ -646,6 +654,7 @@ class chess:
         self.en_passant = copy(self.history[self.history_seq - moves][3])
         self.half_moves = copy(self.history[self.history_seq - moves][4])
         self.moves = copy(self.history[self.history_seq - moves][5])
+        self.moves_seq = copy(self.history[self.history_seq - moves][6])
 
         print('undo %s moves!' % moves)
         self.show_board()
@@ -658,6 +667,7 @@ class chess:
         self.en_passant = copy(self.history[self.history_seq + moves][3])
         self.half_moves = copy(self.history[self.history_seq + moves][4])
         self.moves = copy(self.history[self.history_seq + moves][5])
+        self.moves = copy(self.history[self.history_seq + moves][6])
 
         print('redo %s moves!' % moves)
         self.show_board()
@@ -738,6 +748,9 @@ class chess:
                 else:
                     self.show_board(compact=True)
                 self.board = backup
+
+    def get_moves_seq(self):
+        return ' '.join(self.moves_seq)
 
     def get_position(self):
         fenstring = ''
@@ -970,12 +983,72 @@ class chess:
         return ascii_lowercase[v1] + str(v2 + 1)
 
 
+class engine:
+    def __init__(self, engine_binary_path='../helpers/stockfish'):
+        self.path = engine_binary_path
+        self.process = None
+        self.playing_color = None
+        self.logic_thread = None
+        self.sigterm = False
+
+    def _read(self):
+        line = self.process.stdout.readline().decode()
+        if '\n' in line:
+            line = line.replace('\n', '')
+        return line
+
+    def _write(self, string):
+        if '\n' not in string:
+            string += '\n'
+        self.process.stdin.write(string.encode())
+        self.process.stdin.flush()
+
+    def run_engine(self):
+        args = [self.path]
+        self.process = subprocess.Popen(args, stdout=subprocess.PIPE, stdin=subprocess.PIPE)
+        self._write('setoption name Threads value 4')
+        self._write('setoption name Hash value 256')
+        self._write('setoption name Ponder value true')
+        self._write('setoption name MultiPV value 2')
+        self._write('ucinewgame')
+
+    def get_bestmove(self, fenstring=None, moves_seq=None):
+        if fenstring is not None:
+            self._write('position fen %s' % fenstring)
+            self._write('go')
+            output = self._read()
+            while 'bestmove' not in output:
+                output = self._read()
+            bestmove = output.split()[1]
+        elif moves_seq is not None:
+            if len(moves_seq) > 0:
+                self._write('position startpos moves %s' % moves_seq)
+            else:
+                self._write('position startpos')
+            self._write('go')
+            output = self._read()
+            while 'bestmove' not in output:
+                output = self._read()
+            bestmove = output.split()[1]
+        else:
+            raise ValueError
+
+        return bestmove
+
+
 if __name__ == '__main__':
+    # game = chess()
+    # game.set_position('k7/2P/2K/8/8/8/8/8 w - - 0 1')
+    # game.move('c7c8')
+    # game.show_board()
+    # game.show_legal_moves('c8')
+    # game.show_legal_moves('a8', compact=True)
+    # game.show_board(compact=True, flipped=True)
+
     game = chess()
-    game.set_position('k7/2P/2K/8/8/8/8/8 w - - 0 1')
-    game.move('c7c8')
-    game.show_board()
-    game.show_legal_moves('c8')
-    game.show_legal_moves('a8', compact=True)
-    game.show_board(compact=True, flipped=True)
+
+    en = engine(game=game)
+
+
+
 

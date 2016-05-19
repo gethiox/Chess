@@ -22,6 +22,7 @@ class chess:
         x1, y1 = self.coordinates_to_matrix(pos_a)
         x2, y2 = self.coordinates_to_matrix(pos_b)
         piece = self.board[y1][x1]
+        promoted = False
 
         valid_moves = []
         if debug is False:
@@ -44,9 +45,11 @@ class chess:
             if debug is False:
                 if piece == 'P' and y2 == 7:
                     self.board[y2][x2] = promotion.capitalize()
+                    promoted = True
 
                 if piece == 'p' and y2 == 0:
                     self.board[y2][x2] = promotion.casefold()
+                    promoted = True
 
                 if piece in 'pP' and pos_b == self.en_passant:
                     self.board[y1][x2] = None
@@ -73,14 +76,14 @@ class chess:
                             self.board[0][5] = 'R'
                         elif pos_a == 'e1' and pos_b == 'c1':
                             self.board[0][0] = None
-                            self.board[0][2] = 'R'
+                            self.board[0][3] = 'R'
                     elif piece == 'k':
                         if pos_a == 'e8' and pos_b == 'g8':
                             self.board[7][7] = None
                             self.board[7][5] = 'r'
                         elif pos_a == 'e8' and pos_b == 'c8':
                             self.board[7][0] = None
-                            self.board[7][2] = 'r'
+                            self.board[7][3] = 'r'
                 if piece in 'rR':
                     if self.castle is not None:
                         if piece.isupper():
@@ -106,17 +109,20 @@ class chess:
                 self.history_seq += 1
                 self._save_history(self.history_seq)
 
-                self.moves_seq.append(pos_a + pos_b)
+                if not promoted:
+                    self.moves_seq.append(pos_a + pos_b)
+                else:
+                    self.moves_seq.append(pos_a + pos_b + promotion)
 
                 if display:
-                    self.show_board()
+                    self.show_board(compact=True)
 
-                if self.am_i_mated():
-                    print('checkmate!')
-                elif self.am_i_stalemated():
-                    print('stealmate!')
-                elif self.am_i_checked():
-                    print('check!')
+                # if self.am_i_mated():
+                #     print('checkmate!')
+                # elif self.am_i_stalemated():
+                #     print('stealmate!')
+                # elif self.am_i_checked():
+                #     print('check!')
 
     def _save_history(self, key):
         self.history[key] = (copy(self.board),
@@ -641,11 +647,13 @@ class chess:
             self.history_seq = 0
             self.moves_seq = []
 
-        print('New Game!\n')
+        # print('New Game!\n')
 
     def move(self, move, promotion='q', debug=False, display=True):
         if isinstance(move, str) and len(move) == 4:
-            self._exec_move(move[:2], move[2:], promotion=promotion, debug=debug, display=display)
+            self._exec_move(move[0:2], move[2:4], promotion=promotion, debug=debug, display=display)
+        elif isinstance(move, str) and len(move) == 5:
+            self._exec_move(move[0:2], move[2:4], promotion=move[4], debug=debug, display=display)
 
     def undo(self, moves=1):
         self.board = copy(self.history[self.history_seq - moves][0])
@@ -677,8 +685,8 @@ class chess:
         if not compact:
             if not flipped:
                 for row in reversed(self.board):
-                    print('+---+---+---+---+---+---+---+---+ ')
-                    string = '| '
+                    print(' +---+---+---+---+---+---+---+---+ ')
+                    string = ' | '
                     for piece in row:
                         if piece is not None:
                             string += piece
@@ -686,12 +694,12 @@ class chess:
                             string += ' '
                         string += ' | '
                     print(string)
-                print('+---+---+---+---+---+---+---+---+ ')
+                print(' +---+---+---+---+---+---+---+---+ ')
                 print()
             else:
                 for row in self.board:
-                    print('+---+---+---+---+---+---+---+---+ ')
-                    string = '| '
+                    print(' +---+---+---+---+---+---+---+---+ ')
+                    string = ' | '
                     for piece in reversed(row):
                         if piece is not None:
                             string += piece
@@ -699,12 +707,12 @@ class chess:
                             string += ' '
                         string += ' | '
                     print(string)
-                print('+---+---+---+---+---+---+---+---+ ')
+                print(' +---+---+---+---+---+---+---+---+ ')
                 print()
         else:
             if not flipped:
                 for row in reversed(self.board):
-                    string = ''
+                    string = ' '
                     for piece in row:
                         if piece is not None:
                             string += piece
@@ -715,7 +723,7 @@ class chess:
                 print()
             else:
                 for row in self.board:
-                    string = ''
+                    string = ' '
                     for piece in reversed(row):
                         if piece is not None:
                             string += piece
@@ -1015,7 +1023,7 @@ class engine:
     def get_bestmove(self, fenstring=None, moves_seq=None):
         if fenstring is not None:
             self._write('position fen %s' % fenstring)
-            self._write('go')
+            self._write('go wtime 1000 btime 20')
             output = self._read()
             while 'bestmove' not in output:
                 output = self._read()
@@ -1025,7 +1033,7 @@ class engine:
                 self._write('position startpos moves %s' % moves_seq)
             else:
                 self._write('position startpos')
-            self._write('go')
+            self._write('go wtime 5000 btime 20')
             output = self._read()
             while 'bestmove' not in output:
                 output = self._read()
@@ -1046,8 +1054,18 @@ if __name__ == '__main__':
     # game.show_board(compact=True, flipped=True)
 
     game = chess()
+    e1 = engine()
+    e1.run_engine()
+    e2 = engine()
+    e2.run_engine()
+    game.new_game()
 
-    en = engine(game=game)
+    while True:
+        for i in range(300):
+            game.move(e1.get_bestmove(moves_seq=game.get_moves_seq()))
+            game.move(e2.get_bestmove(moves_seq=game.get_moves_seq()))
+            sleep(0.02)
+        game.new_game()
 
 
 

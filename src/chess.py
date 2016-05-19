@@ -55,7 +55,7 @@ class chess:
                 self.board[y1][x2] = None
 
             if piece in 'kK':
-                if self.castle is not None:
+                if self.castle is not None and debug is False:
                     if piece.isupper():
                         self.castle = self.castle.replace('K', '')
                         self.castle = self.castle.replace('Q', '')

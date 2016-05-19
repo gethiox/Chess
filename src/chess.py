@@ -1,3 +1,4 @@
+#!/usr/bin/python3.4
 # -*- coding: utf-8 -*-
 from string import ascii_letters, digits, ascii_lowercase
 from copy import deepcopy as copy
@@ -26,7 +27,7 @@ class chess:
 
         valid_moves = []
         if debug is False:
-            self._save_history(self.history_seq)
+            self.history[self.history_seq] = self._get_backup()
 
             valid_moves = self.legal_moves(pos_a)
 
@@ -42,64 +43,65 @@ class chess:
             self.board[y1][x1] = None
             self.board[y2][x2] = piece
 
+            if piece == 'P' and y2 == 7:
+                self.board[y2][x2] = promotion.capitalize()
+                promoted = True
+
+            if piece == 'p' and y2 == 0:
+                self.board[y2][x2] = promotion.casefold()
+                promoted = True
+
+            if piece in 'pP' and pos_b == self.en_passant:
+                self.board[y1][x2] = None
+
+            if piece in 'kK':
+                if self.castle is not None:
+                    if piece.isupper():
+                        self.castle = self.castle.replace('K', '')
+                        self.castle = self.castle.replace('Q', '')
+                    elif piece.islower():
+                        self.castle = self.castle.replace('k', '')
+                        self.castle = self.castle.replace('q', '')
+                    if not self.castle:
+                        self.castle = None
+
+                if piece == 'K':
+                    if pos_a == 'e1' and pos_b == 'g1':
+                        self.board[0][7] = None
+                        self.board[0][5] = 'R'
+                    elif pos_a == 'e1' and pos_b == 'c1':
+                        self.board[0][0] = None
+                        self.board[0][3] = 'R'
+                elif piece == 'k':
+                    if pos_a == 'e8' and pos_b == 'g8':
+                        self.board[7][7] = None
+                        self.board[7][5] = 'r'
+                    elif pos_a == 'e8' and pos_b == 'c8':
+                        self.board[7][0] = None
+                        self.board[7][3] = 'r'
+            if piece in 'rR':
+                if self.castle is not None:
+                    if piece.isupper():
+                        if x1 == 7:
+                            self.castle = self.castle.replace('K', '')
+                        elif x1 == 0:
+                            self.castle = self.castle.replace('Q', '')
+                    elif piece.islower():
+                        if x1 == 7:
+                            self.castle = self.castle.replace('k', '')
+                        elif x1 == 0:
+                            self.castle = self.castle.replace('q', '')
+                    if not self.castle:
+                        self.castle = None
+
             if debug is False:
-                if piece == 'P' and y2 == 7:
-                    self.board[y2][x2] = promotion.capitalize()
-                    promoted = True
-
-                if piece == 'p' and y2 == 0:
-                    self.board[y2][x2] = promotion.casefold()
-                    promoted = True
-
-                if piece in 'pP' and pos_b == self.en_passant:
-                    self.board[y1][x2] = None
+                #postmove operations
 
                 if piece in 'pP' and abs(y1 - y2) == 2:
                     self.en_passant = self.coordinates_to_human(x1, int((y1 + y2) / 2))
                 else:
                     self.en_passant = None
 
-                if piece in 'kK':
-                    if self.castle is not None:
-                        if piece.isupper():
-                            self.castle = self.castle.replace('K', '')
-                            self.castle = self.castle.replace('Q', '')
-                        elif piece.islower():
-                            self.castle = self.castle.replace('k', '')
-                            self.castle = self.castle.replace('q', '')
-                        if not self.castle:
-                            self.castle = None
-
-                    if piece == 'K':
-                        if pos_a == 'e1' and pos_b == 'g1':
-                            self.board[0][7] = None
-                            self.board[0][5] = 'R'
-                        elif pos_a == 'e1' and pos_b == 'c1':
-                            self.board[0][0] = None
-                            self.board[0][3] = 'R'
-                    elif piece == 'k':
-                        if pos_a == 'e8' and pos_b == 'g8':
-                            self.board[7][7] = None
-                            self.board[7][5] = 'r'
-                        elif pos_a == 'e8' and pos_b == 'c8':
-                            self.board[7][0] = None
-                            self.board[7][3] = 'r'
-                if piece in 'rR':
-                    if self.castle is not None:
-                        if piece.isupper():
-                            if x1 == 7:
-                                self.castle = self.castle.replace('K', '')
-                            elif x1 == 0:
-                                self.castle = self.castle.replace('Q', '')
-                        elif piece.islower():
-                            if x1 == 7:
-                                self.castle = self.castle.replace('k', '')
-                            elif x1 == 0:
-                                self.castle = self.castle.replace('q', '')
-                        if not self.castle:
-                            self.castle = None
-
-                #postmove operations
                 if self.on_move == 'w':
                     self.on_move = 'b'
                 else:
@@ -107,7 +109,7 @@ class chess:
                     self.moves += 1
 
                 self.history_seq += 1
-                self._save_history(self.history_seq)
+                self.history[self.history_seq] = self._get_backup()
 
                 if not promoted:
                     self.moves_seq.append(pos_a + pos_b)
@@ -115,7 +117,7 @@ class chess:
                     self.moves_seq.append(pos_a + pos_b + promotion)
 
                 if display:
-                    self.show_board(compact=True)
+                    self.show_board()
 
                 # if self.am_i_mated():
                 #     print('checkmate!')
@@ -124,14 +126,15 @@ class chess:
                 # elif self.am_i_checked():
                 #     print('check!')
 
-    def _save_history(self, key):
-        self.history[key] = (copy(self.board),
-                             copy(self.on_move),
-                             copy(self.castle),
-                             copy(self.en_passant),
-                             copy(self.half_moves),
-                             copy(self.moves),
-                             copy(self.moves_seq))
+    def _get_backup(self):
+        data = (copy(self.board),
+                copy(self.on_move),
+                copy(self.castle),
+                copy(self.en_passant),
+                copy(self.half_moves),
+                copy(self.moves),
+                copy(self.moves_seq))
+        return data
 
     def _clear_board(self):
         self.board = [[None for x in range(8)] for i in range(8)]
@@ -656,30 +659,36 @@ class chess:
             self._exec_move(move[0:2], move[2:4], promotion=move[4], debug=debug, display=display)
 
     def undo(self, moves=1):
-        self.board = copy(self.history[self.history_seq - moves][0])
-        self.on_move = copy(self.history[self.history_seq - moves][1])
-        self.castle = copy(self.history[self.history_seq - moves][2])
-        self.en_passant = copy(self.history[self.history_seq - moves][3])
-        self.half_moves = copy(self.history[self.history_seq - moves][4])
-        self.moves = copy(self.history[self.history_seq - moves][5])
-        self.moves_seq = copy(self.history[self.history_seq - moves][6])
+        try:
+            self.board = copy(self.history[self.history_seq - moves][0])
+            self.on_move = copy(self.history[self.history_seq - moves][1])
+            self.castle = copy(self.history[self.history_seq - moves][2])
+            self.en_passant = copy(self.history[self.history_seq - moves][3])
+            self.half_moves = copy(self.history[self.history_seq - moves][4])
+            self.moves = copy(self.history[self.history_seq - moves][5])
+            self.moves_seq = copy(self.history[self.history_seq - moves][6])
 
-        print('undo %s moves!' % moves)
-        self.show_board()
-        self.history_seq -= moves
+            print('undo %s moves!' % moves)
+            self.show_board()
+            self.history_seq -= moves
+        except KeyError:
+            print('operation not in range, max available moves: %d' % len(self.history))
 
     def redo(self, moves=1):
-        self.board = copy(self.history[self.history_seq + moves][0])
-        self.on_move = copy(self.history[self.history_seq + moves][1])
-        self.castle = copy(self.history[self.history_seq + moves][2])
-        self.en_passant = copy(self.history[self.history_seq + moves][3])
-        self.half_moves = copy(self.history[self.history_seq + moves][4])
-        self.moves = copy(self.history[self.history_seq + moves][5])
-        self.moves = copy(self.history[self.history_seq + moves][6])
+        try:
+            self.board = copy(self.history[self.history_seq + moves][0])
+            self.on_move = copy(self.history[self.history_seq + moves][1])
+            self.castle = copy(self.history[self.history_seq + moves][2])
+            self.en_passant = copy(self.history[self.history_seq + moves][3])
+            self.half_moves = copy(self.history[self.history_seq + moves][4])
+            self.moves = copy(self.history[self.history_seq + moves][5])
+            self.moves = copy(self.history[self.history_seq + moves][6])
 
-        print('redo %s moves!' % moves)
-        self.show_board()
-        self.history_seq += moves
+            print('redo %s moves!' % moves)
+            self.show_board()
+            self.history_seq += moves
+        except KeyError:
+            print('operation not in range, max available moves: %d' % len(self.history))
 
     def show_board(self, compact=False, flipped=False):
         if not compact:
@@ -1053,19 +1062,24 @@ if __name__ == '__main__':
     # game.show_legal_moves('a8', compact=True)
     # game.show_board(compact=True, flipped=True)
 
-    game = chess()
-    e1 = engine()
-    e1.run_engine()
-    e2 = engine()
-    e2.run_engine()
-    game.new_game()
+    # game = chess()
+    # e1 = engine()
+    # e1.run_engine()
+    # e2 = engine()
+    # e2.run_engine()
+    # game.new_game()
+    #
+    # while True:
+    #     for i in range(300):
+    #         game.move(input('twój ruch: '))
+    #         game.move(e2.get_bestmove(moves_seq=game.get_moves_seq()))
+    #         sleep(0.02)
+    #     game.new_game()
 
-    while True:
-        for i in range(300):
-            game.move(e1.get_bestmove(moves_seq=game.get_moves_seq()))
-            game.move(e2.get_bestmove(moves_seq=game.get_moves_seq()))
-            sleep(0.02)
-        game.new_game()
+    game = chess()
+    game.set_position('8/7k/7p/6pP/5p1K/1p6/3R4/6r1 w - g6 0 1')
+    game.show_legal_moves('h5')
+    game.move('h5g6')
 
 
 

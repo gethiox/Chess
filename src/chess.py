@@ -1,10 +1,11 @@
 #!/usr/bin/python3.4
 # -*- coding: utf-8 -*-
-from string import ascii_letters, digits, ascii_lowercase
-from copy import deepcopy as copy
 import subprocess
-import threading
+from copy import deepcopy as copy
+from string import ascii_letters, digits, ascii_lowercase
 from time import sleep
+
+from helpers.exceptions import *
 
 
 class chess:
@@ -20,8 +21,8 @@ class chess:
         self.moves_seq = []
 
     def _exec_move(self, pos_a, pos_b, promotion='q', debug=False, display=True):
-        x1, y1 = self.coordinates_to_matrix(pos_a)
-        x2, y2 = self.coordinates_to_matrix(pos_b)
+        x1, y1 = self.convert_to_matrix(pos_a)
+        x2, y2 = self.convert_to_matrix(pos_b)
         piece = self.board[y1][x1]
         promoted = False
 
@@ -32,13 +33,18 @@ class chess:
             valid_moves = self.legal_moves(pos_a)
 
         if valid_moves is None and debug is False:
-            print('%s: Any piece here you stipid whore, fuck you!' % pos_a)
+            raise NoPiece('%s is an empty field.' % pos_a)
         elif piece.isupper() and self.on_move != 'w' and debug is False:
-            print('Black on move you retarted motherfucker!, not white!')
+            raise WrongMoveOrder('Black on move you retarted motherfucker!, not white!')
         elif piece.islower() and self.on_move != 'b' and debug is False:
-            print('White on move you retarted idiot!, not black!')
+            raise WrongMoveOrder('White on move you retarted idiot!, not black!')
         elif pos_b not in valid_moves and debug is False:
-            print('It is not a valid move!\n')
+            raise IllegalMove('%s%s: It is not a valid move!\n' % (pos_a, pos_b))
+        elif not debug and (self.am_i_mated() or self.am_i_stalemated()):
+            if game.on_move == 'w':
+                raise GameOver('Game ended, black won!')
+            elif game.on_move == 'w':
+                raise GameOver('Game ended, white won!')
         else:
             self.board[y1][x1] = None
             self.board[y2][x2] = piece
@@ -98,7 +104,7 @@ class chess:
                 #postmove operations
 
                 if piece in 'pP' and abs(y1 - y2) == 2:
-                    self.en_passant = self.coordinates_to_human(x1, int((y1 + y2) / 2))
+                    self.en_passant = self.convert_to_algebra(x1, int((y1 + y2) / 2))
                 else:
                     self.en_passant = None
 
@@ -119,12 +125,12 @@ class chess:
                 if display:
                     self.show_board()
 
-                # if self.am_i_mated():
-                #     print('checkmate!')
-                # elif self.am_i_stalemated():
-                #     print('stealmate!')
-                # elif self.am_i_checked():
-                #     print('check!')
+                checked, mated, stalemated = (self.am_i_checked(),
+                                              self.am_i_mated(),
+                                              self.am_i_stalemated())
+                game_over = (mated or stalemated)
+
+                return game_over, checked, mated, stalemated
 
     def _get_backup(self):
         data = (copy(self.board),
@@ -136,15 +142,24 @@ class chess:
                 copy(self.moves_seq))
         return data
 
+    def _restore_backup(self, backup):
+        (self.board,
+         self.on_move,
+         self.castle,
+         self.en_passant,
+         self.half_moves,
+         self.moves,
+         self.moves_seq) = copy(backup)
+
     def _clear_board(self):
         self.board = [[None for x in range(8)] for i in range(8)]
 
     def _avabile_moves(self, pos):
-        a1, a2 = self.coordinates_to_matrix(pos)
+        a1, a2 = self.convert_to_matrix(pos)
 
         piece = self.board[a2][a1]
         if piece is None:
-            raise IOError('No piece at %s' % pos)
+            raise NoPiece('No piece at %s' % pos)
         color = self.read_color(piece)
 
         moves = []
@@ -154,45 +169,45 @@ class chess:
             tmp1, tmp2 = a1, a2 + 1
             if tmp1 in range(8) and tmp2 in range(8):
                 if self.board[tmp2][tmp1] is None:
-                    moves.append(self.coordinates_to_human(tmp1, tmp2))
+                    moves.append(self.convert_to_algebra(tmp1, tmp2))
             tmp1, tmp2 = a1, a2 + 2
             if tmp1 in range(8) and tmp2 in range(8):
                 if a2 == 1 and self.board[tmp2][tmp1] is None:
-                    moves.append(self.coordinates_to_human(tmp1, tmp2))
+                    moves.append(self.convert_to_algebra(tmp1, tmp2))
             tmp1, tmp2 = a1 + 1, a2 + 1
             if tmp1 in range(8) and tmp2 in range(8):
                 if self.board[tmp2][tmp1] is not None and self.read_color(self.board[tmp2][tmp1]) != color:
-                    moves.append(self.coordinates_to_human(tmp1, tmp2))
+                    moves.append(self.convert_to_algebra(tmp1, tmp2))
             tmp1, tmp2 = a1 - 1, a2 + 1
             if tmp1 in range(8) and tmp2 in range(8):
                 if self.board[tmp2][tmp1] is not None and self.read_color(self.board[tmp2][tmp1]) != color:
-                    moves.append(self.coordinates_to_human(tmp1, tmp2))
+                    moves.append(self.convert_to_algebra(tmp1, tmp2))
             if self.en_passant and a2 == 4:
-                tmp1, tmp2 = self.coordinates_to_matrix(self.en_passant)
+                tmp1, tmp2 = self.convert_to_matrix(self.en_passant)
                 if (a1 + 1 == tmp1 or a1 - 1 == tmp1) and a2 + 1 == tmp2:
-                    moves.append(self.coordinates_to_human(tmp1, tmp2))
+                    moves.append(self.convert_to_algebra(tmp1, tmp2))
 
         elif piece.casefold() == 'p' and color == 'b':
             tmp1, tmp2 = a1, a2 - 1
             if tmp1 in range(8) and tmp2 in range(8):
                 if self.board[tmp2][tmp1] is None:
-                    moves.append(self.coordinates_to_human(tmp1, tmp2))
+                    moves.append(self.convert_to_algebra(tmp1, tmp2))
             tmp1, tmp2 = a1, a2 - 2
             if tmp1 in range(8) and tmp2 in range(8):
                 if a2 == 6 and self.board[tmp2][tmp1] is None:
-                    moves.append(self.coordinates_to_human(tmp1, tmp2))
+                    moves.append(self.convert_to_algebra(tmp1, tmp2))
             tmp1, tmp2 = a1 + 1, a2 - 1
             if tmp1 in range(8) and tmp2 in range(8):
                 if self.board[tmp2][tmp1] is not None and self.read_color(self.board[tmp2][tmp1]) != color:
-                    moves.append(self.coordinates_to_human(tmp1, tmp2))
+                    moves.append(self.convert_to_algebra(tmp1, tmp2))
             tmp1, tmp2 = a1 - 1, a2 - 1
             if tmp1 in range(8) and tmp2 in range(8):
                 if self.board[tmp2][tmp1] is not None and self.read_color(self.board[tmp2][tmp1]) != color:
-                    moves.append(self.coordinates_to_human(tmp1, tmp2))
+                    moves.append(self.convert_to_algebra(tmp1, tmp2))
             if self.en_passant and a2 == 3:
-                tmp1, tmp2 = self.coordinates_to_matrix(self.en_passant)
+                tmp1, tmp2 = self.convert_to_matrix(self.en_passant)
                 if (a1 + 1 == tmp1 or a1 - 1 == tmp1) and a2 - 1 == tmp2:
-                    moves.append(self.coordinates_to_human(tmp1, tmp2))
+                    moves.append(self.convert_to_algebra(tmp1, tmp2))
 
         # Rook ###
         elif piece.casefold() == 'r':
@@ -200,9 +215,9 @@ class chess:
                 tmp1, tmp2 = a1 + i, a2
                 if tmp1 in range(8) and tmp2 in range(8):
                     if self.board[tmp2][tmp1] is None:
-                        moves.append(self.coordinates_to_human(tmp1, tmp2))
+                        moves.append(self.convert_to_algebra(tmp1, tmp2))
                     elif color != self.read_color(self.board[tmp2][tmp1]):
-                        moves.append(self.coordinates_to_human(tmp1, tmp2))
+                        moves.append(self.convert_to_algebra(tmp1, tmp2))
                         break
                     else:
                         break
@@ -212,9 +227,9 @@ class chess:
                 tmp1, tmp2 = a1 - i, a2
                 if tmp1 in range(8) and tmp2 in range(8):
                     if self.board[tmp2][tmp1] is None:
-                        moves.append(self.coordinates_to_human(tmp1, tmp2))
+                        moves.append(self.convert_to_algebra(tmp1, tmp2))
                     elif color != self.read_color(self.board[tmp2][tmp1]):
-                        moves.append(self.coordinates_to_human(tmp1, tmp2))
+                        moves.append(self.convert_to_algebra(tmp1, tmp2))
                         break
                     else:
                         break
@@ -224,9 +239,9 @@ class chess:
                 tmp1, tmp2 = a1, a2 + i
                 if tmp1 in range(8) and tmp2 in range(8):
                     if self.board[tmp2][tmp1] is None:
-                        moves.append(self.coordinates_to_human(tmp1, tmp2))
+                        moves.append(self.convert_to_algebra(tmp1, tmp2))
                     elif color != self.read_color(self.board[tmp2][tmp1]):
-                        moves.append(self.coordinates_to_human(tmp1, tmp2))
+                        moves.append(self.convert_to_algebra(tmp1, tmp2))
                         break
                     else:
                         break
@@ -236,9 +251,9 @@ class chess:
                 tmp1, tmp2 = a1, a2 - i
                 if tmp1 in range(8) and tmp2 in range(8):
                     if self.board[tmp2][tmp1] is None:
-                        moves.append(self.coordinates_to_human(tmp1, tmp2))
+                        moves.append(self.convert_to_algebra(tmp1, tmp2))
                     elif color != self.read_color(self.board[tmp2][tmp1]):
-                        moves.append(self.coordinates_to_human(tmp1, tmp2))
+                        moves.append(self.convert_to_algebra(tmp1, tmp2))
                         break
                     else:
                         break
@@ -250,51 +265,51 @@ class chess:
             tmp1, tmp2 = a1 + 2, a2 - 1
             if tmp1 in range(8) and tmp2 in range(8):
                 if self.board[tmp2][tmp1] is None:
-                    moves.append(self.coordinates_to_human(tmp1, tmp2))
+                    moves.append(self.convert_to_algebra(tmp1, tmp2))
                 elif color != self.read_color(self.board[tmp2][tmp1]):
-                    moves.append(self.coordinates_to_human(tmp1, tmp2))
+                    moves.append(self.convert_to_algebra(tmp1, tmp2))
             tmp1, tmp2 = a1 + 2, a2 + 1
             if tmp1 in range(8) and tmp2 in range(8):
                 if self.board[tmp2][tmp1] is None:
-                    moves.append(self.coordinates_to_human(tmp1, tmp2))
+                    moves.append(self.convert_to_algebra(tmp1, tmp2))
                 elif color != self.read_color(self.board[tmp2][tmp1]):
-                    moves.append(self.coordinates_to_human(tmp1, tmp2))
+                    moves.append(self.convert_to_algebra(tmp1, tmp2))
             tmp1, tmp2 = a1 + 1, a2 + 2
             if tmp1 in range(8) and tmp2 in range(8):
                 if self.board[tmp2][tmp1] is None:
-                    moves.append(self.coordinates_to_human(tmp1, tmp2))
+                    moves.append(self.convert_to_algebra(tmp1, tmp2))
                 elif color != self.read_color(self.board[tmp2][tmp1]):
-                    moves.append(self.coordinates_to_human(tmp1, tmp2))
+                    moves.append(self.convert_to_algebra(tmp1, tmp2))
             tmp1, tmp2 = a1 - 1, a2 + 2
             if tmp1 in range(8) and tmp2 in range(8):
                 if self.board[tmp2][tmp1] is None:
-                    moves.append(self.coordinates_to_human(tmp1, tmp2))
+                    moves.append(self.convert_to_algebra(tmp1, tmp2))
                 elif color != self.read_color(self.board[tmp2][tmp1]):
-                    moves.append(self.coordinates_to_human(tmp1, tmp2))
+                    moves.append(self.convert_to_algebra(tmp1, tmp2))
             tmp1, tmp2 = a1 - 2, a2 + 1
             if tmp1 in range(8) and tmp2 in range(8):
                 if self.board[tmp2][tmp1] is None:
-                    moves.append(self.coordinates_to_human(tmp1, tmp2))
+                    moves.append(self.convert_to_algebra(tmp1, tmp2))
                 elif color != self.read_color(self.board[tmp2][tmp1]):
-                    moves.append(self.coordinates_to_human(tmp1, tmp2))
+                    moves.append(self.convert_to_algebra(tmp1, tmp2))
             tmp1, tmp2 = a1 - 2, a2 - 1
             if tmp1 in range(8) and tmp2 in range(8):
                 if self.board[tmp2][tmp1] is None:
-                    moves.append(self.coordinates_to_human(tmp1, tmp2))
+                    moves.append(self.convert_to_algebra(tmp1, tmp2))
                 elif color != self.read_color(self.board[tmp2][tmp1]):
-                    moves.append(self.coordinates_to_human(tmp1, tmp2))
+                    moves.append(self.convert_to_algebra(tmp1, tmp2))
             tmp1, tmp2 = a1 - 1, a2 - 2
             if tmp1 in range(8) and tmp2 in range(8):
                 if self.board[tmp2][tmp1] is None:
-                    moves.append(self.coordinates_to_human(tmp1, tmp2))
+                    moves.append(self.convert_to_algebra(tmp1, tmp2))
                 elif color != self.read_color(self.board[tmp2][tmp1]):
-                    moves.append(self.coordinates_to_human(tmp1, tmp2))
+                    moves.append(self.convert_to_algebra(tmp1, tmp2))
             tmp1, tmp2 = a1 + 1, a2 - 2
             if tmp1 in range(8) and tmp2 in range(8):
                 if self.board[tmp2][tmp1] is None:
-                    moves.append(self.coordinates_to_human(tmp1, tmp2))
+                    moves.append(self.convert_to_algebra(tmp1, tmp2))
                 elif color != self.read_color(self.board[tmp2][tmp1]):
-                    moves.append(self.coordinates_to_human(tmp1, tmp2))
+                    moves.append(self.convert_to_algebra(tmp1, tmp2))
 
         # Bishop ###
         elif piece.casefold() == 'b':
@@ -302,9 +317,9 @@ class chess:
                 tmp1, tmp2 = a1 + i, a2 + i
                 if tmp1 in range(8) and tmp2 in range(8):
                     if self.board[tmp2][tmp1] is None:
-                        moves.append(self.coordinates_to_human(tmp1, tmp2))
+                        moves.append(self.convert_to_algebra(tmp1, tmp2))
                     elif color != self.read_color(self.board[tmp2][tmp1]):
-                        moves.append(self.coordinates_to_human(tmp1, tmp2))
+                        moves.append(self.convert_to_algebra(tmp1, tmp2))
                         break
                     else:
                         break
@@ -314,9 +329,9 @@ class chess:
                 tmp1, tmp2 = a1 + i, a2 - i
                 if tmp1 in range(8) and tmp2 in range(8):
                     if self.board[tmp2][tmp1] is None:
-                        moves.append(self.coordinates_to_human(tmp1, tmp2))
+                        moves.append(self.convert_to_algebra(tmp1, tmp2))
                     elif color != self.read_color(self.board[tmp2][tmp1]):
-                        moves.append(self.coordinates_to_human(tmp1, tmp2))
+                        moves.append(self.convert_to_algebra(tmp1, tmp2))
                         break
                     else:
                         break
@@ -326,9 +341,9 @@ class chess:
                 tmp1, tmp2 = a1 - i, a2 + i
                 if tmp1 in range(8) and tmp2 in range(8):
                     if self.board[tmp2][tmp1] is None:
-                        moves.append(self.coordinates_to_human(tmp1, tmp2))
+                        moves.append(self.convert_to_algebra(tmp1, tmp2))
                     elif color != self.read_color(self.board[tmp2][tmp1]):
-                        moves.append(self.coordinates_to_human(tmp1, tmp2))
+                        moves.append(self.convert_to_algebra(tmp1, tmp2))
                         break
                     else:
                         break
@@ -338,9 +353,9 @@ class chess:
                 tmp1, tmp2 = a1 - i, a2 - i
                 if tmp1 in range(8) and tmp2 in range(8):
                     if self.board[tmp2][tmp1] is None:
-                        moves.append(self.coordinates_to_human(tmp1, tmp2))
+                        moves.append(self.convert_to_algebra(tmp1, tmp2))
                     elif color != self.read_color(self.board[tmp2][tmp1]):
-                        moves.append(self.coordinates_to_human(tmp1, tmp2))
+                        moves.append(self.convert_to_algebra(tmp1, tmp2))
                         break
                     else:
                         break
@@ -353,9 +368,9 @@ class chess:
                 tmp1, tmp2 = a1 + i, a2 + i
                 if tmp1 in range(8) and tmp2 in range(8):
                     if self.board[tmp2][tmp1] is None:
-                        moves.append(self.coordinates_to_human(tmp1, tmp2))
+                        moves.append(self.convert_to_algebra(tmp1, tmp2))
                     elif color != self.read_color(self.board[tmp2][tmp1]):
-                        moves.append(self.coordinates_to_human(tmp1, tmp2))
+                        moves.append(self.convert_to_algebra(tmp1, tmp2))
                         break
                     else:
                         break
@@ -365,9 +380,9 @@ class chess:
                 tmp1, tmp2 = a1 + i, a2 - i
                 if tmp1 in range(8) and tmp2 in range(8):
                     if self.board[tmp2][tmp1] is None:
-                        moves.append(self.coordinates_to_human(tmp1, tmp2))
+                        moves.append(self.convert_to_algebra(tmp1, tmp2))
                     elif color != self.read_color(self.board[tmp2][tmp1]):
-                        moves.append(self.coordinates_to_human(tmp1, tmp2))
+                        moves.append(self.convert_to_algebra(tmp1, tmp2))
                         break
                     else:
                         break
@@ -377,9 +392,9 @@ class chess:
                 tmp1, tmp2 = a1 - i, a2 + i
                 if tmp1 in range(8) and tmp2 in range(8):
                     if self.board[tmp2][tmp1] is None:
-                        moves.append(self.coordinates_to_human(tmp1, tmp2))
+                        moves.append(self.convert_to_algebra(tmp1, tmp2))
                     elif color != self.read_color(self.board[tmp2][tmp1]):
-                        moves.append(self.coordinates_to_human(tmp1, tmp2))
+                        moves.append(self.convert_to_algebra(tmp1, tmp2))
                         break
                     else:
                         break
@@ -389,9 +404,9 @@ class chess:
                 tmp1, tmp2 = a1 - i, a2 - i
                 if tmp1 in range(8) and tmp2 in range(8):
                     if self.board[tmp2][tmp1] is None:
-                        moves.append(self.coordinates_to_human(tmp1, tmp2))
+                        moves.append(self.convert_to_algebra(tmp1, tmp2))
                     elif color != self.read_color(self.board[tmp2][tmp1]):
-                        moves.append(self.coordinates_to_human(tmp1, tmp2))
+                        moves.append(self.convert_to_algebra(tmp1, tmp2))
                         break
                     else:
                         break
@@ -402,9 +417,9 @@ class chess:
                 tmp1, tmp2 = a1 + i, a2
                 if tmp1 in range(8) and tmp2 in range(8):
                     if self.board[tmp2][tmp1] is None:
-                        moves.append(self.coordinates_to_human(tmp1, tmp2))
+                        moves.append(self.convert_to_algebra(tmp1, tmp2))
                     elif color != self.read_color(self.board[tmp2][tmp1]):
-                        moves.append(self.coordinates_to_human(tmp1, tmp2))
+                        moves.append(self.convert_to_algebra(tmp1, tmp2))
                         break
                     else:
                         break
@@ -414,9 +429,9 @@ class chess:
                 tmp1, tmp2 = a1 - i, a2
                 if tmp1 in range(8) and tmp2 in range(8):
                     if self.board[tmp2][tmp1] is None:
-                        moves.append(self.coordinates_to_human(tmp1, tmp2))
+                        moves.append(self.convert_to_algebra(tmp1, tmp2))
                     elif color != self.read_color(self.board[tmp2][tmp1]):
-                        moves.append(self.coordinates_to_human(tmp1, tmp2))
+                        moves.append(self.convert_to_algebra(tmp1, tmp2))
                         break
                     else:
                         break
@@ -426,9 +441,9 @@ class chess:
                 tmp1, tmp2 = a1, a2 + i
                 if tmp1 in range(8) and tmp2 in range(8):
                     if self.board[tmp2][tmp1] is None:
-                        moves.append(self.coordinates_to_human(tmp1, tmp2))
+                        moves.append(self.convert_to_algebra(tmp1, tmp2))
                     elif color != self.read_color(self.board[tmp2][tmp1]):
-                        moves.append(self.coordinates_to_human(tmp1, tmp2))
+                        moves.append(self.convert_to_algebra(tmp1, tmp2))
                         break
                     else:
                         break
@@ -438,9 +453,9 @@ class chess:
                 tmp1, tmp2 = a1, a2 - i
                 if tmp1 in range(8) and tmp2 in range(8):
                     if self.board[tmp2][tmp1] is None:
-                        moves.append(self.coordinates_to_human(tmp1, tmp2))
+                        moves.append(self.convert_to_algebra(tmp1, tmp2))
                     elif color != self.read_color(self.board[tmp2][tmp1]):
-                        moves.append(self.coordinates_to_human(tmp1, tmp2))
+                        moves.append(self.convert_to_algebra(tmp1, tmp2))
                         break
                     else:
                         break
@@ -453,9 +468,9 @@ class chess:
                 tmp1, tmp2 = a1 + i, a2 + i
                 if tmp1 in range(8) and tmp2 in range(8):
                     if self.board[tmp2][tmp1] is None:
-                        moves.append(self.coordinates_to_human(tmp1, tmp2))
+                        moves.append(self.convert_to_algebra(tmp1, tmp2))
                     elif color != self.read_color(self.board[tmp2][tmp1]):
-                        moves.append(self.coordinates_to_human(tmp1, tmp2))
+                        moves.append(self.convert_to_algebra(tmp1, tmp2))
                         break
                     else:
                         break
@@ -465,9 +480,9 @@ class chess:
                 tmp1, tmp2 = a1 + i, a2 - i
                 if tmp1 in range(8) and tmp2 in range(8):
                     if self.board[tmp2][tmp1] is None:
-                        moves.append(self.coordinates_to_human(tmp1, tmp2))
+                        moves.append(self.convert_to_algebra(tmp1, tmp2))
                     elif color != self.read_color(self.board[tmp2][tmp1]):
-                        moves.append(self.coordinates_to_human(tmp1, tmp2))
+                        moves.append(self.convert_to_algebra(tmp1, tmp2))
                         break
                     else:
                         break
@@ -477,9 +492,9 @@ class chess:
                 tmp1, tmp2 = a1 - i, a2 + i
                 if tmp1 in range(8) and tmp2 in range(8):
                     if self.board[tmp2][tmp1] is None:
-                        moves.append(self.coordinates_to_human(tmp1, tmp2))
+                        moves.append(self.convert_to_algebra(tmp1, tmp2))
                     elif color != self.read_color(self.board[tmp2][tmp1]):
-                        moves.append(self.coordinates_to_human(tmp1, tmp2))
+                        moves.append(self.convert_to_algebra(tmp1, tmp2))
                         break
                     else:
                         break
@@ -489,9 +504,9 @@ class chess:
                 tmp1, tmp2 = a1 - i, a2 - i
                 if tmp1 in range(8) and tmp2 in range(8):
                     if self.board[tmp2][tmp1] is None:
-                        moves.append(self.coordinates_to_human(tmp1, tmp2))
+                        moves.append(self.convert_to_algebra(tmp1, tmp2))
                     elif color != self.read_color(self.board[tmp2][tmp1]):
-                        moves.append(self.coordinates_to_human(tmp1, tmp2))
+                        moves.append(self.convert_to_algebra(tmp1, tmp2))
                         break
                     else:
                         break
@@ -502,9 +517,9 @@ class chess:
                 tmp1, tmp2 = a1 + i, a2
                 if tmp1 in range(8) and tmp2 in range(8):
                     if self.board[tmp2][tmp1] is None:
-                        moves.append(self.coordinates_to_human(tmp1, tmp2))
+                        moves.append(self.convert_to_algebra(tmp1, tmp2))
                     elif color != self.read_color(self.board[tmp2][tmp1]):
-                        moves.append(self.coordinates_to_human(tmp1, tmp2))
+                        moves.append(self.convert_to_algebra(tmp1, tmp2))
                         break
                     else:
                         break
@@ -514,9 +529,9 @@ class chess:
                 tmp1, tmp2 = a1 - i, a2
                 if tmp1 in range(8) and tmp2 in range(8):
                     if self.board[tmp2][tmp1] is None:
-                        moves.append(self.coordinates_to_human(tmp1, tmp2))
+                        moves.append(self.convert_to_algebra(tmp1, tmp2))
                     elif color != self.read_color(self.board[tmp2][tmp1]):
-                        moves.append(self.coordinates_to_human(tmp1, tmp2))
+                        moves.append(self.convert_to_algebra(tmp1, tmp2))
                         break
                     else:
                         break
@@ -526,9 +541,9 @@ class chess:
                 tmp1, tmp2 = a1, a2 + i
                 if tmp1 in range(8) and tmp2 in range(8):
                     if self.board[tmp2][tmp1] is None:
-                        moves.append(self.coordinates_to_human(tmp1, tmp2))
+                        moves.append(self.convert_to_algebra(tmp1, tmp2))
                     elif color != self.read_color(self.board[tmp2][tmp1]):
-                        moves.append(self.coordinates_to_human(tmp1, tmp2))
+                        moves.append(self.convert_to_algebra(tmp1, tmp2))
                         break
                     else:
                         break
@@ -538,9 +553,9 @@ class chess:
                 tmp1, tmp2 = a1, a2 - i
                 if tmp1 in range(8) and tmp2 in range(8):
                     if self.board[tmp2][tmp1] is None:
-                        moves.append(self.coordinates_to_human(tmp1, tmp2))
+                        moves.append(self.convert_to_algebra(tmp1, tmp2))
                     elif color != self.read_color(self.board[tmp2][tmp1]):
-                        moves.append(self.coordinates_to_human(tmp1, tmp2))
+                        moves.append(self.convert_to_algebra(tmp1, tmp2))
                         break
                     else:
                         break
@@ -574,7 +589,7 @@ class chess:
                 x = 0
                 for piece in row:
                     if piece is not None and piece in 'rnbqkp':
-                        validation.extend(self._avabile_moves(self.coordinates_to_human(x, y)))
+                        validation.extend(self._avabile_moves(self.convert_to_algebra(x, y)))
                     x += 1
                 y += 1
 
@@ -584,7 +599,7 @@ class chess:
                 x = 0
                 for piece in row:
                     if piece is not None and piece in 'RNBQKP':
-                        validation.extend(self._avabile_moves(self.coordinates_to_human(x, y)))
+                        validation.extend(self._avabile_moves(self.convert_to_algebra(x, y)))
                     x += 1
                 y += 1
 
@@ -595,14 +610,14 @@ class chess:
         moves = self._avabile_moves(pos)
         real_moves = []
 
-        backup = copy(self.board)
+        backup = self._get_backup()
         for move in moves:
             self._exec_move(pos, move, debug=True)
             if not self.am_i_checked():
                 real_moves.append(move)
-            self.board = copy(backup)
+            self._restore_backup(backup)
 
-        x, y = self.coordinates_to_matrix(pos)
+        x, y = self.convert_to_matrix(pos)
         if self.board[y][x] == 'K' and self.castle is not None and x == 4 and y == 0:
             if 'f1' not in real_moves and 'K' in self.castle:
                 if 'g1' in real_moves:
@@ -654,9 +669,9 @@ class chess:
 
     def move(self, move, promotion='q', debug=False, display=True):
         if isinstance(move, str) and len(move) == 4:
-            self._exec_move(move[0:2], move[2:4], promotion=promotion, debug=debug, display=display)
+            return self._exec_move(move[0:2], move[2:4], promotion=promotion, debug=debug, display=display)
         elif isinstance(move, str) and len(move) == 5:
-            self._exec_move(move[0:2], move[2:4], promotion=move[4], debug=debug, display=display)
+            return self._exec_move(move[0:2], move[2:4], promotion=move[4], debug=debug, display=display)
 
     def undo(self, moves=1):
         try:
@@ -743,7 +758,7 @@ class chess:
                 print()
 
     def show_legal_moves(self, pos, compact=False):
-        v1, v2 = self.coordinates_to_matrix(pos)
+        v1, v2 = self.convert_to_matrix(pos)
         if self.read_color(self.board[v2][v1]) != self.on_move:
             if self.on_move == 'w':
                 print('Whine on move! You can verify only white pieces now.')
@@ -757,7 +772,7 @@ class chess:
             else:
                 backup = copy(self.board)
                 for move in moves:
-                    x, y = self.coordinates_to_matrix(move)
+                    x, y = self.convert_to_matrix(move)
                     self.board[y][x] = '+'
 
                 if not compact:
@@ -860,7 +875,7 @@ class chess:
                 x = 0
                 for piece in row:
                     if piece == 'K':
-                        king_pos = self.coordinates_to_human(x, y)
+                        king_pos = self.convert_to_algebra(x, y)
                     x += 1
                 y += 1
 
@@ -870,7 +885,7 @@ class chess:
                 x = 0
                 for piece in row:
                     if piece == 'k':
-                        king_pos = self.coordinates_to_human(x, y)
+                        king_pos = self.convert_to_algebra(x, y)
                     x += 1
                 y += 1
 
@@ -891,7 +906,7 @@ class chess:
                 x = 0
                 for piece in row:
                     if piece is not None and piece.isupper():
-                        all_avabile_moves.extend(self.legal_moves(self.coordinates_to_human(x, y)))
+                        all_avabile_moves.extend(self.legal_moves(self.convert_to_algebra(x, y)))
                     x += 1
                 y += 1
 
@@ -901,7 +916,7 @@ class chess:
                 x = 0
                 for piece in row:
                     if piece is not None and piece.islower():
-                        all_avabile_moves.extend(self.legal_moves(self.coordinates_to_human(x, y)))
+                        all_avabile_moves.extend(self.legal_moves(self.convert_to_algebra(x, y)))
                     x += 1
                 y += 1
 
@@ -922,7 +937,7 @@ class chess:
                 x = 0
                 for piece in row:
                     if piece is not None and piece.isupper():
-                        all_avabile_moves.extend(self.legal_moves(self.coordinates_to_human(x, y)))
+                        all_avabile_moves.extend(self.legal_moves(self.convert_to_algebra(x, y)))
                     x += 1
                 y += 1
 
@@ -932,7 +947,7 @@ class chess:
                 x = 0
                 for piece in row:
                     if piece is not None and piece.islower():
-                        all_avabile_moves.extend(self.legal_moves(self.coordinates_to_human(x, y)))
+                        all_avabile_moves.extend(self.legal_moves(self.convert_to_algebra(x, y)))
                     x += 1
                 y += 1
 
@@ -966,7 +981,7 @@ class chess:
             return 'b'
 
     @staticmethod
-    def coordinates_to_matrix(string):
+    def convert_to_matrix(string):
         if not isinstance(string, str):
             raise TypeError('you need to select position as text only!')
         if len(string) != 2:
@@ -989,7 +1004,7 @@ class chess:
         return a_out, b_out
 
     @staticmethod
-    def coordinates_to_human(v1, v2):
+    def convert_to_algebra(v1, v2):
         if not isinstance(v1, int) or not isinstance(v2, int):
             raise TypeError('values need to be an int!')
         if not 0 <= v1 <= 7:
@@ -1001,7 +1016,7 @@ class chess:
 
 
 class engine:
-    def __init__(self, engine_binary_path='../helpers/stockfish'):
+    def __init__(self, engine_binary_path='./helpers/stockfish'):
         self.path = engine_binary_path
         self.process = None
         self.playing_color = None
@@ -1029,10 +1044,10 @@ class engine:
         self._write('setoption name MultiPV value 2')
         self._write('ucinewgame')
 
-    def get_bestmove(self, fenstring=None, moves_seq=None):
+    def bestmove(self, fenstring=None, moves_seq=None):
         if fenstring is not None:
             self._write('position fen %s' % fenstring)
-            self._write('go wtime 1000 btime 20')
+            self._write('go wtime 500 btime 500')
             output = self._read()
             while 'bestmove' not in output:
                 output = self._read()
@@ -1042,7 +1057,7 @@ class engine:
                 self._write('position startpos moves %s' % moves_seq)
             else:
                 self._write('position startpos')
-            self._write('go wtime 5000 btime 20')
+            self._write('go wtime 500 btime 500')
             output = self._read()
             while 'bestmove' not in output:
                 output = self._read()
@@ -1062,6 +1077,27 @@ if __name__ == '__main__':
     # game.show_legal_moves('a8', compact=True)
     # game.show_board(compact=True, flipped=True)
 
+    game = chess()
+    e1 = engine()
+    e1.run_engine()
+    e2 = engine()
+    e2.run_engine()
+    game.new_game()
+
+    while True:
+        for i in range(300):
+            while True:
+                try:
+                    game.move(input('twój ruch: '))
+                except e:
+                    print(e)
+                else:
+                    break
+
+            game.move(e2.bestmove(moves_seq=game.get_moves_seq()))
+            sleep(0.02)
+        game.new_game()
+
     # game = chess()
     # e1 = engine()
     # e1.run_engine()
@@ -1071,16 +1107,27 @@ if __name__ == '__main__':
     #
     # while True:
     #     for i in range(300):
-    #         game.move(input('twój ruch: '))
-    #         game.move(e2.get_bestmove(moves_seq=game.get_moves_seq()))
-    #         sleep(0.02)
+    #         status = game.move(e1.bestmove(moves_seq=game.get_moves_seq()))[0]
+    #         if status:
+    #             if game.on_move == 'w':
+    #                 print('game over, black won')
+    #             elif game.on_move == 'b':
+    #                 print('game over, white won')
+    #             sleep(2)
+    #             break
+    #         status = game.move(e2.bestmove(moves_seq=game.get_moves_seq()))[0]
+    #         if status:
+    #             if game.on_move == 'w':
+    #                 print('game over, black won')
+    #             elif game.on_move == 'b':
+    #                 print('game over, white won')
+    #             sleep(2)
+    #             break
     #     game.new_game()
 
-    game = chess()
-    game.set_position('8/7k/7p/6pP/5p1K/1p6/3R4/6r1 w - g6 0 1')
-    game.show_legal_moves('h5')
-    game.move('h5g6')
-
-
+    # game = chess()
+    # game.set_position('8/7k/7p/6pP/5p1K/1p6/3R4/6r1 w - g6 0 1')
+    # game.move('h5g6')
+    # game.move('a1a2')
 
 

@@ -1,4 +1,4 @@
-#!/usr/bin/python3.4
+#!/bin/env python
 # -*- coding: utf-8 -*-
 import subprocess
 from copy import deepcopy as copy
@@ -1022,6 +1022,7 @@ class engine:
         self.playing_color = None
         self.logic_thread = None
         self.sigterm = False
+        self.pondering = False
 
     def _read(self):
         line = self.process.stdout.readline().decode()
@@ -1044,24 +1045,41 @@ class engine:
         self._write('setoption name MultiPV value 2')
         self._write('ucinewgame')
 
+    def ponder(self):
+        if not self.pondering:
+            self._write('go ponder')
+            self.pondering = True
+
+    def stop_ponder(self):
+        if self.pondering:
+            self._write('stop')
+            output = self._read()
+            while 'bestmove' not in output:
+                output = self._read()
+            self.pondering = False
+
     def bestmove(self, fenstring=None, moves_seq=None):
         if fenstring is not None:
+            self.stop_ponder()
             self._write('position fen %s' % fenstring)
             self._write('go wtime 500 btime 500')
             output = self._read()
             while 'bestmove' not in output:
                 output = self._read()
             bestmove = output.split()[1]
+            self.ponder()
         elif moves_seq is not None:
+            self.stop_ponder()
             if len(moves_seq) > 0:
                 self._write('position startpos moves %s' % moves_seq)
             else:
                 self._write('position startpos')
-            self._write('go wtime 500 btime 500')
+            self._write('go wtime 5000 btime 500')
             output = self._read()
             while 'bestmove' not in output:
                 output = self._read()
             bestmove = output.split()[1]
+            self.ponder()
         else:
             raise ValueError
 

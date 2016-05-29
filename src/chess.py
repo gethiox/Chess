@@ -125,12 +125,13 @@ class chess:
                 if display:
                     self.show_board()
 
-                checked, mated, stalemated = (self.am_i_checked(),
-                                              self.am_i_mated(),
-                                              self.am_i_stalemated())
-                game_over = (mated or stalemated)
+                checked, mated, stalemated, pated = (self.am_i_checked(),
+                                                     self.am_i_mated(),
+                                                     self.am_i_stalemated(),
+                                                     self.am_i_pated())
+                game_over = (mated or stalemated or pated)
 
-                return game_over, checked, mated, stalemated
+                return game_over, checked, mated, stalemated, pated
 
     def _get_backup(self):
         data = (copy(self.board),
@@ -139,7 +140,8 @@ class chess:
                 copy(self.en_passant),
                 copy(self.half_moves),
                 copy(self.moves),
-                copy(self.moves_seq))
+                copy(self.moves_seq),
+                hash(str(self.board)))
         return data
 
     def _restore_backup(self, backup):
@@ -149,7 +151,8 @@ class chess:
          self.en_passant,
          self.half_moves,
          self.moves,
-         self.moves_seq) = copy(backup)
+         self.moves_seq,
+         _) = copy(backup)
 
     def _clear_board(self):
         self.board = [[None for x in range(8)] for i in range(8)]
@@ -958,6 +961,16 @@ class chess:
         else:
             return False
 
+    def am_i_pated(self):
+        hash_list = []
+        for i in range(self.history_seq):
+            hash_list.append(self.history[i][7])
+
+        for i in hash_list:
+            if hash_list.count(i) >= 3:
+                return True
+        return False
+
     @staticmethod
     def read_piece(piece_code):
         if piece_code in 'pP':
@@ -1016,13 +1029,14 @@ class chess:
 
 
 class engine:
-    def __init__(self, engine_binary_path='./helpers/stockfish'):
+    def __init__(self, engine_binary_path='./helpers/stockfish', ponder=False):
         self.path = engine_binary_path
         self.process = None
         self.playing_color = None
         self.logic_thread = None
         self.sigterm = False
         self.pondering = False
+        self.ponder = ponder
 
     def _read(self):
         line = self.process.stdout.readline().decode()
@@ -1045,7 +1059,7 @@ class engine:
         self._write('setoption name MultiPV value 2')
         self._write('ucinewgame')
 
-    def ponder(self):
+    def start_ponder(self):
         if not self.pondering:
             self._write('go ponder')
             self.pondering = True
@@ -1060,26 +1074,30 @@ class engine:
 
     def bestmove(self, fenstring=None, moves_seq=None):
         if fenstring is not None:
-            self.stop_ponder()
+            if self.ponder:
+                self.stop_ponder()
             self._write('position fen %s' % fenstring)
-            self._write('go wtime 500 btime 500')
+            self._write('go wtime 5000 btime 5000')
             output = self._read()
             while 'bestmove' not in output:
                 output = self._read()
             bestmove = output.split()[1]
-            self.ponder()
+            if self.ponder:
+                self.start_ponder()
         elif moves_seq is not None:
-            self.stop_ponder()
+            if self.ponder:
+                self.stop_ponder()
             if len(moves_seq) > 0:
                 self._write('position startpos moves %s' % moves_seq)
             else:
                 self._write('position startpos')
-            self._write('go wtime 5000 btime 500')
+            self._write('go wtime 50000 btime 5000')
             output = self._read()
             while 'bestmove' not in output:
                 output = self._read()
             bestmove = output.split()[1]
-            self.ponder()
+            if self.ponder:
+                self.start_ponder()
         else:
             raise ValueError
 
@@ -1095,27 +1113,6 @@ if __name__ == '__main__':
     # game.show_legal_moves('a8', compact=True)
     # game.show_board(compact=True, flipped=True)
 
-    game = chess()
-    e1 = engine()
-    e1.run_engine()
-    e2 = engine()
-    e2.run_engine()
-    game.new_game()
-
-    while True:
-        for i in range(300):
-            while True:
-                try:
-                    game.move(input('twój ruch: '))
-                except e:
-                    print(e)
-                else:
-                    break
-
-            game.move(e2.bestmove(moves_seq=game.get_moves_seq()))
-            sleep(0.02)
-        game.new_game()
-
     # game = chess()
     # e1 = engine()
     # e1.run_engine()
@@ -1125,23 +1122,64 @@ if __name__ == '__main__':
     #
     # while True:
     #     for i in range(300):
-    #         status = game.move(e1.bestmove(moves_seq=game.get_moves_seq()))[0]
-    #         if status:
-    #             if game.on_move == 'w':
-    #                 print('game over, black won')
-    #             elif game.on_move == 'b':
-    #                 print('game over, white won')
-    #             sleep(2)
-    #             break
-    #         status = game.move(e2.bestmove(moves_seq=game.get_moves_seq()))[0]
-    #         if status:
-    #             if game.on_move == 'w':
-    #                 print('game over, black won')
-    #             elif game.on_move == 'b':
-    #                 print('game over, white won')
-    #             sleep(2)
-    #             break
+    #         while True:
+    #             try:
+    #                 game.move(input('twój ruch: '))
+    #             except e:
+    #                 print(e)
+    #             else:
+    #                 break
+    #
+    #         game.move(e2.bestmove(moves_seq=game.get_moves_seq()))
+    #         sleep(0.02)
     #     game.new_game()
+
+    game = chess()
+    e1 = engine(ponder=True)
+    e1.run_engine()
+    e2 = engine(ponder=False)
+    e2.run_engine()
+    game.new_game()
+
+    while True:
+        for i in range(300):
+            status = game.move(e1.bestmove(moves_seq=game.get_moves_seq()))
+            if status[0]:
+                if game.on_move == 'w':
+                    if status[2]:
+                        print('game over, black won')
+                    if status[3]:
+                        print('stalemate! no legal moves for white!')
+                    if status[4]:
+                        print('stalemate! three position repetition by white!')
+                elif game.on_move == 'b':
+                    if status[2]:
+                        print('game over, white won')
+                    if status[3]:
+                        print('stalemate! no legal moves for black!')
+                    if status[4]:
+                        print('stalemate! three position repetition by black!')
+                sleep(2)
+                break
+            status = game.move(e2.bestmove(moves_seq=game.get_moves_seq()))
+            if status[0]:
+                if game.on_move == 'w':
+                    if status[2]:
+                        print('game over, black won')
+                    if status[3]:
+                        print('stalemate! no legal moves for white!')
+                    if status[4]:
+                        print('stalemate! three position repetition by white!')
+                elif game.on_move == 'b':
+                    if status[2]:
+                        print('game over, white won')
+                    if status[3]:
+                        print('stalemate! no legal moves for black!')
+                    if status[4]:
+                        print('stalemate! three position repetition by black!')
+                sleep(2)
+                break
+        game.new_game()
 
     # game = chess()
     # game.set_position('8/7k/7p/6pP/5p1K/1p6/3R4/6r1 w - g6 0 1')

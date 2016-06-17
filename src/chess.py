@@ -1,6 +1,8 @@
-#!/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+import argparse
 import subprocess
+import socket
 from copy import deepcopy as copy
 from string import ascii_letters, digits, ascii_lowercase
 from time import sleep
@@ -1104,36 +1106,132 @@ class engine:
         return bestmove
 
 
-if __name__ == '__main__':
-    # game = chess()
-    # game.set_position('k7/2P/2K/8/8/8/8/8 w - - 0 1')
-    # game.move('c7c8')
-    # game.show_board()
-    # game.show_legal_moves('c8')
-    # game.show_legal_moves('a8', compact=True)
-    # game.show_board(compact=True, flipped=True)
+class network:
+    def __init__(self, game):
+        self.cnx = socket.socket()
+        self.game = game
+        self.socket = None
 
-    # game = chess()
-    # e1 = engine()
-    # e1.run_engine()
-    # e2 = engine()
-    # e2.run_engine()
-    # game.new_game()
-    #
-    # while True:
-    #     for i in range(300):
-    #         while True:
-    #             try:
-    #                 game.move(input('twój ruch: '))
-    #             except e:
-    #                 print(e)
-    #             else:
-    #                 break
-    #
-    #         game.move(e2.bestmove(moves_seq=game.get_moves_seq()))
-    #         sleep(0.02)
-    #     game.new_game()
+    @staticmethod
+    def handle_client(client_socket):
+        request = client_socket.recv(1024)
 
+        print(request.decode())
+
+        client_socket.close()
+
+    def host(self, host='127.0.0.1', port=5678):
+        self.cnx.bind((host, port))
+        self.cnx.listen(1)
+        while True:
+            connection, addr = self.cnx.accept()
+            print('nawiązano połączenie z %s!' % addr[0])
+            while True:
+                data = connection.recv(4096)
+                if not data:
+                    print('nodata')
+                    break
+                if 'kurwa' in data.decode():
+                    connection.send('404 ERROR: TY WULGARNY KUTASIE!'.encode())
+                else:
+                    connection.send('200 OK: dane ok ziomek.'.encode())
+                    print(data.decode())
+                if data.decode() == 'exit':
+                    break
+            connection.close()
+            print('zakończono połączenie z %s!' % addr[0])
+        self.cnx.close()
+
+    def join(self, host='127.0.0.1', port=5678):
+        self.cnx.connect((host, port))
+        while True:
+            data = input()
+            self.cnx.send(data.encode())
+            response = self.cnx.recv(4096)
+            print(response.decode())
+            if data == 'exit':
+                break
+        self.cnx.close()
+
+    def move(self, move):
+        if self.socket is not None:
+            self.game.move(move)
+            self.cnx.send(move.encode())
+
+        else:
+            raise Exception('No active connection')
+
+
+def parse_args():
+    parser = argparse.ArgumentParser(add_help=False)
+    parser.add_argument('-p', '--port', dest='port', type=int, default=5678, help='Destination Port')
+    group = parser.add_mutually_exclusive_group(required=True)
+    group.add_argument('-n', '--normal', dest='human', action='store_true', help='Hunam vs Computer')
+    group.add_argument('-a', '--auto', dest='auto', action='store_true', help='Computer vs Computer')
+    group.add_argument('-h', '--host', dest='host', default=None, help='Host a network game')
+    group.add_argument('-j', '--join', dest='join', default=None, help='Join a network game')
+
+    args = parser.parse_args()
+    return args
+
+
+def human_vs_cpu():
+    game = chess()
+    e1 = engine(ponder=True)
+    e1.run_engine()
+    game.new_game()
+
+    while True:
+        while True:
+            try:
+                status = game.move(input('Podaj ruch: '))
+            except KeyboardInterrupt:
+                print()
+                exit(0)
+            except:
+                print('nieprawidłowe posunięcie')
+                continue
+            else:
+                break
+
+        if status[0]:
+            if game.on_move == 'w':
+                if status[2]:
+                    print('game over, black won')
+                if status[3]:
+                    print('stalemate! no legal moves for white!')
+                if status[4]:
+                    print('stalemate! three position repetition by white!')
+            elif game.on_move == 'b':
+                if status[2]:
+                    print('game over, white won')
+                if status[3]:
+                    print('stalemate! no legal moves for black!')
+                if status[4]:
+                    print('stalemate! three position repetition by black!')
+            sleep(2)
+            break
+        status = game.move(e1.bestmove(moves_seq=game.get_moves_seq()))
+        if status[0]:
+            if game.on_move == 'w':
+                if status[2]:
+                    print('game over, black won')
+                if status[3]:
+                    print('stalemate! no legal moves for white!')
+                if status[4]:
+                    print('stalemate! three position repetition by white!')
+            elif game.on_move == 'b':
+                if status[2]:
+                    print('game over, white won')
+                if status[3]:
+                    print('stalemate! no legal moves for black!')
+                if status[4]:
+                    print('stalemate! three position repetition by black!')
+            sleep(2)
+            break
+
+
+def cpu_vs_cpu():
     game = chess()
     e1 = engine(ponder=True)
     e1.run_engine()
@@ -1181,9 +1279,18 @@ if __name__ == '__main__':
                 break
         game.new_game()
 
-    # game = chess()
-    # game.set_position('8/7k/7p/6pP/5p1K/1p6/3R4/6r1 w - g6 0 1')
-    # game.move('h5g6')
-    # game.move('a1a2')
+
+if __name__ == '__main__':
+    args = parse_args()
+    if args.auto:
+        cpu_vs_cpu()
+    elif args.join:
+        client = network()
+        client.join(args.join, args.port)
+    elif args.host:
+        server = network()
+        server.host(args.host, args.port)
+    elif args.human:
+        human_vs_cpu()
 
 

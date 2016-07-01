@@ -28,112 +28,104 @@ class chess:
         piece = self.board[y1][x1]
         promoted = False
 
-        valid_moves = []
-        if debug is False:
-            self.history[self.history_seq] = self._get_backup()
-
+        if not debug:
             valid_moves = self.legal_moves(pos_a)
 
-        if valid_moves is None and debug is False:
-            raise NoPiece('%s is an empty field.' % pos_a)
-        elif piece.isupper() and self.on_move != 'w' and debug is False:
-            raise WrongMoveOrder('Black on move you retarted motherfucker!, not white!')
-        elif piece.islower() and self.on_move != 'b' and debug is False:
-            raise WrongMoveOrder('White on move you retarted idiot!, not black!')
-        elif pos_b not in valid_moves and debug is False:
-            raise IllegalMove('%s%s: It is not a valid move!\n' % (pos_a, pos_b))
-        elif not debug and (self.am_i_mated() or self.am_i_stalemated()):
-            if self.on_move == 'w':
-                raise GameOver('Game ended, black won!')
-            elif self.on_move == 'w':
-                raise GameOver('Game ended, white won!')
-        else:
-            self.board[y1][x1] = None
-            self.board[y2][x2] = piece
-
-            if piece == 'P' and y2 == 7:
-                self.board[y2][x2] = promotion.capitalize()
-                promoted = True
-
-            if piece == 'p' and y2 == 0:
-                self.board[y2][x2] = promotion.casefold()
-                promoted = True
-
-            if piece in 'pP' and pos_b == self.en_passant:
-                self.board[y1][x2] = None
-
-            if piece in 'kK':
-                if self.castle is not None and debug is False:
-                    if piece.isupper():
-                        self.castle = self.castle.replace('K', '')
-                        self.castle = self.castle.replace('Q', '')
-                    elif piece.islower():
-                        self.castle = self.castle.replace('k', '')
-                        self.castle = self.castle.replace('q', '')
-                    if not self.castle:
-                        self.castle = None
-
-                if piece == 'K':
-                    if pos_a == 'e1' and pos_b == 'g1':
-                        self.board[0][7] = None
-                        self.board[0][5] = 'R'
-                    elif pos_a == 'e1' and pos_b == 'c1':
-                        self.board[0][0] = None
-                        self.board[0][3] = 'R'
-                elif piece == 'k':
-                    if pos_a == 'e8' and pos_b == 'g8':
-                        self.board[7][7] = None
-                        self.board[7][5] = 'r'
-                    elif pos_a == 'e8' and pos_b == 'c8':
-                        self.board[7][0] = None
-                        self.board[7][3] = 'r'
-            if piece in 'rR':
-                if self.castle is not None:
-                    if piece.isupper():
-                        if x1 == 7:
-                            self.castle = self.castle.replace('K', '')
-                        elif x1 == 0:
-                            self.castle = self.castle.replace('Q', '')
-                    elif piece.islower():
-                        if x1 == 7:
-                            self.castle = self.castle.replace('k', '')
-                        elif x1 == 0:
-                            self.castle = self.castle.replace('q', '')
-                    if not self.castle:
-                        self.castle = None
-
-            if debug is False:
-                #postmove operations
-
-                if piece in 'pP' and abs(y1 - y2) == 2:
-                    self.en_passant = self.convert_to_algebra(x1, int((y1 + y2) / 2))
-                else:
-                    self.en_passant = None
-
+            if piece is None:
+                raise NoPiece('%s is an empty field.' % pos_a)
+            elif piece.isupper() and self.on_move != 'w':
+                raise WrongMoveOrder('Black on move you retarted motherfucker!, not white!')
+            elif piece.islower() and self.on_move != 'b':
+                raise WrongMoveOrder('White on move you retarted idiot!, not black!')
+            elif pos_b not in valid_moves:
+                raise IllegalMove('%s%s: It is not a valid move!\n' % (pos_a, pos_b))
+            elif self.am_i_mated() or self.am_i_stalemated():
                 if self.on_move == 'w':
-                    self.on_move = 'b'
-                else:
-                    self.on_move = 'w'
-                    self.moves += 1
+                    raise GameOver('Game ended, black won!')
+                elif self.on_move == 'w':
+                    raise GameOver('Game ended, white won!')
 
-                self.history_seq += 1
-                self.history[self.history_seq] = self._get_backup()
+            self.history[self.history_seq] = self._get_backup()
 
-                if not promoted:
-                    self.moves_seq.append(pos_a + pos_b)
-                else:
-                    self.moves_seq.append(pos_a + pos_b + promotion)
+        self.board[y1][x1] = None
+        self.board[y2][x2] = piece
 
-                if display:
-                    self.show_board()
+        if piece == 'P' and y2 == 7:
+            self.board[y2][x2] = promotion.capitalize()
+            promoted = True
+        elif piece == 'p' and y2 == 0:
+            self.board[y2][x2] = promotion.casefold()
+            promoted = True
 
-                checked, mated, stalemated, pated = (self.am_i_checked(),
-                                                     self.am_i_mated(),
-                                                     self.am_i_stalemated(),
-                                                     self.am_i_pated())
-                game_over = (mated or stalemated or pated)
+        if piece in 'pP' and pos_b == self.en_passant:
+            self.board[y1][x2] = None
 
-                return game_over, checked, mated, stalemated, pated
+        if piece in 'kK':
+            if piece == 'K':
+                if pos_a == 'e1' and pos_b == 'g1':
+                    self.board[0][7] = None
+                    self.board[0][5] = 'R'
+                elif pos_a == 'e1' and pos_b == 'c1':
+                    self.board[0][0] = None
+                    self.board[0][3] = 'R'
+            elif piece == 'k':
+                if pos_a == 'e8' and pos_b == 'g8':
+                    self.board[7][7] = None
+                    self.board[7][5] = 'r'
+                elif pos_a == 'e8' and pos_b == 'c8':
+                    self.board[7][0] = None
+                    self.board[7][3] = 'r'
+
+        if not debug:
+            # postmove operations
+
+            if piece in 'kK' and self.castle is not None:
+                if piece.isupper():
+                    self.castle = self.castle.replace('K', '')
+                    self.castle = self.castle.replace('Q', '')
+                elif piece.islower():
+                    self.castle = self.castle.replace('k', '')
+                    self.castle = self.castle.replace('q', '')
+                if not self.castle:
+                    self.castle = None
+
+            elif piece in 'rR' and self.castle is not None:
+                if piece.isupper():
+                    if x1 == 7:
+                        self.castle = self.castle.replace('K', '')
+                    elif x1 == 0:
+                        self.castle = self.castle.replace('Q', '')
+                elif piece.islower():
+                    if x1 == 7:
+                        self.castle = self.castle.replace('k', '')
+                    elif x1 == 0:
+                        self.castle = self.castle.replace('q', '')
+                if not self.castle:
+                    self.castle = None
+
+            if piece in 'pP' and abs(y1 - y2) == 2:
+                self.en_passant = self.convert_to_algebra(x1, int((y1 + y2) / 2))
+            else:
+                self.en_passant = None
+
+            if self.on_move == 'w':
+                self.on_move = 'b'
+            else:
+                self.on_move = 'w'
+                self.moves += 1
+
+            self.history_seq += 1
+            self.history[self.history_seq] = self._get_backup()
+
+            if not promoted:
+                self.moves_seq.append(pos_a + pos_b)
+            else:
+                self.moves_seq.append(pos_a + pos_b + promotion)
+
+            if display:
+                self.show_board()
+
+            return self._board_state()
 
     def _get_backup(self):
         data = (copy(self.board),
@@ -611,6 +603,16 @@ class chess:
         validation = list(set(validation))
         return validation
 
+    def _board_state(self):
+        checked, mated, stalemated, pated = (self.am_i_checked(),
+                                             self.am_i_mated(),
+                                             self.am_i_stalemated(),
+                                             self.am_i_pated())
+
+        game_over = (mated or stalemated or pated)
+
+        return game_over, checked, mated, stalemated, pated
+
     def legal_moves(self, pos):
         moves = self._avabile_moves(pos)
         real_moves = []
@@ -693,6 +695,7 @@ class chess:
             self.history_seq -= moves
         except KeyError:
             print('operation not in range, max available moves: %d' % len(self.history))
+        return self._board_state()
 
     def redo(self, moves=1):
         try:
@@ -702,13 +705,14 @@ class chess:
             self.en_passant = copy(self.history[self.history_seq + moves][3])
             self.half_moves = copy(self.history[self.history_seq + moves][4])
             self.moves = copy(self.history[self.history_seq + moves][5])
-            self.moves = copy(self.history[self.history_seq + moves][6])
+            self.moves_seq = copy(self.history[self.history_seq + moves][6])
 
             print('redo %s moves!' % moves)
             self.show_board()
             self.history_seq += moves
         except KeyError:
             print('operation not in range, max available moves: %d' % len(self.history))
+        return self._board_state()
 
     def show_board(self, compact=False, flipped=False):
         if not compact:
@@ -761,6 +765,7 @@ class chess:
                         string += ' '
                     print(string)
                 print()
+        print(self.get_position())
 
     def show_legal_moves(self, pos, compact=False):
         v1, v2 = self.convert_to_matrix(pos)
@@ -867,7 +872,6 @@ class chess:
 
         if w_kings != 1 or b_kings != 1:
             raise KingsCount('Missing/Too many Kings on the board!')
-
 
         self.board = dumped
         if len(fendata) == 6:

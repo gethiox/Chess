@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 import argparse
-import subprocess
 import socket
+import subprocess
 from copy import deepcopy as copy
 from string import ascii_letters, digits, ascii_lowercase
 from time import sleep
 
-from helpers.exceptions import *
+from src.exceptions import *
 
 
 class chess:
@@ -43,9 +43,9 @@ class chess:
         elif pos_b not in valid_moves and debug is False:
             raise IllegalMove('%s%s: It is not a valid move!\n' % (pos_a, pos_b))
         elif not debug and (self.am_i_mated() or self.am_i_stalemated()):
-            if game.on_move == 'w':
+            if self.on_move == 'w':
                 raise GameOver('Game ended, black won!')
-            elif game.on_move == 'w':
+            elif self.on_move == 'w':
                 raise GameOver('Game ended, white won!')
         else:
             self.board[y1][x1] = None
@@ -826,31 +826,37 @@ class chess:
 
         return fenstring
 
-    def set_position(self, fenstring, display=True):
+    def set_position(self, fenstring, display=False):
         # Fen documentation http://www.thechessdrum.net/PGN_Reference.txt
-        # @TODO validate: http://chess.stackexchange.com/questions/1482/how-to-know-when-a-fen-position-is-legal
         if not isinstance(fenstring, str):
             raise TypeError('fenstring must be a string!')
 
         fenstring = fenstring.replace(u'\u200b', '')
         fendata = fenstring.split(' ')
         fenboard = fendata[0].split('/')
+
         if len(fenboard) != 8:
-            raise ValueError('Missing/too_much rows of pieces in fenstring!')
+            raise WrongBoardSize('Missing/too_much rows of pieces in fenstring!')
 
         dumped = [[None for x in range(8)] for i in range(8)]
         x, y = 0, 0
         for row in reversed(fenboard):
+            row_pieces = 0
             if len(row) > 8:
-                raise ValueError('too_much pieces in one row of fenstring!')
+                raise WrongBoardSize('too_much pieces in one row of fenstring!')
             for piece in row:
                 if piece not in digits:
                     dumped[x][y] = piece
+                    row_pieces += 1
                 else:
-                    for i in range(int(piece) - 1):
+                    for i in range(int(piece)):
                         dumped[x][y] = None
+                        row_pieces += 1
                         y += 1
                 y += 1
+            if row_pieces != 8:
+                print(row_pieces)
+                raise WrongBoardSize('too_much pieces in one row of fenstring!')
             y = 0
             x += 1
 
@@ -870,6 +876,8 @@ class chess:
 
         if display:
             self.show_board()
+
+        return True
 
     def am_i_checked(self):
 
@@ -1031,7 +1039,7 @@ class chess:
 
 
 class engine:
-    def __init__(self, engine_binary_path='./helpers/stockfish', ponder=False):
+    def __init__(self, engine_binary_path='./src/helpers/stockfish', ponder=False):
         self.path = engine_binary_path
         self.process = None
         self.playing_color = None

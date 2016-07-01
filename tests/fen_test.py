@@ -11,25 +11,28 @@ game = chess()
 
 def test_board_size():
     # Too many rows
-    with pytest.raises(IllegalPosition):
+    with pytest.raises(WrongBoardSize):
         game.set_position('k7/8/K7/8/8/8/8/8/8')
 
     # Too few rows
-    with pytest.raises(IllegalPosition):
+    with pytest.raises(WrongBoardSize):
         game.set_position('k7/8/K7/8/8/8/8')
 
     # Too many columns in some row
-    with pytest.raises(IllegalPosition):
+    with pytest.raises(WrongBoardSize):
         game.set_position('k7/8/K7/8/ppppppppp/8/8')
 
-    with pytest.raises(IllegalPosition):
+    with pytest.raises(WrongBoardSize):
         game.set_position('k7/8/K7/8/9/8/8')
 
+    with pytest.raises(WrongBoardSize):
+        game.set_position('k7/8/K7/8/p4p3/8/8')
+
     # Too few columns in some row
-    with pytest.raises(IllegalPosition):
+    with pytest.raises(WrongBoardSize):
         game.set_position('k7/8/K7/8/ppppppp/8/8')
 
-    with pytest.raises(IllegalPosition):
+    with pytest.raises(WrongBoardSize):
         game.set_position('k7/8/K7/8/7/8/8')
 
     # Correct size

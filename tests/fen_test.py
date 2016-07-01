@@ -41,23 +41,23 @@ def test_board_size():
 
 def test_kings_count():
     # Any kings here
-    with pytest.raises(IllegalPosition):
+    with pytest.raises(KingsCount):
         game.set_position('8/8/8/8/8/8/8/8')
 
     # Missed black king
-    with pytest.raises(IllegalPosition):
+    with pytest.raises(KingsCount):
         game.set_position('K7/8/8/8/8/8/8/8')
 
     # Missed white king
-    with pytest.raises(IllegalPosition):
+    with pytest.raises(KingsCount):
         game.set_position('k7/8/8/8/8/8/8/8')
 
     # More than one black king
-    with pytest.raises(IllegalPosition):
+    with pytest.raises(KingsCount):
         game.set_position('k1k5/8/K7/8/8/8/8/8')
 
     # More than one white king
-    with pytest.raises(IllegalPosition):
+    with pytest.raises(KingsCount):
         game.set_position('K1K5/8/k7/8/8/8/8/8')
 
 

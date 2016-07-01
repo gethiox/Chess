@@ -839,6 +839,7 @@ class chess:
             raise WrongBoardSize('Missing/too_much rows of pieces in fenstring!')
 
         dumped = [[None for x in range(8)] for i in range(8)]
+        b_kings, w_kings = 0, 0
         x, y = 0, 0
         for row in reversed(fenboard):
             row_pieces = 0
@@ -848,17 +849,25 @@ class chess:
                 if piece not in digits:
                     dumped[x][y] = piece
                     row_pieces += 1
+                    if piece == 'K':
+                        w_kings += 1
+                    elif piece == 'k':
+                        b_kings += 1
+                    y += 1
                 else:
                     for i in range(int(piece)):
                         dumped[x][y] = None
                         row_pieces += 1
                         y += 1
-                y += 1
             if row_pieces != 8:
                 print(row_pieces)
-                raise WrongBoardSize('too_much pieces in one row of fenstring!')
+                raise WrongBoardSize('Missing/Too many pieces in one row of fenstring!')
             y = 0
             x += 1
+
+        if w_kings != 1 or b_kings != 1:
+            raise KingsCount('Missing/Too many Kings on the board!')
+
 
         self.board = dumped
         if len(fendata) == 6:

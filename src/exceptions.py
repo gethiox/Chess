@@ -18,9 +18,13 @@ class EmptyBoard(Exception):
     pass
 
 
-class KingsMissing(Exception):
+class KingsCount(Exception):
     pass
 
 
 class NoPiece(Exception):
+    pass
+
+
+class WrongBoardSize(Exception):
     pass

@@ -10,8 +10,8 @@ from time import sleep
 from src.exceptions import *
 
 
-class chess:
-    def __init__(self):
+class Chess:
+    def __init__(self, auto_show_board=False):
         self.history = {}
         self.history_seq = 0
         self.board = [[None for x in range(8)] for i in range(8)]
@@ -21,8 +21,9 @@ class chess:
         self.half_moves = 0
         self.moves = 1
         self.moves_seq = []
+        self.auto_show_board = auto_show_board
 
-    def _exec_move(self, pos_a, pos_b, promotion='q', debug=False, display=True):
+    def _exec_move(self, pos_a, pos_b, promotion='q', debug=False):
         x1, y1 = self.convert_to_matrix(pos_a)
         x2, y2 = self.convert_to_matrix(pos_b)
         piece = self.board[y1][x1]
@@ -122,8 +123,9 @@ class chess:
             else:
                 self.moves_seq.append(pos_a + pos_b + promotion)
 
-            if display:
+            if self.auto_show_board:
                 self.show_board()
+                print(self.get_position())
 
             return self._board_state()
 
@@ -674,11 +676,11 @@ class chess:
 
         # print('New Game!\n')
 
-    def move(self, move, promotion='q', debug=False, display=True):
+    def move(self, move, promotion='q', debug=False):
         if isinstance(move, str) and len(move) == 4:
-            return self._exec_move(move[0:2], move[2:4], promotion=promotion, debug=debug, display=display)
+            return self._exec_move(move[0:2], move[2:4], promotion=promotion, debug=debug)
         elif isinstance(move, str) and len(move) == 5:
-            return self._exec_move(move[0:2], move[2:4], promotion=move[4], debug=debug, display=display)
+            return self._exec_move(move[0:2], move[2:4], promotion=move[4], debug=debug)
 
     def undo(self, moves=1):
         try:
@@ -691,7 +693,8 @@ class chess:
             self.moves_seq = copy(self.history[self.history_seq - moves][6])
 
             print('undo %s moves!' % moves)
-            self.show_board()
+            if self.auto_show_board:
+                self.show_board()
             self.history_seq -= moves
         except KeyError:
             print('operation not in range, max available moves: %d' % len(self.history))
@@ -708,11 +711,13 @@ class chess:
             self.moves_seq = copy(self.history[self.history_seq + moves][6])
 
             print('redo %s moves!' % moves)
-            self.show_board()
+            if self.auto_show_board:
+                self.show_board()
             self.history_seq += moves
         except KeyError:
             print('operation not in range, max available moves: %d' % len(self.history))
-        return self._board_state()
+        else:
+            return self._board_state()
 
     def show_board(self, compact=False, flipped=False):
         if not compact:
@@ -765,7 +770,6 @@ class chess:
                         string += ' '
                     print(string)
                 print()
-        print(self.get_position())
 
     def show_legal_moves(self, pos, compact=False):
         v1, v2 = self.convert_to_matrix(pos)
@@ -1051,7 +1055,7 @@ class chess:
         return ascii_lowercase[v1] + str(v2 + 1)
 
 
-class engine:
+class Engine:
     def __init__(self, engine_binary_path='./src/helpers/stockfish', ponder=False):
         self.path = engine_binary_path
         self.process = None
@@ -1127,7 +1131,7 @@ class engine:
         return bestmove
 
 
-class network:
+class Network:
     def __init__(self, game):
         self.cnx = socket.socket()
         self.game = game
@@ -1185,20 +1189,92 @@ class network:
 
 def parse_args():
     parser = argparse.ArgumentParser(add_help=False)
-    parser.add_argument('-p', '--port', dest='port', type=int, default=5678, help='Destination Port')
+    parser.add_argument('--help', action='help', help='Show Help')
+
     group = parser.add_mutually_exclusive_group(required=True)
+    group.add_argument('-f', '--alone', dest='forever_alone', action='store_true', help='Human vs Human')
     group.add_argument('-n', '--normal', dest='human', action='store_true', help='Hunam vs Computer')
     group.add_argument('-a', '--auto', dest='auto', action='store_true', help='Computer vs Computer')
-    group.add_argument('-h', '--host', dest='host', default=None, help='Host a network game')
-    group.add_argument('-j', '--join', dest='join', default=None, help='Join a network game')
+
+    group.add_argument('-h', '--host', dest='host', metavar='<ip>', default=None, help='Host a network game')
+    group.add_argument('-j', '--join', dest='join', metavar='<ip>', default=None, help='Join a network game')
+
+    parser.add_argument('-p', '--port', dest='port', metavar='<port>', type=int, default=5678, help='Destination Port')
+    parser.add_argument('-s', '--stock', dest='stock', metavar='./stockfish', type=str, default='./src/helpers/stockfish', help='Path to the Stockfish binary')
 
     args = parser.parse_args()
     return args
 
 
-def human_vs_cpu():
-    game = chess()
-    e1 = engine(ponder=True)
+def human_vs_human(engine_binary_path):
+    game = Chess(auto_show_board=True)
+    game.new_game()
+
+    while True:
+        while True:
+            try:
+                status = game.move(input('[Białe] Podaj ruch: '))
+            except KeyboardInterrupt:
+                print()
+                exit(0)
+            except:
+                print('nieprawidłowe posunięcie')
+                continue
+            else:
+                break
+
+        if status[0]:
+            if game.on_move == 'w':
+                if status[2]:
+                    print('game over, black won')
+                if status[3]:
+                    print('stalemate! no legal moves for white!')
+                if status[4]:
+                    print('stalemate! three position repetition by white!')
+            elif game.on_move == 'b':
+                if status[2]:
+                    print('game over, white won')
+                if status[3]:
+                    print('stalemate! no legal moves for black!')
+                if status[4]:
+                    print('stalemate! three position repetition by black!')
+            sleep(2)
+            break
+
+        while True:
+            try:
+                status = game.move(input('[czarne] Podaj ruch: '))
+            except KeyboardInterrupt:
+                print()
+                exit(0)
+            except:
+                print('nieprawidłowe posunięcie')
+                continue
+            else:
+                break
+
+        if status[0]:
+            if game.on_move == 'w':
+                if status[2]:
+                    print('game over, black won')
+                if status[3]:
+                    print('stalemate! no legal moves for white!')
+                if status[4]:
+                    print('stalemate! three position repetition by white!')
+            elif game.on_move == 'b':
+                if status[2]:
+                    print('game over, white won')
+                if status[3]:
+                    print('stalemate! no legal moves for black!')
+                if status[4]:
+                    print('stalemate! three position repetition by black!')
+            sleep(2)
+            break
+
+
+def human_vs_cpu(engine_binary_path):
+    game = Chess(auto_show_board=True)
+    e1 = Engine(ponder=True, engine_binary_path=engine_binary_path)
     e1.run_engine()
     game.new_game()
 
@@ -1252,11 +1328,11 @@ def human_vs_cpu():
             break
 
 
-def cpu_vs_cpu():
-    game = chess()
-    e1 = engine(ponder=True)
+def cpu_vs_cpu(engine_binary_path):
+    game = Chess(auto_show_board=True)
+    e1 = Engine(ponder=True, engine_binary_path=engine_binary_path)
     e1.run_engine()
-    e2 = engine(ponder=False)
+    e2 = Engine(ponder=False, engine_binary_path=engine_binary_path)
     e2.run_engine()
     game.new_game()
 
@@ -1304,14 +1380,16 @@ def cpu_vs_cpu():
 if __name__ == '__main__':
     args = parse_args()
     if args.auto:
-        cpu_vs_cpu()
+        cpu_vs_cpu(engine_binary_path=args.stock)
     elif args.join:
-        client = network()
+        client = Network()
         client.join(args.join, args.port)
     elif args.host:
-        server = network()
+        server = Network()
         server.host(args.host, args.port)
     elif args.human:
-        human_vs_cpu()
+        human_vs_cpu(engine_binary_path=args.stock)
+    elif args.forever_alone:
+        human_vs_human(engine_binary_path=args.stock)
 
 

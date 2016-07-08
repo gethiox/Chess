@@ -6,7 +6,7 @@ from src.exceptions import *
 # http://chess.stackexchange.com/questions/1482/how-to-know-when-a-fen-position-is-legal
 # start position - 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 1 0'
 
-game = chess()
+game = Chess()
 
 
 def test_board_size():

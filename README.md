@@ -17,37 +17,37 @@ modułu w konsoli. Wielkie litery oznaczają bierki białe, małe natomiast bier
 
 **Opis gry w konsoli**
 
-`>>> from chess import *`
-`>>> game = Chess()`
-`>>> game.new_game()`
-`>>> game.show_board(compact=True)`
-` r n b q k b n r `
-` p p p p p p p p `
-` . . . . . . . . `
-` . . . . . . . . `
-` . . . . . . . . `
-` . . . . . . . . `
-` P P P P P P P P `
-` R N B Q K B N R `
+`>>> from chess import *`  
+`>>> game = Chess()`  
+`>>> game.new_game()`  
+`>>> game.show_board(compact=True)`  
+` r n b q k b n r `  
+` p p p p p p p p `  
+` . . . . . . . . `  
+` . . . . . . . . `  
+` . . . . . . . . `  
+` . . . . . . . . `  
+` P P P P P P P P `  
+` R N B Q K B N R `  
 
-`>>> game.get_position()`
-`'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 1 0'`
+`>>> game.get_position()`  
+`'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 1 0'`  
 
 do wykonywania ruchów służy metoda **`move()`**
 
-`>>> game.move('e2e4')`
-`(False, False, False, False, False)`
-`>>> game.move('d7d5')`
-`(False, False, False, False, False)`
-`>>> game.show_board(compact=True)`
-` r n b q k b n r `
-` p p p . p p p p `
-` . . . . . . . . `
-` . . . p . . . . `
-` . . . . P . . . `
-` . . . . . . . . `
-` P P P P . P P P `
-` R N B Q K B N R `
+`>>> game.move('e2e4')`  
+`(False, False, False, False, False)`  
+`>>> game.move('d7d5')`  
+`(False, False, False, False, False)`  
+`>>> game.show_board(compact=True)`  
+` r n b q k b n r `  
+` p p p . p p p p `  
+` . . . . . . . . `  
+` . . . p . . . . `  
+` . . . . P . . . `  
+` . . . . . . . . `  
+` P P P P . P P P `  
+` R N B Q K B N R `  
 
 Widoczna krotka po wykonaniu posunięcia określa status gry na szachownicy,
 kolejno:
@@ -60,41 +60,41 @@ kolejno:
 
 Można wyświetlić możliwe posunięcia dla danej figury za pomocą metody **`show_legal_moves()`**
 ustawmy sobie więc od razu pozycję kilka posunięć później:
-`>>> game.set_position('rnb1kbnr/ppp1pppp/4q3/3p4/4P3/P1N5/1PPP1PPP/R1BQKBNR w KQkq - 4 0')`
-`True`
-`>>> game.show_board(compact=True)`
-` r n b . k b n r `
-` p p p . p p p p `
-` . . . . q . . . `
-` . . . p . . . . `
-` . . . . P . . . `
-` P . N . . . . . `
-` . P P P . P P P `
+`>>> game.set_position('rnb1kbnr/ppp1pppp/4q3/3p4/4P3/P1N5/1PPP1PPP/R1BQKBNR w KQkq - 4 0')`  
+`True`  
+`>>> game.show_board(compact=True)`  
+` r n b . k b n r `  
+` p p p . p p p p `  
+` . . . . q . . . `  
+` . . . p . . . . `  
+` . . . . P . . . `  
+` P . N . . . . . `  
+` . P P P . P P P `  
 ` R . B Q K B N R `
 
 teraz sprawdźmy jakie możliwe posunięcia ma dostępne pion stojący na `e4`
 
-`>>> game.show_legal_moves('e4', compact=True)`
-` r n b . k b n r `
-` p p p . p p p p `
-` . . . . q . . . `
-` . . . p + . . . `
-` . . . . P . . . `
-` P . N . . . . . `
-` . P P P . P P P `
+`>>> game.show_legal_moves('e4', compact=True)`  
+` r n b . k b n r `  
+` p p p . p p p p `  
+` . . . . q . . . `  
+` . . . p + . . . `  
+` . . . . P . . . `  
+` P . N . . . . . `  
+` . P P P . P P P `  
 ` R . B Q K B N R `
 
 Widzimy że dostępne posunięcie to tylko ruch na przód (oznaczone plusem), biały pion nie może zbić piona czarnego ponieważ w tej pozycji odsłaniałby się na szacha ze strony czarnej królowej stojącej na `e6`
 Sprawdźmy zatem skoczka na `c3`
 
-`>>> game.show_legal_moves('c3', compact=True)`
-` r n b . k b n r `
-` p p p . p p p p `
-` . . . . q . . . `
-` . + . + . . . . `
-` + . . . P . . . `
-` P . N . . . . . `
-` + P P P + P P P `
+`>>> game.show_legal_moves('c3', compact=True)`  
+` r n b . k b n r `  
+` p p p . p p p p `  
+` . . . . q . . . `  
+` . + . + . . . . `  
+` + . . . P . . . `  
+` P . N . . . . . `  
+` + P P P + P P P `  
 ` R + B Q K B N R `
 
 Jak nie trudno zauważyć ten już może zbić wspomnianego wcześniej piona i oczywiście poruszyć się również na inne pola.

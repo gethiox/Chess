@@ -721,15 +721,14 @@ class Chess:
                 for row in reversed(self.board):
                     string = ' '
                     for piece in row:
-                        if piece is not None:
-                            if piece is not None and not self.colors:
-                                string += piece
-                            elif piece is not None and self.colors and piece.isupper():
-                                string += color.green(piece)
-                            elif piece is not None and self.colors and piece.islower():
-                                string += color.red(piece)
-                            else:
-                                string += '.'
+                        if piece is not None and not self.colors:
+                            string += piece
+                        elif piece is not None and self.colors and piece.isupper():
+                            string += color.green(piece)
+                        elif piece is not None and self.colors and piece.islower():
+                            string += color.red(piece)
+                        else:
+                            string += '.'
                         string += ' '
                     print(string)
                 print()

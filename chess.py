@@ -642,6 +642,8 @@ class Chess:
             return self._exec_move(move[0:2], move[2:4], promotion=promotion, debug=debug)
         elif isinstance(move, str) and len(move) == 5:
             return self._exec_move(move[0:2], move[2:4], promotion=move[4], debug=debug)
+        else:
+            raise TypeError('Wrong move syntax')
 
     def undo(self, moves=1):
         try:

@@ -683,72 +683,45 @@ class Chess:
             return self._board_state()
 
     def show_board(self, compact=False, flipped=False):
-        if not compact:
-            if not flipped:
-                for row in reversed(self.board):
-                    print(' +---+---+---+---+---+---+---+---+ ')
-                    string = ' | '
-                    for piece in row:
-                        if piece is not None and not self.colors:
-                            string += piece
-                        elif piece is not None and self.colors and piece.isupper():
-                            string += color.green(piece)
-                        elif piece is not None and self.colors and piece.islower():
-                            string += color.red(piece)
-                        else:
-                            string += ' '
-                        string += ' | '
-                    print(string)
-                print(' +---+---+---+---+---+---+---+---+ ')
-                print()
-            else:
-                for row in self.board:
-                    print(' +---+---+---+---+---+---+---+---+ ')
-                    string = ' | '
-                    for piece in reversed(row):
-                        if piece is not None and not self.colors:
-                            string += piece
-                        elif piece is not None and self.colors and piece.isupper():
-                            string += color.green(piece)
-                        elif piece is not None and self.colors and piece.islower():
-                            string += color.red(piece)
-                        else:
-                            string += ' '
-                        string += ' | '
-                    print(string)
-                print(' +---+---+---+---+---+---+---+---+ ')
-                print()
+        if flipped:
+            board = self.board
         else:
-            if not flipped:
-                for row in reversed(self.board):
-                    string = ' '
-                    for piece in row:
-                        if piece is not None and not self.colors:
-                            string += piece
-                        elif piece is not None and self.colors and piece.isupper():
-                            string += color.green(piece)
-                        elif piece is not None and self.colors and piece.islower():
-                            string += color.red(piece)
-                        else:
-                            string += '.'
+            board = reversed(self.board)
+
+        if not compact:
+            for row in board:
+                print(' +---+---+---+---+---+---+---+---+ ')
+                string = ' | '
+                for piece in row:
+                    if piece is not None and not self.colors:
+                        string += piece
+                    elif piece is not None and self.colors and piece.isupper():
+                        string += color.green(piece)
+                    elif piece is not None and self.colors and piece.islower():
+                        string += color.red(piece)
+                    else:
                         string += ' '
-                    print(string)
-                print()
-            else:
-                for row in self.board:
-                    string = ' '
-                    for piece in reversed(row):
-                        if piece is not None and not self.colors:
-                            string += piece
-                        elif piece is not None and self.colors and piece.isupper():
-                            string += color.green(piece)
-                        elif piece is not None and self.colors and piece.islower():
-                            string += color.red(piece)
-                        else:
-                            string += '.'
-                        string += ' '
-                    print(string)
-                print()
+                    string += ' | '
+                print(string)
+            print(' +---+---+---+---+---+---+---+---+ ')
+            print()
+
+        else:
+            for row in board:
+                string = ' '
+                for piece in row:
+                    if piece is not None and not self.colors:
+                        string += piece
+                    elif piece is not None and self.colors and piece.isupper():
+                        string += color.green(piece)
+                    elif piece is not None and self.colors and piece.islower():
+                        string += color.red(piece)
+                    else:
+                        string += '.'
+                    string += ' '
+                print(string)
+            print()
+
 
     def show_legal_moves(self, pos, compact=False):
         v1, v2 = self.convert_to_matrix(pos)

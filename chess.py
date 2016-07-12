@@ -1168,9 +1168,7 @@ def parse_args():
     parser = argparse.ArgumentParser(add_help=False)
     parser.add_argument('--help', action='help', help='Show Help')
 
-    group = parser.add_mutually_exclusive_group(required=True)
-    group.add_argument('-f', '--alone', dest='forever_alone', action='store_true',
-                       help='Human vs Human')
+    group = parser.add_mutually_exclusive_group()
     group.add_argument('-n', '--normal', dest='human', action='store_true',
                        help='Hunam vs Computer (chess engine required)')
     group.add_argument('-a', '--auto', dest='auto', action='store_true',
@@ -1373,7 +1371,9 @@ if __name__ == '__main__':
         server.host(args.host, args.port)
     elif args.human:
         human_vs_cpu(engine_binary_path=args.stock)
-    elif args.forever_alone:
+    else:
         human_vs_human(engine_binary_path=args.stock)
+
+
 
 

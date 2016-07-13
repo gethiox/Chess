@@ -10,7 +10,6 @@ from time import sleep
 from src.helpers import color
 from src.exceptions import *
 
-
 class Chess:
     def __init__(self, auto_show_board=False, colors=True, symbols=False):
         self.history = {}
@@ -1311,6 +1310,11 @@ def cpu_vs_cpu(engine_binary_path):
 
 
 if __name__ == '__main__':
+    with open('src/helpers/banner') as banner:
+        for row in banner:
+            print(row, end='')
+        print()
+
     args = parse_args()
     if args.auto:
         cpu_vs_cpu(engine_binary_path=args.stock)

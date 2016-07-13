@@ -698,10 +698,8 @@ class Chess:
                         string += ' '
                     elif self.symbols:
                         string += self.chess_symbol(piece)
-                    elif self.colors and piece.isupper():
-                        string += color.green(piece)
-                    elif self.colors and piece.islower():
-                        string += color.red(piece)
+                    elif self.colors:
+                        string += color.green(piece) if piece.isupper() else color.red(piece)
                     elif not self.colors:
                         string += piece
                     string += ' | '
@@ -714,13 +712,11 @@ class Chess:
                 string = ' '
                 for piece in row:
                     if piece is None:
-                        string += '.'
+                        string += ' '
                     elif self.symbols:
                         string += self.chess_symbol(piece)
-                    elif self.colors and piece.isupper():
-                        string += color.green(piece)
-                    elif self.colors and piece.islower():
-                        string += color.red(piece)
+                    elif self.colors:
+                        string += color.green(piece) if piece.isupper() else color.red(piece)
                     elif not self.colors:
                         string += piece
                     string += ' '

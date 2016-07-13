@@ -541,28 +541,16 @@ class Chess:
         return moves
 
     def _attacked_fields(self):
-        """lista pól atakowanych przez przeciwnika, metoda do wadilacji posunięć"""
-
         validation = []
-        if self.on_move == 'w':
-            y = 0
-            for row in self.board:
-                x = 0
-                for piece in row:
-                    if piece is not None and piece in 'rnbqkp':
-                        validation.extend(self._avabile_moves(self.convert_to_algebra(x, y)))
-                    x += 1
-                y += 1
 
-        elif self.on_move == 'b':
-            y = 0
-            for row in self.board:
-                x = 0
-                for piece in row:
-                    if piece is not None and piece in 'RNBQKP':
-                        validation.extend(self._avabile_moves(self.convert_to_algebra(x, y)))
-                    x += 1
-                y += 1
+        y = 0
+        for row in self.board:
+            x = 0
+            for piece in row:
+                if piece is not None and (piece.islower() if self.on_move == 'w' else piece.isupper()):
+                    validation.extend(self._avabile_moves(self.convert_to_algebra(x, y)))
+                x += 1
+            y += 1
 
         validation = list(set(validation))
         return validation

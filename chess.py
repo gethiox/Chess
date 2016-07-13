@@ -851,27 +851,16 @@ class Chess:
         return True
 
     def am_i_checked(self):
-
         king_pos = None
-        if self.on_move == 'w':
-            y = 0
-            for row in self.board:
-                x = 0
-                for piece in row:
-                    if piece == 'K':
-                        king_pos = self.convert_to_algebra(x, y)
-                    x += 1
-                y += 1
 
-        elif self.on_move == 'b':
-            y = 0
-            for row in self.board:
-                x = 0
-                for piece in row:
-                    if piece == 'k':
-                        king_pos = self.convert_to_algebra(x, y)
-                    x += 1
-                y += 1
+        y = 0
+        for row in self.board:
+            x = 0
+            for piece in row:
+                if piece == ('K' if self.on_move == 'w' else 'k'):
+                    king_pos = self.convert_to_algebra(x, y)
+                x += 1
+            y += 1
 
         if king_pos is None:
             raise IOError('What the fuck, where is my king?!?!')

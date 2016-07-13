@@ -127,11 +127,14 @@ class Chess:
             else:
                 self.moves_seq.append(pos_a + pos_b + promotion)
 
-            if self.auto_show_board:
-                self.show_board()
-                print(self.get_position())
+            state = self._board_state()
 
-            return self._board_state()
+            if self.auto_show_board:
+                position = self.get_position()
+                self.show_board()
+                print(position)
+
+            return state
 
     def _get_backup(self):
         data = (copy(self.board),

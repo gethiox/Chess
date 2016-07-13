@@ -694,16 +694,16 @@ class Chess:
                 print(' +---+---+---+---+---+---+---+---+ ')
                 string = ' | '
                 for piece in row:
-                    if piece is not None and self.symbols:
-                        string += self.chess_symbol(piece)
-                    elif piece is not None and self.colors and piece.isupper():
-                        string += color.green(piece)
-                    elif piece is not None and self.colors and piece.islower():
-                        string += color.red(piece)
-                    elif piece is not None and not self.colors:
-                        string += piece
-                    else:
+                    if piece is None:
                         string += ' '
+                    elif self.symbols:
+                        string += self.chess_symbol(piece)
+                    elif self.colors and piece.isupper():
+                        string += color.green(piece)
+                    elif self.colors and piece.islower():
+                        string += color.red(piece)
+                    elif not self.colors:
+                        string += piece
                     string += ' | '
                 print(string)
             print(' +---+---+---+---+---+---+---+---+ ')
@@ -713,20 +713,19 @@ class Chess:
             for row in board:
                 string = ' '
                 for piece in row:
-                    if piece is not None and self.symbols:
-                        string += self.chess_symbol(piece)
-                    elif piece is not None and self.colors and piece.isupper():
-                        string += color.green(piece)
-                    elif piece is not None and self.colors and piece.islower():
-                        string += color.red(piece)
-                    elif piece is not None and not self.colors:
-                        string += piece
-                    else:
+                    if piece is None:
                         string += '.'
+                    elif self.symbols:
+                        string += self.chess_symbol(piece)
+                    elif self.colors and piece.isupper():
+                        string += color.green(piece)
+                    elif self.colors and piece.islower():
+                        string += color.red(piece)
+                    elif not self.colors:
+                        string += piece
                     string += ' '
                 print(string)
             print()
-
 
     def show_legal_moves(self, pos, compact=False):
         v1, v2 = self.convert_to_matrix(pos)

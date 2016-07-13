@@ -628,7 +628,9 @@ class Chess:
             self.moves_seq = []
 
         if self.auto_show_board:
+            position = self.get_position()
             self.show_board()
+            print(position)
 
     def move(self, move, promotion='q', debug=False):
         if isinstance(move, str) and len(move) == 4:

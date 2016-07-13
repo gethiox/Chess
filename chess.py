@@ -12,7 +12,7 @@ from src.exceptions import *
 
 
 class Chess:
-    def __init__(self, auto_show_board=False, colors=True):
+    def __init__(self, auto_show_board=False, colors=True, symbols=False):
         self.history = {}
         self.history_seq = 0
         self.board = [[None for x in range(8)] for i in range(8)]
@@ -25,6 +25,7 @@ class Chess:
 
         self.auto_show_board = auto_show_board
         self.colors = colors
+        self.symbols = symbols
 
     def _exec_move(self, pos_a, pos_b, promotion='q', debug=False):
         x1, y1 = self.convert_to_matrix(pos_a)
@@ -693,12 +694,14 @@ class Chess:
                 print(' +---+---+---+---+---+---+---+---+ ')
                 string = ' | '
                 for piece in row:
-                    if piece is not None and not self.colors:
-                        string += piece
+                    if piece is not None and self.symbols:
+                        string += self.chess_symbol(piece)
                     elif piece is not None and self.colors and piece.isupper():
                         string += color.green(piece)
                     elif piece is not None and self.colors and piece.islower():
                         string += color.red(piece)
+                    elif piece is not None and not self.colors:
+                        string += piece
                     else:
                         string += ' '
                     string += ' | '
@@ -710,12 +713,14 @@ class Chess:
             for row in board:
                 string = ' '
                 for piece in row:
-                    if piece is not None and not self.colors:
-                        string += piece
+                    if piece is not None and self.symbols:
+                        string += self.chess_symbol(piece)
                     elif piece is not None and self.colors and piece.isupper():
                         string += color.green(piece)
                     elif piece is not None and self.colors and piece.islower():
                         string += color.red(piece)
+                    elif piece is not None and not self.colors:
+                        string += piece
                     else:
                         string += '.'
                     string += ' '
@@ -741,10 +746,7 @@ class Chess:
                     x, y = self.convert_to_matrix(move)
                     self.board[y][x] = '+'
 
-                if not compact:
-                    self.show_board()
-                else:
-                    self.show_board(compact=True)
+                self.show_board(compact=compact)
                 self.board = backup
 
     def get_moves_seq(self):
@@ -949,6 +951,34 @@ class Chess:
             if hash_list.count(i) >= 3:
                 return True
         return False
+
+    @staticmethod
+    def chess_symbol(piece):
+        if piece == 'K':
+            return '\u2654'
+        elif piece == 'Q':
+            return '\u2655'
+        elif piece == 'R':
+            return '\u2656'
+        elif piece == 'B':
+            return '\u2657'
+        elif piece == 'N':
+            return '\u2658'
+        elif piece == 'P':
+            return '\u2659'
+
+        elif piece == 'k':
+            return '\u265A'
+        elif piece == 'q':
+            return '\u265B'
+        elif piece == 'r':
+            return '\u265C'
+        elif piece == 'b':
+            return '\u265D'
+        elif piece == 'n':
+            return '\u265E'
+        elif piece == 'p':
+            return '\u265F'
 
     @staticmethod
     def read_piece(piece_code):

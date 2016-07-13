@@ -678,9 +678,11 @@ class Chess:
         else:
             board = reversed(self.board)
 
+        board_string = ''
+
         for row in board:
             if not compact:
-                print(' +---+---+---+---+---+---+---+---+ ')
+                board_string += ' +---+---+---+---+---+---+---+---+ \n'
             string = ' ' if compact else ' | '
             for piece in row:
                 if piece is None:
@@ -694,10 +696,11 @@ class Chess:
                 else:
                     string += piece
                 string += ' ' if compact else ' | '
-            print(string)
+            board_string += string + '\n'
         if not compact:
-            print(' +---+---+---+---+---+---+---+---+ ')
-        print()
+            board_string += ' +---+---+---+---+---+---+---+---+ \n'
+
+        print(board_string)
 
     def show_legal_moves(self, pos, compact=False):
         v1, v2 = self.convert_to_matrix(pos)

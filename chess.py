@@ -893,25 +893,14 @@ class Chess:
         all_avabile_moves = []
         board = copy(self.board)
 
-        if self.on_move == 'w':
-            y = 0
-            for row in board:
-                x = 0
-                for piece in row:
-                    if piece is not None and piece.isupper():
-                        all_avabile_moves.extend(self.legal_moves(self.convert_to_algebra(x, y)))
-                    x += 1
-                y += 1
-
-        elif self.on_move == 'b':
-            y = 0
-            for row in board:
-                x = 0
-                for piece in row:
-                    if piece is not None and piece.islower():
-                        all_avabile_moves.extend(self.legal_moves(self.convert_to_algebra(x, y)))
-                    x += 1
-                y += 1
+        y = 0
+        for row in board:
+            x = 0
+            for piece in row:
+                if piece is not None and (piece.isupper() if self.on_move == 'w' else piece.islower()):
+                    all_avabile_moves.extend(self.legal_moves(self.convert_to_algebra(x, y)))
+                x += 1
+            y += 1
 
         all_avabile_moves = list(set(all_avabile_moves))
 

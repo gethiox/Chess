@@ -678,43 +678,26 @@ class Chess:
         else:
             board = reversed(self.board)
 
-        if not compact:
-            for row in board:
+        for row in board:
+            if not compact:
                 print(' +---+---+---+---+---+---+---+---+ ')
-                string = ' | '
-                for piece in row:
-                    if piece is None:
-                        string += ' '
-                    elif piece == '+':
-                        string += color.yellow(piece) if self.colors else piece
-                    elif self.symbols:
-                        string += self.chess_symbol(piece)
-                    elif self.colors:
-                        string += color.green(piece) if piece.isupper() else color.red(piece)
-                    else:
-                        string += piece
-                    string += ' | '
-                print(string)
+            string = ' ' if compact else ' | '
+            for piece in row:
+                if piece is None:
+                    string += '.' if compact else ' '
+                elif piece == '+':
+                    string += color.yellow(piece) if self.colors else piece
+                elif self.symbols:
+                    string += self.chess_symbol(piece)
+                elif self.colors:
+                    string += color.green(piece) if piece.isupper() else color.red(piece)
+                else:
+                    string += piece
+                string += ' ' if compact else ' | '
+            print(string)
+        if not compact:
             print(' +---+---+---+---+---+---+---+---+ ')
-            print()
-
-        else:
-            for row in board:
-                string = ' '
-                for piece in row:
-                    if piece is None:
-                        string += '.'
-                    elif piece == '+':
-                        string += color.yellow(piece) if self.colors else piece
-                    elif self.symbols:
-                        string += self.chess_symbol(piece)
-                    elif self.colors:
-                        string += color.green(piece) if piece.isupper() else color.red(piece)
-                    else:
-                        string += piece
-                    string += ' '
-                print(string)
-            print()
+        print()
 
     def show_legal_moves(self, pos, compact=False):
         v1, v2 = self.convert_to_matrix(pos)

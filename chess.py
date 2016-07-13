@@ -636,7 +636,8 @@ class Chess:
             self.history_seq = 0
             self.moves_seq = []
 
-        # print('New Game!\n')
+        if self.auto_show_board:
+            self.show_board()
 
     def move(self, move, promotion='q', debug=False):
         if isinstance(move, str) and len(move) == 4:

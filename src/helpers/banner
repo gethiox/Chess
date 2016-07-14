@@ -1,8 +1,8 @@
   _   _   _
- | |_| |_| |  Welcome in GxChessApp2000!
- |_       _|
-   |     |    Ultimate Chess app
-   /     \    write in pure Python
-   |     |
-  /       \   Need help?
- |_________|  try 'rm -r chess/'
+  ||_| |_||  Welcome in GxChessApp2000!
+  |_     _|
+    |   |    Ultimate Chess app
+    |   |    writee in pure Python
+    |   |
+  _/     \_  Need help?
+ |_________| try 'rm -r chess/'

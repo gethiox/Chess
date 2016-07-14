@@ -926,21 +926,6 @@ class Chess:
             return '\u265F'
 
     @staticmethod
-    def read_piece(piece_code):
-        if piece_code in 'pP':
-            return 'pawn'
-        elif piece_code in 'rR':
-            return 'rook'
-        elif piece_code in 'nN':
-            return 'knight'
-        elif piece_code in 'bB':
-            return 'bishop'
-        elif piece_code in 'qQ':
-            return 'queen'
-        elif piece_code in 'kK':
-            return 'king'
-
-    @staticmethod
     def read_color(piece_code):
         if piece_code.isupper():
             return 'w'

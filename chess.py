@@ -678,7 +678,7 @@ class Chess:
         else:
             return self._board_state()
 
-    def show_board(self, compact=False, flipped=False):
+    def show_board(self, compact=False, flipped=False, description=True):
         if flipped:
             board = self.board
         else:
@@ -686,6 +686,7 @@ class Chess:
 
         board_string = ''
 
+        row_count = 1
         for row in board:
             if not compact:
                 board_string += ' +---+---+---+---+---+---+---+---+ \n'
@@ -702,9 +703,25 @@ class Chess:
                 else:
                     string += piece
                 string += ' ' if compact else ' | '
+
+            if description and not flipped:
+                string += str(9 - row_count)
+            elif description and flipped:
+                string += str(row_count)
+
             board_string += string + '\n'
+            row_count += 1
         if not compact:
             board_string += ' +---+---+---+---+---+---+---+---+ \n'
+            if description and not flipped:
+                board_string += '   a   b   c   d   e   f   g   h   \n'
+            elif description and flipped:
+                board_string += '   h   g   f   e   d   c   b   a   \n'
+        elif compact and description:
+            if not flipped:
+                board_string += ' a b c d e f g h \n'
+            else:
+                board_string += ' h g f e d c b a \n'
 
         print(board_string)
 

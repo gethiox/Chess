@@ -38,9 +38,9 @@ class Chess:
             if piece is None:
                 raise NoPiece('%s is an empty field.' % pos_a)
             elif piece.isupper() and self.on_move != 'w':
-                raise WrongMoveOrder('Black on move you retarted motherfucker!, not white!')
+                raise WrongMoveOrder('Black on move, not white!')
             elif piece.islower() and self.on_move != 'b':
-                raise WrongMoveOrder('White on move you retarted idiot!, not black!')
+                raise WrongMoveOrder('White on move, not black!')
             elif pos_b not in valid_moves:
                 raise IllegalMove('%s%s: It is not a valid move!\n' % (pos_a, pos_b))
             elif self.am_i_mated() or self.am_i_stalemated():

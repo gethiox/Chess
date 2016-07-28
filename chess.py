@@ -1145,8 +1145,9 @@ def parse_args():
 
 
 def human_vs_human(engine_binary_path):
-    game = Chess(auto_show_board=True)
+    game = Chess(auto_show_board=False)
     game.new_game()
+    game.show_board()
 
     while True:
         while True:
@@ -1160,6 +1161,8 @@ def human_vs_human(engine_binary_path):
                 continue
             else:
                 break
+
+        game.show_board(flipped=True)
 
         if status[0]:
             if game.on_move == 'w':
@@ -1190,6 +1193,8 @@ def human_vs_human(engine_binary_path):
                 continue
             else:
                 break
+
+        game.show_board()
 
         if status[0]:
             if game.on_move == 'w':

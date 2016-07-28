@@ -680,7 +680,9 @@ class Chess:
 
     def show_board(self, compact=False, flipped=False, description=True):
         if flipped:
-            board = self.board
+            board = []
+            for row in self.board:
+                board.append(reversed(row))
         else:
             board = reversed(self.board)
 

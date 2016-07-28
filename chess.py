@@ -631,8 +631,10 @@ class Chess:
             self.show_board()
             print(position)
 
-    def move(self, move, promotion='q', debug=False):
-        if isinstance(move, str) and len(move) == 4:
+    def move(self, move, move2=None, promotion='q', debug=False):
+        if isinstance(move, str) and isinstance(move2, str) and len(move) == len(move2) == 2:
+            return self._exec_move(move, move2, promotion=promotion, debug=debug)
+        elif isinstance(move, str) and len(move) == 4:
             return self._exec_move(move[0:2], move[2:4], promotion=promotion, debug=debug)
         elif isinstance(move, str) and len(move) == 5:
             return self._exec_move(move[0:2], move[2:4], promotion=move[4], debug=debug)

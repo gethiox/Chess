@@ -165,12 +165,14 @@ class Chess:
         piece = self.board[a2][a1]
         if piece is None:
             raise NoPiece('No piece at %s' % pos)
-        color = self.read_color(piece)
+        else:
+            color = self.read_color(piece)
+            piece = piece.casefold()
 
         moves = []
 
         # Pawns ###
-        if piece.casefold() == 'p' and color == 'w':
+        if piece == 'p' and color == 'w':
             tmp1, tmp2 = a1, a2 + 1
             if tmp1 in range(8) and tmp2 in range(8):
                 if self.board[tmp2][tmp1] is None:
@@ -192,7 +194,7 @@ class Chess:
                 if (a1 + 1 == tmp1 or a1 - 1 == tmp1) and a2 + 1 == tmp2:
                     moves.append(self.convert_to_algebra(tmp1, tmp2))
 
-        elif piece.casefold() == 'p' and color == 'b':
+        elif piece == 'p' and color == 'b':
             tmp1, tmp2 = a1, a2 - 1
             if tmp1 in range(8) and tmp2 in range(8):
                 if self.board[tmp2][tmp1] is None:
@@ -215,7 +217,7 @@ class Chess:
                     moves.append(self.convert_to_algebra(tmp1, tmp2))
 
         # Rook ###
-        elif piece.casefold() == 'r':
+        elif piece == 'r':
             for i in range(1, 8):
                 tmp1, tmp2 = a1 + i, a2
                 if tmp1 in range(8) and tmp2 in range(8):
@@ -266,7 +268,7 @@ class Chess:
                     break
 
         # Knight ###
-        elif piece.casefold() == 'n':
+        elif piece == 'n':
             tmp1, tmp2 = a1 + 2, a2 - 1
             if tmp1 in range(8) and tmp2 in range(8):
                 if self.board[tmp2][tmp1] is None:
@@ -317,7 +319,7 @@ class Chess:
                     moves.append(self.convert_to_algebra(tmp1, tmp2))
 
         # Bishop ###
-        elif piece.casefold() == 'b':
+        elif piece == 'b':
             for i in range(1, 8):
                 tmp1, tmp2 = a1 + i, a2 + i
                 if tmp1 in range(8) and tmp2 in range(8):
@@ -368,7 +370,7 @@ class Chess:
                     break
 
         # Queen ###
-        elif piece.casefold() == 'q':
+        elif piece == 'q':
             for i in range(1, 8):
                 tmp1, tmp2 = a1 + i, a2 + i
                 if tmp1 in range(8) and tmp2 in range(8):
@@ -468,7 +470,7 @@ class Chess:
                     break
 
         # King ###
-        elif piece.casefold() == 'k':
+        elif piece == 'k':
             tmp1, tmp2 = a1 + 1, a2 + 1
             if tmp1 in range(8) and tmp2 in range(8):
                 if self.board[tmp2][tmp1] is None:
@@ -580,17 +582,17 @@ class Chess:
 
         x, y = self.convert_to_matrix(pos)
         if self.board[y][x] == 'K' and self.castle is not None and x == 4 and y == 0:
-            if 'f1' not in real_moves and 'K' in self.castle:
+            if ('f1' not in real_moves and 'K' in self.castle) or self.am_i_checked():
                 if 'g1' in real_moves:
                     real_moves.remove('g1')
-            if 'd1' not in real_moves and 'Q' in self.castle:
+            if ('d1' not in real_moves and 'Q' in self.castle) or self.am_i_checked():
                 if 'c1' in real_moves:
                     real_moves.remove('c1')
         elif self.board[y][x] == 'k' and self.castle is not None and x == 4 and y == 7:
-            if 'f8' not in real_moves and 'k' in self.castle:
+            if ('f8' not in real_moves and 'k' in self.castle) or self.am_i_checked():
                 if 'g8' in real_moves:
                     real_moves.remove('g8')
-            if 'd8' not in real_moves and 'q' in self.castle:
+            if ('d8' not in real_moves and 'q' in self.castle) or self.am_i_checked():
                 if 'c8' in real_moves:
                     real_moves.remove('c8')
 

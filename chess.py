@@ -572,16 +572,16 @@ class Chess:
     def legal_moves(self, pos):
         moves = self._avabile_moves(pos)
         real_moves = []
+        checked = self.am_i_checked()
 
         backup = self._get_backup()
         for move in moves:
             self._exec_move(pos, move, debug=True)
-            if not self.am_i_checked():
+            if not checked:
                 real_moves.append(move)
             self._restore_backup(backup)
 
         x, y = self.convert_to_matrix(pos)
-        checked = self.am_i_checked()
 
         if self.board[y][x] == 'K' and self.castle is not None and x == 4 and y == 0:
             if ('f1' not in real_moves and 'K' in self.castle) or checked:

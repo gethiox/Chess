@@ -173,14 +173,17 @@ class Chess:
 
         # Pawns ###
         if piece == 'p' and color == 'w':
+            # test for move one square ahead
             tmp_x, tmp_y = pos_x, pox_y + 1
             if tmp_x in range(8) and tmp_y in range(8):
                 if self.board[tmp_y][tmp_x] is None:
                     moves.append(self.convert_to_algebra(tmp_x, tmp_y))
+            # test for move two squares ahead
             tmp_x, tmp_y = pos_x, pox_y + 2
             if tmp_x in range(8) and tmp_y in range(8):
                 if pox_y == 1 and self.board[tmp_y][tmp_x] is None:
                     moves.append(self.convert_to_algebra(tmp_x, tmp_y))
+            # tests for capturing enemy pieces
             tmp_x, tmp_y = pos_x + 1, pox_y + 1
             if tmp_x in range(8) and tmp_y in range(8):
                 if self.board[tmp_y][tmp_x] is not None and self.read_color(self.board[tmp_y][tmp_x]) != color:
@@ -189,6 +192,7 @@ class Chess:
             if tmp_x in range(8) and tmp_y in range(8):
                 if self.board[tmp_y][tmp_x] is not None and self.read_color(self.board[tmp_y][tmp_x]) != color:
                     moves.append(self.convert_to_algebra(tmp_x, tmp_y))
+            # test for en passant possibility
             if self.en_passant and pox_y == 4:
                 tmp_x, tmp_y = self.convert_to_matrix(self.en_passant)
                 if (pos_x + 1 == tmp_x or pos_x - 1 == tmp_x) and pox_y + 1 == tmp_y:
@@ -218,6 +222,7 @@ class Chess:
 
         # Rook ###
         elif piece == 'r':
+            # tests for moving rook in all four directions
             for i in range(1, 8):
                 tmp_x, tmp_y = pos_x + i, pox_y
                 if tmp_x in range(8) and tmp_y in range(8):
@@ -269,6 +274,7 @@ class Chess:
 
         # Knight ###
         elif piece == 'n':
+            # tests for knight jumps
             tmp_x, tmp_y = pos_x + 2, pox_y - 1
             if tmp_x in range(8) and tmp_y in range(8):
                 if self.board[tmp_y][tmp_x] is None:
@@ -320,6 +326,7 @@ class Chess:
 
         # Bishop ###
         elif piece == 'b':
+            # like a roock, tests for all four directions
             for i in range(1, 8):
                 tmp_x, tmp_y = pos_x + i, pox_y + i
                 if tmp_x in range(8) and tmp_y in range(8):
@@ -371,6 +378,7 @@ class Chess:
 
         # Queen ###
         elif piece == 'q':
+            # tests in all eight directions
             for i in range(1, 8):
                 tmp_x, tmp_y = pos_x + i, pox_y + i
                 if tmp_x in range(8) and tmp_y in range(8):
@@ -471,6 +479,7 @@ class Chess:
 
         # King ###
         elif piece == 'k':
+            # tests for moving king
             tmp_x, tmp_y = pos_x + 1, pox_y + 1
             if tmp_x in range(8) and tmp_y in range(8):
                 if self.board[tmp_y][tmp_x] is None:
@@ -527,6 +536,7 @@ class Chess:
                 elif color != self.read_color(self.board[tmp_y][tmp_x]):
                     moves.append(self.convert_to_algebra(tmp_x, tmp_y))
 
+            # tests of castling availability
             if self.castle is not None and color == 'w':
                 if 'K' in self.castle:
                     if self.board[0][5] is None and self.board[0][6] is None and self.board[0][7] == 'R':

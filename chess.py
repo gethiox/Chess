@@ -581,18 +581,20 @@ class Chess:
             self._restore_backup(backup)
 
         x, y = self.convert_to_matrix(pos)
+        checked = self.am_i_checked()
+
         if self.board[y][x] == 'K' and self.castle is not None and x == 4 and y == 0:
-            if ('f1' not in real_moves and 'K' in self.castle) or self.am_i_checked():
+            if ('f1' not in real_moves and 'K' in self.castle) or checked:
                 if 'g1' in real_moves:
                     real_moves.remove('g1')
-            if ('d1' not in real_moves and 'Q' in self.castle) or self.am_i_checked():
+            if ('d1' not in real_moves and 'Q' in self.castle) or checked:
                 if 'c1' in real_moves:
                     real_moves.remove('c1')
         elif self.board[y][x] == 'k' and self.castle is not None and x == 4 and y == 7:
-            if ('f8' not in real_moves and 'k' in self.castle) or self.am_i_checked():
+            if ('f8' not in real_moves and 'k' in self.castle) or checked:
                 if 'g8' in real_moves:
                     real_moves.remove('g8')
-            if ('d8' not in real_moves and 'q' in self.castle) or self.am_i_checked():
+            if ('d8' not in real_moves and 'q' in self.castle) or checked:
                 if 'c8' in real_moves:
                     real_moves.remove('c8')
 

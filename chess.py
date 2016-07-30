@@ -577,7 +577,7 @@ class Chess:
         backup = self._get_backup()
         for move in moves:
             self._exec_move(pos, move, debug=True)
-            if not checked:
+            if not self.am_i_checked():
                 real_moves.append(move)
             self._restore_backup(backup)
 

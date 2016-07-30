@@ -160,9 +160,9 @@ class Chess:
         self.board = [[None for x in range(8)] for i in range(8)]
 
     def _avabile_moves(self, pos):
-        a1, a2 = self.convert_to_matrix(pos)
+        pos_x, pox_y = self.convert_to_matrix(pos)
 
-        piece = self.board[a2][a1]
+        piece = self.board[pox_y][pos_x]
         if piece is None:
             raise NoPiece('No piece at %s' % pos)
         else:
@@ -173,94 +173,94 @@ class Chess:
 
         # Pawns ###
         if piece == 'p' and color == 'w':
-            tmp1, tmp2 = a1, a2 + 1
-            if tmp1 in range(8) and tmp2 in range(8):
-                if self.board[tmp2][tmp1] is None:
-                    moves.append(self.convert_to_algebra(tmp1, tmp2))
-            tmp1, tmp2 = a1, a2 + 2
-            if tmp1 in range(8) and tmp2 in range(8):
-                if a2 == 1 and self.board[tmp2][tmp1] is None:
-                    moves.append(self.convert_to_algebra(tmp1, tmp2))
-            tmp1, tmp2 = a1 + 1, a2 + 1
-            if tmp1 in range(8) and tmp2 in range(8):
-                if self.board[tmp2][tmp1] is not None and self.read_color(self.board[tmp2][tmp1]) != color:
-                    moves.append(self.convert_to_algebra(tmp1, tmp2))
-            tmp1, tmp2 = a1 - 1, a2 + 1
-            if tmp1 in range(8) and tmp2 in range(8):
-                if self.board[tmp2][tmp1] is not None and self.read_color(self.board[tmp2][tmp1]) != color:
-                    moves.append(self.convert_to_algebra(tmp1, tmp2))
-            if self.en_passant and a2 == 4:
-                tmp1, tmp2 = self.convert_to_matrix(self.en_passant)
-                if (a1 + 1 == tmp1 or a1 - 1 == tmp1) and a2 + 1 == tmp2:
-                    moves.append(self.convert_to_algebra(tmp1, tmp2))
+            tmp_x, tmp_y = pos_x, pox_y + 1
+            if tmp_x in range(8) and tmp_y in range(8):
+                if self.board[tmp_y][tmp_x] is None:
+                    moves.append(self.convert_to_algebra(tmp_x, tmp_y))
+            tmp_x, tmp_y = pos_x, pox_y + 2
+            if tmp_x in range(8) and tmp_y in range(8):
+                if pox_y == 1 and self.board[tmp_y][tmp_x] is None:
+                    moves.append(self.convert_to_algebra(tmp_x, tmp_y))
+            tmp_x, tmp_y = pos_x + 1, pox_y + 1
+            if tmp_x in range(8) and tmp_y in range(8):
+                if self.board[tmp_y][tmp_x] is not None and self.read_color(self.board[tmp_y][tmp_x]) != color:
+                    moves.append(self.convert_to_algebra(tmp_x, tmp_y))
+            tmp_x, tmp_y = pos_x - 1, pox_y + 1
+            if tmp_x in range(8) and tmp_y in range(8):
+                if self.board[tmp_y][tmp_x] is not None and self.read_color(self.board[tmp_y][tmp_x]) != color:
+                    moves.append(self.convert_to_algebra(tmp_x, tmp_y))
+            if self.en_passant and pox_y == 4:
+                tmp_x, tmp_y = self.convert_to_matrix(self.en_passant)
+                if (pos_x + 1 == tmp_x or pos_x - 1 == tmp_x) and pox_y + 1 == tmp_y:
+                    moves.append(self.convert_to_algebra(tmp_x, tmp_y))
 
         elif piece == 'p' and color == 'b':
-            tmp1, tmp2 = a1, a2 - 1
-            if tmp1 in range(8) and tmp2 in range(8):
-                if self.board[tmp2][tmp1] is None:
-                    moves.append(self.convert_to_algebra(tmp1, tmp2))
-            tmp1, tmp2 = a1, a2 - 2
-            if tmp1 in range(8) and tmp2 in range(8):
-                if a2 == 6 and self.board[tmp2][tmp1] is None:
-                    moves.append(self.convert_to_algebra(tmp1, tmp2))
-            tmp1, tmp2 = a1 + 1, a2 - 1
-            if tmp1 in range(8) and tmp2 in range(8):
-                if self.board[tmp2][tmp1] is not None and self.read_color(self.board[tmp2][tmp1]) != color:
-                    moves.append(self.convert_to_algebra(tmp1, tmp2))
-            tmp1, tmp2 = a1 - 1, a2 - 1
-            if tmp1 in range(8) and tmp2 in range(8):
-                if self.board[tmp2][tmp1] is not None and self.read_color(self.board[tmp2][tmp1]) != color:
-                    moves.append(self.convert_to_algebra(tmp1, tmp2))
-            if self.en_passant and a2 == 3:
-                tmp1, tmp2 = self.convert_to_matrix(self.en_passant)
-                if (a1 + 1 == tmp1 or a1 - 1 == tmp1) and a2 - 1 == tmp2:
-                    moves.append(self.convert_to_algebra(tmp1, tmp2))
+            tmp_x, tmp_y = pos_x, pox_y - 1
+            if tmp_x in range(8) and tmp_y in range(8):
+                if self.board[tmp_y][tmp_x] is None:
+                    moves.append(self.convert_to_algebra(tmp_x, tmp_y))
+            tmp_x, tmp_y = pos_x, pox_y - 2
+            if tmp_x in range(8) and tmp_y in range(8):
+                if pox_y == 6 and self.board[tmp_y][tmp_x] is None:
+                    moves.append(self.convert_to_algebra(tmp_x, tmp_y))
+            tmp_x, tmp_y = pos_x + 1, pox_y - 1
+            if tmp_x in range(8) and tmp_y in range(8):
+                if self.board[tmp_y][tmp_x] is not None and self.read_color(self.board[tmp_y][tmp_x]) != color:
+                    moves.append(self.convert_to_algebra(tmp_x, tmp_y))
+            tmp_x, tmp_y = pos_x - 1, pox_y - 1
+            if tmp_x in range(8) and tmp_y in range(8):
+                if self.board[tmp_y][tmp_x] is not None and self.read_color(self.board[tmp_y][tmp_x]) != color:
+                    moves.append(self.convert_to_algebra(tmp_x, tmp_y))
+            if self.en_passant and pox_y == 3:
+                tmp_x, tmp_y = self.convert_to_matrix(self.en_passant)
+                if (pos_x + 1 == tmp_x or pos_x - 1 == tmp_x) and pox_y - 1 == tmp_y:
+                    moves.append(self.convert_to_algebra(tmp_x, tmp_y))
 
         # Rook ###
         elif piece == 'r':
             for i in range(1, 8):
-                tmp1, tmp2 = a1 + i, a2
-                if tmp1 in range(8) and tmp2 in range(8):
-                    if self.board[tmp2][tmp1] is None:
-                        moves.append(self.convert_to_algebra(tmp1, tmp2))
-                    elif color != self.read_color(self.board[tmp2][tmp1]):
-                        moves.append(self.convert_to_algebra(tmp1, tmp2))
+                tmp_x, tmp_y = pos_x + i, pox_y
+                if tmp_x in range(8) and tmp_y in range(8):
+                    if self.board[tmp_y][tmp_x] is None:
+                        moves.append(self.convert_to_algebra(tmp_x, tmp_y))
+                    elif color != self.read_color(self.board[tmp_y][tmp_x]):
+                        moves.append(self.convert_to_algebra(tmp_x, tmp_y))
                         break
                     else:
                         break
                 else:
                     break
             for i in range(1, 8):
-                tmp1, tmp2 = a1 - i, a2
-                if tmp1 in range(8) and tmp2 in range(8):
-                    if self.board[tmp2][tmp1] is None:
-                        moves.append(self.convert_to_algebra(tmp1, tmp2))
-                    elif color != self.read_color(self.board[tmp2][tmp1]):
-                        moves.append(self.convert_to_algebra(tmp1, tmp2))
+                tmp_x, tmp_y = pos_x - i, pox_y
+                if tmp_x in range(8) and tmp_y in range(8):
+                    if self.board[tmp_y][tmp_x] is None:
+                        moves.append(self.convert_to_algebra(tmp_x, tmp_y))
+                    elif color != self.read_color(self.board[tmp_y][tmp_x]):
+                        moves.append(self.convert_to_algebra(tmp_x, tmp_y))
                         break
                     else:
                         break
                 else:
                     break
             for i in range(1, 8):
-                tmp1, tmp2 = a1, a2 + i
-                if tmp1 in range(8) and tmp2 in range(8):
-                    if self.board[tmp2][tmp1] is None:
-                        moves.append(self.convert_to_algebra(tmp1, tmp2))
-                    elif color != self.read_color(self.board[tmp2][tmp1]):
-                        moves.append(self.convert_to_algebra(tmp1, tmp2))
+                tmp_x, tmp_y = pos_x, pox_y + i
+                if tmp_x in range(8) and tmp_y in range(8):
+                    if self.board[tmp_y][tmp_x] is None:
+                        moves.append(self.convert_to_algebra(tmp_x, tmp_y))
+                    elif color != self.read_color(self.board[tmp_y][tmp_x]):
+                        moves.append(self.convert_to_algebra(tmp_x, tmp_y))
                         break
                     else:
                         break
                 else:
                     break
             for i in range(1, 8):
-                tmp1, tmp2 = a1, a2 - i
-                if tmp1 in range(8) and tmp2 in range(8):
-                    if self.board[tmp2][tmp1] is None:
-                        moves.append(self.convert_to_algebra(tmp1, tmp2))
-                    elif color != self.read_color(self.board[tmp2][tmp1]):
-                        moves.append(self.convert_to_algebra(tmp1, tmp2))
+                tmp_x, tmp_y = pos_x, pox_y - i
+                if tmp_x in range(8) and tmp_y in range(8):
+                    if self.board[tmp_y][tmp_x] is None:
+                        moves.append(self.convert_to_algebra(tmp_x, tmp_y))
+                    elif color != self.read_color(self.board[tmp_y][tmp_x]):
+                        moves.append(self.convert_to_algebra(tmp_x, tmp_y))
                         break
                     else:
                         break
@@ -269,100 +269,100 @@ class Chess:
 
         # Knight ###
         elif piece == 'n':
-            tmp1, tmp2 = a1 + 2, a2 - 1
-            if tmp1 in range(8) and tmp2 in range(8):
-                if self.board[tmp2][tmp1] is None:
-                    moves.append(self.convert_to_algebra(tmp1, tmp2))
-                elif color != self.read_color(self.board[tmp2][tmp1]):
-                    moves.append(self.convert_to_algebra(tmp1, tmp2))
-            tmp1, tmp2 = a1 + 2, a2 + 1
-            if tmp1 in range(8) and tmp2 in range(8):
-                if self.board[tmp2][tmp1] is None:
-                    moves.append(self.convert_to_algebra(tmp1, tmp2))
-                elif color != self.read_color(self.board[tmp2][tmp1]):
-                    moves.append(self.convert_to_algebra(tmp1, tmp2))
-            tmp1, tmp2 = a1 + 1, a2 + 2
-            if tmp1 in range(8) and tmp2 in range(8):
-                if self.board[tmp2][tmp1] is None:
-                    moves.append(self.convert_to_algebra(tmp1, tmp2))
-                elif color != self.read_color(self.board[tmp2][tmp1]):
-                    moves.append(self.convert_to_algebra(tmp1, tmp2))
-            tmp1, tmp2 = a1 - 1, a2 + 2
-            if tmp1 in range(8) and tmp2 in range(8):
-                if self.board[tmp2][tmp1] is None:
-                    moves.append(self.convert_to_algebra(tmp1, tmp2))
-                elif color != self.read_color(self.board[tmp2][tmp1]):
-                    moves.append(self.convert_to_algebra(tmp1, tmp2))
-            tmp1, tmp2 = a1 - 2, a2 + 1
-            if tmp1 in range(8) and tmp2 in range(8):
-                if self.board[tmp2][tmp1] is None:
-                    moves.append(self.convert_to_algebra(tmp1, tmp2))
-                elif color != self.read_color(self.board[tmp2][tmp1]):
-                    moves.append(self.convert_to_algebra(tmp1, tmp2))
-            tmp1, tmp2 = a1 - 2, a2 - 1
-            if tmp1 in range(8) and tmp2 in range(8):
-                if self.board[tmp2][tmp1] is None:
-                    moves.append(self.convert_to_algebra(tmp1, tmp2))
-                elif color != self.read_color(self.board[tmp2][tmp1]):
-                    moves.append(self.convert_to_algebra(tmp1, tmp2))
-            tmp1, tmp2 = a1 - 1, a2 - 2
-            if tmp1 in range(8) and tmp2 in range(8):
-                if self.board[tmp2][tmp1] is None:
-                    moves.append(self.convert_to_algebra(tmp1, tmp2))
-                elif color != self.read_color(self.board[tmp2][tmp1]):
-                    moves.append(self.convert_to_algebra(tmp1, tmp2))
-            tmp1, tmp2 = a1 + 1, a2 - 2
-            if tmp1 in range(8) and tmp2 in range(8):
-                if self.board[tmp2][tmp1] is None:
-                    moves.append(self.convert_to_algebra(tmp1, tmp2))
-                elif color != self.read_color(self.board[tmp2][tmp1]):
-                    moves.append(self.convert_to_algebra(tmp1, tmp2))
+            tmp_x, tmp_y = pos_x + 2, pox_y - 1
+            if tmp_x in range(8) and tmp_y in range(8):
+                if self.board[tmp_y][tmp_x] is None:
+                    moves.append(self.convert_to_algebra(tmp_x, tmp_y))
+                elif color != self.read_color(self.board[tmp_y][tmp_x]):
+                    moves.append(self.convert_to_algebra(tmp_x, tmp_y))
+            tmp_x, tmp_y = pos_x + 2, pox_y + 1
+            if tmp_x in range(8) and tmp_y in range(8):
+                if self.board[tmp_y][tmp_x] is None:
+                    moves.append(self.convert_to_algebra(tmp_x, tmp_y))
+                elif color != self.read_color(self.board[tmp_y][tmp_x]):
+                    moves.append(self.convert_to_algebra(tmp_x, tmp_y))
+            tmp_x, tmp_y = pos_x + 1, pox_y + 2
+            if tmp_x in range(8) and tmp_y in range(8):
+                if self.board[tmp_y][tmp_x] is None:
+                    moves.append(self.convert_to_algebra(tmp_x, tmp_y))
+                elif color != self.read_color(self.board[tmp_y][tmp_x]):
+                    moves.append(self.convert_to_algebra(tmp_x, tmp_y))
+            tmp_x, tmp_y = pos_x - 1, pox_y + 2
+            if tmp_x in range(8) and tmp_y in range(8):
+                if self.board[tmp_y][tmp_x] is None:
+                    moves.append(self.convert_to_algebra(tmp_x, tmp_y))
+                elif color != self.read_color(self.board[tmp_y][tmp_x]):
+                    moves.append(self.convert_to_algebra(tmp_x, tmp_y))
+            tmp_x, tmp_y = pos_x - 2, pox_y + 1
+            if tmp_x in range(8) and tmp_y in range(8):
+                if self.board[tmp_y][tmp_x] is None:
+                    moves.append(self.convert_to_algebra(tmp_x, tmp_y))
+                elif color != self.read_color(self.board[tmp_y][tmp_x]):
+                    moves.append(self.convert_to_algebra(tmp_x, tmp_y))
+            tmp_x, tmp_y = pos_x - 2, pox_y - 1
+            if tmp_x in range(8) and tmp_y in range(8):
+                if self.board[tmp_y][tmp_x] is None:
+                    moves.append(self.convert_to_algebra(tmp_x, tmp_y))
+                elif color != self.read_color(self.board[tmp_y][tmp_x]):
+                    moves.append(self.convert_to_algebra(tmp_x, tmp_y))
+            tmp_x, tmp_y = pos_x - 1, pox_y - 2
+            if tmp_x in range(8) and tmp_y in range(8):
+                if self.board[tmp_y][tmp_x] is None:
+                    moves.append(self.convert_to_algebra(tmp_x, tmp_y))
+                elif color != self.read_color(self.board[tmp_y][tmp_x]):
+                    moves.append(self.convert_to_algebra(tmp_x, tmp_y))
+            tmp_x, tmp_y = pos_x + 1, pox_y - 2
+            if tmp_x in range(8) and tmp_y in range(8):
+                if self.board[tmp_y][tmp_x] is None:
+                    moves.append(self.convert_to_algebra(tmp_x, tmp_y))
+                elif color != self.read_color(self.board[tmp_y][tmp_x]):
+                    moves.append(self.convert_to_algebra(tmp_x, tmp_y))
 
         # Bishop ###
         elif piece == 'b':
             for i in range(1, 8):
-                tmp1, tmp2 = a1 + i, a2 + i
-                if tmp1 in range(8) and tmp2 in range(8):
-                    if self.board[tmp2][tmp1] is None:
-                        moves.append(self.convert_to_algebra(tmp1, tmp2))
-                    elif color != self.read_color(self.board[tmp2][tmp1]):
-                        moves.append(self.convert_to_algebra(tmp1, tmp2))
+                tmp_x, tmp_y = pos_x + i, pox_y + i
+                if tmp_x in range(8) and tmp_y in range(8):
+                    if self.board[tmp_y][tmp_x] is None:
+                        moves.append(self.convert_to_algebra(tmp_x, tmp_y))
+                    elif color != self.read_color(self.board[tmp_y][tmp_x]):
+                        moves.append(self.convert_to_algebra(tmp_x, tmp_y))
                         break
                     else:
                         break
                 else:
                     break
             for i in range(1, 8):
-                tmp1, tmp2 = a1 + i, a2 - i
-                if tmp1 in range(8) and tmp2 in range(8):
-                    if self.board[tmp2][tmp1] is None:
-                        moves.append(self.convert_to_algebra(tmp1, tmp2))
-                    elif color != self.read_color(self.board[tmp2][tmp1]):
-                        moves.append(self.convert_to_algebra(tmp1, tmp2))
+                tmp_x, tmp_y = pos_x + i, pox_y - i
+                if tmp_x in range(8) and tmp_y in range(8):
+                    if self.board[tmp_y][tmp_x] is None:
+                        moves.append(self.convert_to_algebra(tmp_x, tmp_y))
+                    elif color != self.read_color(self.board[tmp_y][tmp_x]):
+                        moves.append(self.convert_to_algebra(tmp_x, tmp_y))
                         break
                     else:
                         break
                 else:
                     break
             for i in range(1, 8):
-                tmp1, tmp2 = a1 - i, a2 + i
-                if tmp1 in range(8) and tmp2 in range(8):
-                    if self.board[tmp2][tmp1] is None:
-                        moves.append(self.convert_to_algebra(tmp1, tmp2))
-                    elif color != self.read_color(self.board[tmp2][tmp1]):
-                        moves.append(self.convert_to_algebra(tmp1, tmp2))
+                tmp_x, tmp_y = pos_x - i, pox_y + i
+                if tmp_x in range(8) and tmp_y in range(8):
+                    if self.board[tmp_y][tmp_x] is None:
+                        moves.append(self.convert_to_algebra(tmp_x, tmp_y))
+                    elif color != self.read_color(self.board[tmp_y][tmp_x]):
+                        moves.append(self.convert_to_algebra(tmp_x, tmp_y))
                         break
                     else:
                         break
                 else:
                     break
             for i in range(1, 8):
-                tmp1, tmp2 = a1 - i, a2 - i
-                if tmp1 in range(8) and tmp2 in range(8):
-                    if self.board[tmp2][tmp1] is None:
-                        moves.append(self.convert_to_algebra(tmp1, tmp2))
-                    elif color != self.read_color(self.board[tmp2][tmp1]):
-                        moves.append(self.convert_to_algebra(tmp1, tmp2))
+                tmp_x, tmp_y = pos_x - i, pox_y - i
+                if tmp_x in range(8) and tmp_y in range(8):
+                    if self.board[tmp_y][tmp_x] is None:
+                        moves.append(self.convert_to_algebra(tmp_x, tmp_y))
+                    elif color != self.read_color(self.board[tmp_y][tmp_x]):
+                        moves.append(self.convert_to_algebra(tmp_x, tmp_y))
                         break
                     else:
                         break
@@ -372,48 +372,48 @@ class Chess:
         # Queen ###
         elif piece == 'q':
             for i in range(1, 8):
-                tmp1, tmp2 = a1 + i, a2 + i
-                if tmp1 in range(8) and tmp2 in range(8):
-                    if self.board[tmp2][tmp1] is None:
-                        moves.append(self.convert_to_algebra(tmp1, tmp2))
-                    elif color != self.read_color(self.board[tmp2][tmp1]):
-                        moves.append(self.convert_to_algebra(tmp1, tmp2))
+                tmp_x, tmp_y = pos_x + i, pox_y + i
+                if tmp_x in range(8) and tmp_y in range(8):
+                    if self.board[tmp_y][tmp_x] is None:
+                        moves.append(self.convert_to_algebra(tmp_x, tmp_y))
+                    elif color != self.read_color(self.board[tmp_y][tmp_x]):
+                        moves.append(self.convert_to_algebra(tmp_x, tmp_y))
                         break
                     else:
                         break
                 else:
                     break
             for i in range(1, 8):
-                tmp1, tmp2 = a1 + i, a2 - i
-                if tmp1 in range(8) and tmp2 in range(8):
-                    if self.board[tmp2][tmp1] is None:
-                        moves.append(self.convert_to_algebra(tmp1, tmp2))
-                    elif color != self.read_color(self.board[tmp2][tmp1]):
-                        moves.append(self.convert_to_algebra(tmp1, tmp2))
+                tmp_x, tmp_y = pos_x + i, pox_y - i
+                if tmp_x in range(8) and tmp_y in range(8):
+                    if self.board[tmp_y][tmp_x] is None:
+                        moves.append(self.convert_to_algebra(tmp_x, tmp_y))
+                    elif color != self.read_color(self.board[tmp_y][tmp_x]):
+                        moves.append(self.convert_to_algebra(tmp_x, tmp_y))
                         break
                     else:
                         break
                 else:
                     break
             for i in range(1, 8):
-                tmp1, tmp2 = a1 - i, a2 + i
-                if tmp1 in range(8) and tmp2 in range(8):
-                    if self.board[tmp2][tmp1] is None:
-                        moves.append(self.convert_to_algebra(tmp1, tmp2))
-                    elif color != self.read_color(self.board[tmp2][tmp1]):
-                        moves.append(self.convert_to_algebra(tmp1, tmp2))
+                tmp_x, tmp_y = pos_x - i, pox_y + i
+                if tmp_x in range(8) and tmp_y in range(8):
+                    if self.board[tmp_y][tmp_x] is None:
+                        moves.append(self.convert_to_algebra(tmp_x, tmp_y))
+                    elif color != self.read_color(self.board[tmp_y][tmp_x]):
+                        moves.append(self.convert_to_algebra(tmp_x, tmp_y))
                         break
                     else:
                         break
                 else:
                     break
             for i in range(1, 8):
-                tmp1, tmp2 = a1 - i, a2 - i
-                if tmp1 in range(8) and tmp2 in range(8):
-                    if self.board[tmp2][tmp1] is None:
-                        moves.append(self.convert_to_algebra(tmp1, tmp2))
-                    elif color != self.read_color(self.board[tmp2][tmp1]):
-                        moves.append(self.convert_to_algebra(tmp1, tmp2))
+                tmp_x, tmp_y = pos_x - i, pox_y - i
+                if tmp_x in range(8) and tmp_y in range(8):
+                    if self.board[tmp_y][tmp_x] is None:
+                        moves.append(self.convert_to_algebra(tmp_x, tmp_y))
+                    elif color != self.read_color(self.board[tmp_y][tmp_x]):
+                        moves.append(self.convert_to_algebra(tmp_x, tmp_y))
                         break
                     else:
                         break
@@ -421,48 +421,48 @@ class Chess:
                     break
 
             for i in range(1, 8):
-                tmp1, tmp2 = a1 + i, a2
-                if tmp1 in range(8) and tmp2 in range(8):
-                    if self.board[tmp2][tmp1] is None:
-                        moves.append(self.convert_to_algebra(tmp1, tmp2))
-                    elif color != self.read_color(self.board[tmp2][tmp1]):
-                        moves.append(self.convert_to_algebra(tmp1, tmp2))
+                tmp_x, tmp_y = pos_x + i, pox_y
+                if tmp_x in range(8) and tmp_y in range(8):
+                    if self.board[tmp_y][tmp_x] is None:
+                        moves.append(self.convert_to_algebra(tmp_x, tmp_y))
+                    elif color != self.read_color(self.board[tmp_y][tmp_x]):
+                        moves.append(self.convert_to_algebra(tmp_x, tmp_y))
                         break
                     else:
                         break
                 else:
                     break
             for i in range(1, 8):
-                tmp1, tmp2 = a1 - i, a2
-                if tmp1 in range(8) and tmp2 in range(8):
-                    if self.board[tmp2][tmp1] is None:
-                        moves.append(self.convert_to_algebra(tmp1, tmp2))
-                    elif color != self.read_color(self.board[tmp2][tmp1]):
-                        moves.append(self.convert_to_algebra(tmp1, tmp2))
+                tmp_x, tmp_y = pos_x - i, pox_y
+                if tmp_x in range(8) and tmp_y in range(8):
+                    if self.board[tmp_y][tmp_x] is None:
+                        moves.append(self.convert_to_algebra(tmp_x, tmp_y))
+                    elif color != self.read_color(self.board[tmp_y][tmp_x]):
+                        moves.append(self.convert_to_algebra(tmp_x, tmp_y))
                         break
                     else:
                         break
                 else:
                     break
             for i in range(1, 8):
-                tmp1, tmp2 = a1, a2 + i
-                if tmp1 in range(8) and tmp2 in range(8):
-                    if self.board[tmp2][tmp1] is None:
-                        moves.append(self.convert_to_algebra(tmp1, tmp2))
-                    elif color != self.read_color(self.board[tmp2][tmp1]):
-                        moves.append(self.convert_to_algebra(tmp1, tmp2))
+                tmp_x, tmp_y = pos_x, pox_y + i
+                if tmp_x in range(8) and tmp_y in range(8):
+                    if self.board[tmp_y][tmp_x] is None:
+                        moves.append(self.convert_to_algebra(tmp_x, tmp_y))
+                    elif color != self.read_color(self.board[tmp_y][tmp_x]):
+                        moves.append(self.convert_to_algebra(tmp_x, tmp_y))
                         break
                     else:
                         break
                 else:
                     break
             for i in range(1, 8):
-                tmp1, tmp2 = a1, a2 - i
-                if tmp1 in range(8) and tmp2 in range(8):
-                    if self.board[tmp2][tmp1] is None:
-                        moves.append(self.convert_to_algebra(tmp1, tmp2))
-                    elif color != self.read_color(self.board[tmp2][tmp1]):
-                        moves.append(self.convert_to_algebra(tmp1, tmp2))
+                tmp_x, tmp_y = pos_x, pox_y - i
+                if tmp_x in range(8) and tmp_y in range(8):
+                    if self.board[tmp_y][tmp_x] is None:
+                        moves.append(self.convert_to_algebra(tmp_x, tmp_y))
+                    elif color != self.read_color(self.board[tmp_y][tmp_x]):
+                        moves.append(self.convert_to_algebra(tmp_x, tmp_y))
                         break
                     else:
                         break
@@ -471,61 +471,61 @@ class Chess:
 
         # King ###
         elif piece == 'k':
-            tmp1, tmp2 = a1 + 1, a2 + 1
-            if tmp1 in range(8) and tmp2 in range(8):
-                if self.board[tmp2][tmp1] is None:
-                    moves.append(self.convert_to_algebra(tmp1, tmp2))
-                elif color != self.read_color(self.board[tmp2][tmp1]):
-                    moves.append(self.convert_to_algebra(tmp1, tmp2))
+            tmp_x, tmp_y = pos_x + 1, pox_y + 1
+            if tmp_x in range(8) and tmp_y in range(8):
+                if self.board[tmp_y][tmp_x] is None:
+                    moves.append(self.convert_to_algebra(tmp_x, tmp_y))
+                elif color != self.read_color(self.board[tmp_y][tmp_x]):
+                    moves.append(self.convert_to_algebra(tmp_x, tmp_y))
 
-            tmp1, tmp2 = a1 + 1, a2 - 1
-            if tmp1 in range(8) and tmp2 in range(8):
-                if self.board[tmp2][tmp1] is None:
-                    moves.append(self.convert_to_algebra(tmp1, tmp2))
-                elif color != self.read_color(self.board[tmp2][tmp1]):
-                    moves.append(self.convert_to_algebra(tmp1, tmp2))
+            tmp_x, tmp_y = pos_x + 1, pox_y - 1
+            if tmp_x in range(8) and tmp_y in range(8):
+                if self.board[tmp_y][tmp_x] is None:
+                    moves.append(self.convert_to_algebra(tmp_x, tmp_y))
+                elif color != self.read_color(self.board[tmp_y][tmp_x]):
+                    moves.append(self.convert_to_algebra(tmp_x, tmp_y))
 
-            tmp1, tmp2 = a1 - 1, a2 + 1
-            if tmp1 in range(8) and tmp2 in range(8):
-                if self.board[tmp2][tmp1] is None:
-                    moves.append(self.convert_to_algebra(tmp1, tmp2))
-                elif color != self.read_color(self.board[tmp2][tmp1]):
-                    moves.append(self.convert_to_algebra(tmp1, tmp2))
+            tmp_x, tmp_y = pos_x - 1, pox_y + 1
+            if tmp_x in range(8) and tmp_y in range(8):
+                if self.board[tmp_y][tmp_x] is None:
+                    moves.append(self.convert_to_algebra(tmp_x, tmp_y))
+                elif color != self.read_color(self.board[tmp_y][tmp_x]):
+                    moves.append(self.convert_to_algebra(tmp_x, tmp_y))
 
-            tmp1, tmp2 = a1 - 1, a2 - 1
-            if tmp1 in range(8) and tmp2 in range(8):
-                if self.board[tmp2][tmp1] is None:
-                    moves.append(self.convert_to_algebra(tmp1, tmp2))
-                elif color != self.read_color(self.board[tmp2][tmp1]):
-                    moves.append(self.convert_to_algebra(tmp1, tmp2))
+            tmp_x, tmp_y = pos_x - 1, pox_y - 1
+            if tmp_x in range(8) and tmp_y in range(8):
+                if self.board[tmp_y][tmp_x] is None:
+                    moves.append(self.convert_to_algebra(tmp_x, tmp_y))
+                elif color != self.read_color(self.board[tmp_y][tmp_x]):
+                    moves.append(self.convert_to_algebra(tmp_x, tmp_y))
 
-            tmp1, tmp2 = a1 + 1, a2
-            if tmp1 in range(8) and tmp2 in range(8):
-                if self.board[tmp2][tmp1] is None:
-                    moves.append(self.convert_to_algebra(tmp1, tmp2))
-                elif color != self.read_color(self.board[tmp2][tmp1]):
-                    moves.append(self.convert_to_algebra(tmp1, tmp2))
+            tmp_x, tmp_y = pos_x + 1, pox_y
+            if tmp_x in range(8) and tmp_y in range(8):
+                if self.board[tmp_y][tmp_x] is None:
+                    moves.append(self.convert_to_algebra(tmp_x, tmp_y))
+                elif color != self.read_color(self.board[tmp_y][tmp_x]):
+                    moves.append(self.convert_to_algebra(tmp_x, tmp_y))
 
-            tmp1, tmp2 = a1 - 1, a2
-            if tmp1 in range(8) and tmp2 in range(8):
-                if self.board[tmp2][tmp1] is None:
-                    moves.append(self.convert_to_algebra(tmp1, tmp2))
-                elif color != self.read_color(self.board[tmp2][tmp1]):
-                    moves.append(self.convert_to_algebra(tmp1, tmp2))
+            tmp_x, tmp_y = pos_x - 1, pox_y
+            if tmp_x in range(8) and tmp_y in range(8):
+                if self.board[tmp_y][tmp_x] is None:
+                    moves.append(self.convert_to_algebra(tmp_x, tmp_y))
+                elif color != self.read_color(self.board[tmp_y][tmp_x]):
+                    moves.append(self.convert_to_algebra(tmp_x, tmp_y))
 
-            tmp1, tmp2 = a1, a2 + 1
-            if tmp1 in range(8) and tmp2 in range(8):
-                if self.board[tmp2][tmp1] is None:
-                    moves.append(self.convert_to_algebra(tmp1, tmp2))
-                elif color != self.read_color(self.board[tmp2][tmp1]):
-                    moves.append(self.convert_to_algebra(tmp1, tmp2))
+            tmp_x, tmp_y = pos_x, pox_y + 1
+            if tmp_x in range(8) and tmp_y in range(8):
+                if self.board[tmp_y][tmp_x] is None:
+                    moves.append(self.convert_to_algebra(tmp_x, tmp_y))
+                elif color != self.read_color(self.board[tmp_y][tmp_x]):
+                    moves.append(self.convert_to_algebra(tmp_x, tmp_y))
 
-            tmp1, tmp2 = a1, a2 - 1
-            if tmp1 in range(8) and tmp2 in range(8):
-                if self.board[tmp2][tmp1] is None:
-                    moves.append(self.convert_to_algebra(tmp1, tmp2))
-                elif color != self.read_color(self.board[tmp2][tmp1]):
-                    moves.append(self.convert_to_algebra(tmp1, tmp2))
+            tmp_x, tmp_y = pos_x, pox_y - 1
+            if tmp_x in range(8) and tmp_y in range(8):
+                if self.board[tmp_y][tmp_x] is None:
+                    moves.append(self.convert_to_algebra(tmp_x, tmp_y))
+                elif color != self.read_color(self.board[tmp_y][tmp_x]):
+                    moves.append(self.convert_to_algebra(tmp_x, tmp_y))
 
             if self.castle is not None and color == 'w':
                 if 'K' in self.castle:

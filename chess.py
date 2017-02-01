@@ -1,14 +1,15 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 import argparse
-import socket
-import subprocess
 from copy import deepcopy as copy
 from string import ascii_letters, digits, ascii_lowercase
 from time import sleep
 
-from src.helpers import color
+from src.engine_handler import Engine
 from src.exceptions import *
+from src.helpers import color
+from src.network import Network
+
 
 class Chess:
     def __init__(self, auto_show_board=False, colors=True, symbols=False):
@@ -1001,137 +1002,6 @@ class Chess:
 
         return ascii_lowercase[v1] + str(v2 + 1)
 
-
-class Engine:
-    def __init__(self, engine_binary_path='./src/helpers/stockfish', ponder=False):
-        self.path = engine_binary_path
-        self.process = None
-        self.playing_color = None
-        self.logic_thread = None
-        self.sigterm = False
-        self.pondering = False
-        self.ponder = ponder
-
-    def _read(self):
-        line = self.process.stdout.readline().decode()
-        if '\n' in line:
-            line = line.replace('\n', '')
-        return line
-
-    def _write(self, string):
-        if '\n' not in string:
-            string += '\n'
-        self.process.stdin.write(string.encode())
-        self.process.stdin.flush()
-
-    def run_engine(self):
-        args = [self.path]
-        self.process = subprocess.Popen(args, stdout=subprocess.PIPE, stdin=subprocess.PIPE)
-        self._write('setoption name Threads value 4')
-        self._write('setoption name Hash value 256')
-        self._write('setoption name Ponder value true')
-        self._write('setoption name MultiPV value 2')
-        self._write('ucinewgame')
-
-    def start_ponder(self):
-        if not self.pondering:
-            self._write('go ponder')
-            self.pondering = True
-
-    def stop_ponder(self):
-        if self.pondering:
-            self._write('stop')
-            output = self._read()
-            while 'bestmove' not in output:
-                output = self._read()
-            self.pondering = False
-
-    def bestmove(self, fenstring=None, moves_seq=None):
-        if fenstring is not None:
-            if self.ponder:
-                self.stop_ponder()
-            self._write('position fen %s' % fenstring)
-            self._write('go wtime 5000 btime 5000')
-            output = self._read()
-            while 'bestmove' not in output:
-                output = self._read()
-            bestmove = output.split()[1]
-            if self.ponder:
-                self.start_ponder()
-        elif moves_seq is not None:
-            if self.ponder:
-                self.stop_ponder()
-            if len(moves_seq) > 0:
-                self._write('position startpos moves %s' % moves_seq)
-            else:
-                self._write('position startpos')
-            self._write('go wtime 50000 btime 5000')
-            output = self._read()
-            while 'bestmove' not in output:
-                output = self._read()
-            bestmove = output.split()[1]
-            if self.ponder:
-                self.start_ponder()
-        else:
-            raise ValueError
-
-        return bestmove
-
-
-class Network:
-    def __init__(self, game):
-        self.cnx = socket.socket()
-        self.game = game
-        self.socket = None
-
-    @staticmethod
-    def handle_client(client_socket):
-        request = client_socket.recv(1024)
-
-        print(request.decode())
-
-        client_socket.close()
-
-    def host(self, host='127.0.0.1', port=5678):
-        self.cnx.bind((host, port))
-        self.cnx.listen(1)
-        while True:
-            connection, addr = self.cnx.accept()
-            print('nawiązano połączenie z %s!' % addr[0])
-            while True:
-                data = connection.recv(4096)
-                if not data:
-                    print('nodata')
-                    break
-                if 'kurwa' in data.decode():
-                    connection.send('404 ERROR: TY WULGARNY KUTASIE!'.encode())
-                else:
-                    connection.send('200 OK: dane ok ziomek.'.encode())
-                    print(data.decode())
-                if data.decode() == 'exit':
-                    break
-            connection.close()
-            print('zakończono połączenie z %s!' % addr[0])
-        self.cnx.close()
-
-    def join(self, host='127.0.0.1', port=5678):
-        self.cnx.connect((host, port))
-        while True:
-            data = input()
-            self.cnx.send(data.encode())
-            response = self.cnx.recv(4096)
-            print(response.decode())
-            if data == 'exit':
-                break
-        self.cnx.close()
-
-    def move(self, move):
-        if self.socket is not None:
-            self.game.move(move)
-            self.cnx.send(move.encode())
-
-        else:
-            raise Exception('No active connection')
 
 
 def parse_args():

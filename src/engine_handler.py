@@ -2,6 +2,11 @@ import subprocess
 
 
 class Engine:
+    """
+    UCI interface documentation:
+    http://wbec-ridderkerk.nl/html/UCIProtocol.html
+    """
+
     def __init__(self, engine_binary_path='./src/helpers/stockfish', ponder=False):
         self.path = engine_binary_path
         self.process = None

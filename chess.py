@@ -803,7 +803,11 @@ class Chess:
         return fenstring
 
     def set_position(self, fenstring, display=False):
-        # Fen documentation http://www.thechessdrum.net/PGN_Reference.txt
+        """
+        Fen documentation:
+        http://www.thechessdrum.net/PGN_Reference.txt
+        """
+
         if not isinstance(fenstring, str):
             raise TypeError('fenstring must be a string!')
 

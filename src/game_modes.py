@@ -9,8 +9,11 @@ def human_vs_human(chess, engine_binary_path):
 
     while True:
         while True:
+            input_stroke = input('[Białe] Podaj ruch: ')
+            if 'exit' in input_stroke:
+                exit(0)
             try:
-                status = game.move(input('[Białe] Podaj ruch: '))
+                status = game.move(input_stroke)
             except KeyboardInterrupt:
                 print()
                 exit(0)
@@ -41,8 +44,11 @@ def human_vs_human(chess, engine_binary_path):
             break
 
         while True:
+            input_stroke = input('[Czarne] Podaj ruch: ')
+            if 'exit' in input_stroke:
+                exit(0)
             try:
-                status = game.move(input('[czarne] Podaj ruch: '))
+                status = game.move(input_stroke)
             except KeyboardInterrupt:
                 print()
                 exit(0)
@@ -81,8 +87,11 @@ def human_vs_cpu(chess, engine_binary_path):
 
     while True:
         while True:
+            input_stroke = input('Podaj ruch: ')
+            if 'exit' in input_stroke:
+                exit(0)
             try:
-                status = game.move(input('Podaj ruch: '))
+                status = game.move(input_stroke)
             except KeyboardInterrupt:
                 print()
                 exit(0)

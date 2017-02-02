@@ -7,7 +7,7 @@ class Engine:
     http://wbec-ridderkerk.nl/html/UCIProtocol.html
     """
 
-    def __init__(self, engine_binary_path='./src/helpers/stockfish', ponder=False):
+    def __init__(self, engine_binary_path='./src/helpers/stockfish', ponder=False, threads=4):
         self.path = engine_binary_path
         self.process = None
         self.playing_color = None
@@ -15,6 +15,7 @@ class Engine:
         self.sigterm = False
         self.pondering = False
         self.ponder = ponder
+        self.threads = threads
 
     def _read(self):
         line = self.process.stdout.readline().decode()
@@ -31,7 +32,7 @@ class Engine:
     def run_engine(self):
         args = [self.path]
         self.process = subprocess.Popen(args, stdout=subprocess.PIPE, stdin=subprocess.PIPE)
-        self._write('setoption name Threads value 4')
+        self._write('setoption name Threads value %d' % self.threads)
         self._write('setoption name Hash value 256')
         self._write('setoption name Ponder value true')
         self._write('setoption name MultiPV value 2')
@@ -50,12 +51,17 @@ class Engine:
                 output = self._read()
             self.pondering = False
 
-    def bestmove(self, fenstring=None, moves_seq=None):
+    def bestmove(self, fenstring=None, moves_seq=None, btime=None, wtime=None):
+        if isinstance(btime, int) and isinstance(wtime, int):
+            go_string = 'go wtime %d btime %d' % (wtime, btime)
+        else:
+            go_string = 'go'
+
         if fenstring is not None:
             if self.ponder:
                 self.stop_ponder()
             self._write('position fen %s' % fenstring)
-            self._write('go wtime 5000 btime 5000000')
+            self._write(go_string)
             output = self._read()
             while 'bestmove' not in output:
                 output = self._read()
@@ -69,7 +75,7 @@ class Engine:
                 self._write('position startpos moves %s' % moves_seq)
             else:
                 self._write('position startpos')
-            self._write('go wtime 50000 btime 5000')
+            self._write(go_string)
             output = self._read()
             while 'bestmove' not in output:
                 output = self._read()

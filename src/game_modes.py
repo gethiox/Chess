@@ -1,5 +1,6 @@
 from src.engine_handler import Engine
 from time import sleep
+from src.exceptions import *
 
 
 def human_vs_human(chess, engine_binary_path):
@@ -9,15 +10,15 @@ def human_vs_human(chess, engine_binary_path):
 
     while True:
         while True:
-            input_stroke = input('[Białe] Podaj ruch: ')
+            try:
+                input_stroke = input('[Białe] Podaj ruch: ')
+            except KeyboardInterrupt:
+                exit(0)
             if 'exit' in input_stroke:
                 exit(0)
             try:
                 status = game.move(input_stroke)
-            except KeyboardInterrupt:
-                print()
-                exit(0)
-            except:
+            except IllegalMove:
                 print('nieprawidłowe posunięcie')
                 continue
             else:
@@ -44,15 +45,16 @@ def human_vs_human(chess, engine_binary_path):
             break
 
         while True:
-            input_stroke = input('[Czarne] Podaj ruch: ')
+            try:
+                input_stroke = input('[Czarne] Podaj ruch: ')
+            except KeyboardInterrupt:
+                print()
+                exit(0)
             if 'exit' in input_stroke:
                 exit(0)
             try:
                 status = game.move(input_stroke)
-            except KeyboardInterrupt:
-                print()
-                exit(0)
-            except:
+            except IllegalMove:
                 print('nieprawidłowe posunięcie')
                 continue
             else:
@@ -87,15 +89,16 @@ def human_vs_cpu(chess, engine_binary_path):
 
     while True:
         while True:
-            input_stroke = input('Podaj ruch: ')
+            try:
+                input_stroke = input('Podaj ruch: ')
+            except KeyboardInterrupt:
+                print()
+                exit(0)
             if 'exit' in input_stroke:
                 exit(0)
             try:
                 status = game.move(input_stroke)
-            except KeyboardInterrupt:
-                print()
-                exit(0)
-            except:
+            except IllegalMove:
                 print('nieprawidłowe posunięcie')
                 continue
             else:

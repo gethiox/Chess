@@ -1016,10 +1016,10 @@ if __name__ == '__main__':
     if args.auto:
         cpu_vs_cpu(Chess, engine_binary_path=args.stock)
     elif args.join:
-        client = Network()
+        client = Network(Chess)
         client.join(args.join, args.port)
     elif args.host:
-        server = Network()
+        server = Network(Chess)
         server.host(args.host, args.port)
     elif args.human:
         human_vs_cpu(Chess, engine_binary_path=args.stock)

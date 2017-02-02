@@ -52,7 +52,7 @@ class Engine:
             self.pondering = False
 
     def bestmove(self, fenstring=None, moves_seq=None, btime=None, wtime=None):
-        if not fenstring and not moves_seq:
+        if fenstring is None and moves_seq is None:
             raise Exception('you need to specify fenstring or move sequence as board state.')
 
         if isinstance(btime, int) and isinstance(wtime, int):

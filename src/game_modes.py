@@ -121,7 +121,7 @@ def human_vs_cpu(chess, engine_binary_path):
                     print('stalemate! three position repetition by black!')
             sleep(2)
             break
-        status = game.move(e1.bestmove(moves_seq=game.get_moves_seq()))
+        status = game.move(e1.bestmove(moves_seq=game.get_moves_seq(), btime=1000, wtime=1000))
         if status[0]:
             if game.on_move == 'w':
                 if status[2]:
@@ -143,15 +143,15 @@ def human_vs_cpu(chess, engine_binary_path):
 
 def cpu_vs_cpu(chess, engine_binary_path):
     game = chess(auto_show_board=True)
-    e1 = Engine(ponder=True, engine_binary_path=engine_binary_path)
+    e1 = Engine(ponder=True, engine_binary_path=engine_binary_path, threads=2)
     e1.run_engine()
-    e2 = Engine(ponder=False, engine_binary_path=engine_binary_path)
+    e2 = Engine(ponder=False, engine_binary_path=engine_binary_path, threads=1)
     e2.run_engine()
     game.new_game()
 
     while True:
         for i in range(300):
-            status = game.move(e1.bestmove(moves_seq=game.get_moves_seq()))
+            status = game.move(e1.bestmove(moves_seq=game.get_moves_seq(), btime=1000000, wtime=1))
             if status[0]:
                 if game.on_move == 'w':
                     if status[2]:
@@ -169,7 +169,7 @@ def cpu_vs_cpu(chess, engine_binary_path):
                         print('stalemate! three position repetition by black!')
                 sleep(2)
                 break
-            status = game.move(e2.bestmove(moves_seq=game.get_moves_seq()))
+            status = game.move(e2.bestmove(moves_seq=game.get_moves_seq(), btime=1000000, wtime=1))
             if status[0]:
                 if game.on_move == 'w':
                     if status[2]:

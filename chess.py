@@ -711,11 +711,11 @@ class Chess:
                 if piece is None:
                     string += '.' if compact else ' '
                 elif piece == '+':
-                    string += color.yellow(piece) if self.colors else piece
+                    string += color.bold(color.yellow(piece)) if self.colors else piece
                 elif self.symbols:
                     string += self.chess_symbol(piece)
                 elif self.colors:
-                    string += color.green(piece) if piece.isupper() else color.red(piece)
+                    string += color.bold(color.green(piece)) if piece.isupper() else color.bold(color.red(piece))
                 else:
                     string += piece
                 string += ' ' if compact else ' | '
@@ -966,10 +966,13 @@ class Chess:
 
     @staticmethod
     def read_color(piece_code):
-        if piece_code.isupper():
-            return 'w'
-        else:
-            return 'b'
+        if piece_code is None:
+            return None
+        elif isinstance(piece_code, str):
+            if piece_code.isupper():
+                return 'w'
+            else:
+                return 'b'
 
     @staticmethod
     def convert_to_matrix(string):

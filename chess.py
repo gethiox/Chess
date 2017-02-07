@@ -1011,9 +1011,7 @@ class Chess:
 
 if __name__ == '__main__':
     with open('src/helpers/banner') as banner:
-        for row in banner:
-            print(row, end='')
-        print()
+        print(banner.read())
 
     args = parse_args()
     if args.auto:

@@ -4,11 +4,11 @@ from copy import deepcopy as copy
 from string import ascii_letters, digits, ascii_lowercase
 
 from src.exceptions import *
+from src.game_modes import human_vs_human, human_vs_cpu, cpu_vs_cpu
 from src.helpers import color
 from src.helpers.args import parse_args
 from src.network import Network
-from src.game_modes import human_vs_human, human_vs_cpu, cpu_vs_cpu
-
+import re
 
 class Chess:
     def __init__(self, auto_show_board=False, colors=True, symbols=False):
@@ -935,6 +935,39 @@ class Chess:
             if hash_list.count(i) >= 3:
                 return True
         return False
+
+    def load_pgn(self, pgn_path):
+        self.new_game()
+
+        with open(pgn_path) as pgn_file:
+            pgn_str = pgn_file.read()
+
+        moves_str = ''
+        for line in pgn_str.split('\n'):
+            if line.startswith('['):
+                continue
+            if not line:
+                continue
+            moves_str += line + ' '
+
+        regex = re.compile(r'([0-9]+).\s+([a-zA-Z0-9\-\+\\\/]+)\s+([a-zA-Z0-9\-\+\\\/]+)')
+        data = regex.findall(moves_str)
+
+        move_list = []
+        for move in data:
+            move_list.append(move[1])
+            move_list.append(move[2])
+
+        for move in move_list:
+            print(move)
+            self.find_move_from_pgn_notation(move)
+
+
+    def find_move_from_pgn_notation(self, x):
+        pass
+        # if len(x) == 2 and x[0].islower() and x[1].isdigit():
+        #     for i in range(8):
+        #         if self.board[]
 
     @staticmethod
     def chess_symbol(piece):

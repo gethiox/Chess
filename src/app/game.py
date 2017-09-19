@@ -1,4 +1,4 @@
-from typing import Union, List
+from typing import List, Optional
 
 from src.domain.pieces import Piece
 
@@ -10,13 +10,13 @@ class Board:
     It is just my retarded project, what did you even expect from it?
     """
 
-    def __init__(self, pieces: Union[List[Piece], None] = None):
+    def __init__(self, pieces: Optional[List[Piece]] = None):
         if pieces:
             self.pieces = pieces
         else:
             self.pieces = []
 
-    def array(self) -> List[List[Union[Piece, None]]]:
+    def array(self) -> List[List[Optional[Piece]]]:
         """
         Dynamically generated two-dimensional board array
         :return: 8x8 board array
@@ -69,4 +69,3 @@ class Board:
 
 class Chess:
     pass  # TODO
-

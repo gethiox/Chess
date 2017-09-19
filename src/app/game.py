@@ -30,6 +30,9 @@ class Board:
         return arr
 
     def fen(self) -> str:
+        """
+        :return: FEN representation of board state
+        """
         arr = self.array()
         board_fen = ''
 

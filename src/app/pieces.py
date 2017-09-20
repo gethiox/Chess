@@ -1,22 +1,4 @@
-from src.domain.pieces import Piece
-
-ranks = '12345678'
-files = 'abcdefgh'
-
-
-class Position:
-    def __init__(self, x, y):
-        self.pos = [x, y]
-
-    def __repr__(self):
-        return '<Position: %s>' % str(self)
-
-    def __str__(self):
-        return '%s%s' % (files[self.pos[0]], ranks[self.pos[1]])
-
-    def __iter__(self):
-        for coordinate in self.pos:
-            yield coordinate
+from domain.pieces import Piece, Position, white, black
 
 
 class King(Piece):
@@ -41,9 +23,15 @@ class Bishop(Piece):
 
 class Knight(Piece):
     name = 'Knight'
-    char = 'N'
+    char = 'n'
 
 
 class Pawn(Piece):
     name = 'Pawn'
     char = 'p'
+
+
+def from_str(piece: str, position: Position) -> Piece:
+    for real_piece in [King, Queen, Rook, Bishop, Knight, Pawn]:
+        if real_piece.char == piece.lower():
+            return real_piece(black if piece.islower() else white, position)

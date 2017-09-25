@@ -20,6 +20,9 @@ Black = Side("Black")
 
 
 class Piece:
+    """
+    I don't know how to force overwrite these parameters when this class is used as Base instance.
+    """
     name = 'Piece'
     char = 'p'
     points = 1

@@ -22,18 +22,21 @@ class Board:
         Sets board state from FEN
         :param board_fen: string, min 15 letters (ranks separated by slash)
         """
+        board_tmp = [[None for _ in range(8)] for _ in range(8)]
 
         y = 7
         for rank in board_fen.split('/'):
             x = 0
             for piece in rank:
                 if piece not in digits:
-                    self.board[x][y] = from_str(piece)
+                    board_tmp[x][y] = from_str(piece)
                     x += 1
                 else:
                     for i in range(int(piece)):
                         x += 1
             y -= 1
+
+        self.board = board_tmp
 
     def get_fen(self) -> str:
         """

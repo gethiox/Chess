@@ -15,6 +15,7 @@ class Board:
         self.board = [[None for _ in range(8)] for _ in range(8)]
 
     def render(self):
+        # TODO: More rendererers, if more than one will appear then refactor
         tiny_rendererer(self.board)
 
     def set_fen(self, board_fen: str):
@@ -23,6 +24,8 @@ class Board:
         :param board_fen: string, min 15 letters (ranks separated by slash)
         """
         board_tmp = [[None for _ in range(8)] for _ in range(8)]
+
+        # thumbs up for more AVR-Based code like this, maybe assembly inside Python?
 
         y = 7
         for rank in board_fen.split('/'):

@@ -1,10 +1,7 @@
 from string import digits
-from typing import List, Optional
 
 from app.cli_board import tiny_rendererer
 from app.pieces import from_str
-from domain.pieces import Piece
-from domain.pieces import Position
 
 
 class Board:
@@ -14,37 +11,34 @@ class Board:
     It is just my retarded project, what did you even expect from it?
     """
 
-    def __init__(self, pieces: Optional[List[Piece]] = None):
-        if pieces:
-            self.pieces = pieces
-        else:
-            self.pieces = []
+    def __init__(self):
+        self.board = [[None for _ in range(8)] for _ in range(8)]
 
     def render(self):
-        tiny_rendererer(self._array())
+        tiny_rendererer(self.board)
 
     def set_fen(self, board_fen: str):
-        pieces = []
+        """
+        Sets board state from FEN
+        :param board_fen: string, min 15 letters (ranks separated by slash)
+        """
 
         y = 7
         for rank in board_fen.split('/'):
             x = 0
             for piece in rank:
                 if piece not in digits:
-                    pieces.append(from_str(piece, Position((x, y))))
+                    self.board[x][y] = from_str(piece)
                     x += 1
                 else:
                     for i in range(int(piece)):
                         x += 1
             y -= 1
 
-        self.pieces = pieces
-
     def get_fen(self) -> str:
         """
         :return: FEN representation of board state
         """
-        arr = self._array()
         board_fen = ''
 
         # Here we go into C programming style
@@ -54,7 +48,7 @@ class Board:
         while y >= 0:
             x = 0
             while x <= 7:
-                piece = arr[x][y]
+                piece = self.board[x][y]
                 if piece:
                     if no_pieces_counter > 0:
                         board_fen += str(no_pieces_counter)
@@ -74,18 +68,9 @@ class Board:
 
         return board_fen
 
-    def _array(self) -> List[List[Optional[Piece]]]:
-        """
-        Dynamically generated two-dimensional board array
-        :return: 8x8 board array
-        """
-        arr = [[None for _ in range(8)] for _ in range(8)]
-
-        for piece in self.pieces:
-            x, y = tuple(piece.position)
-            arr[x][y] = piece
-
-        return arr
+    def _clear(self):
+        """Should be not used but here you go, just for you"""
+        self.board = [[None for _ in range(8)] for _ in range(8)]
 
     def __repr__(self):
         return '<Board: %s>' % self.get_fen()

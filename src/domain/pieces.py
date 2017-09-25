@@ -32,21 +32,19 @@ class Position:
 class Piece:
     name = 'Piece'
     char = 'p'
+    points = 1
 
-    def __init__(self, side: int, position: Position):
+    def __init__(self, side: int):
         self.side = side
-        self.position = position
 
     def __repr__(self):
         if self.side == white:
             return '<White %s>' % self.name
         elif self.side == black:
             return '<Black %s>' % self.name
-        raise Exception('oops')
 
     def __str__(self):
         if self.side == white:
             return self.char.upper()
         elif self.side == black:
             return self.char.lower()
-        raise Exception('oops')

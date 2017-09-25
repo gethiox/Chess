@@ -56,4 +56,4 @@ def from_str(piece: str) -> Piece:
     """
     if piece.lower() not in ['k', 'q', 'r', 'b', 'n', 'p']:
         raise ValueError('"%s" not defined as Chess piece.', piece)
-    return str_map[piece](White) if piece.isupper() else str_map[piece](Black)
+    return str_map[piece.lower()](White) if piece.isupper() else str_map[piece.lower()](Black)

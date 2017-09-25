@@ -1,4 +1,4 @@
-from typing import Union, Tuple, List
+from typing import Union, Tuple, List, Optional, Iterator
 
 ranks = '12345678'
 files = 'abcdefgh'
@@ -38,6 +38,9 @@ class Piece:
 
 
 class Position:
+    """
+    tuple with two board coordinates is too simple of course
+    """
     def __init__(self, pos: Union[str, Tuple[int], List[int]]):
         if isinstance(pos, tuple) or isinstance(pos, list):
             if len(pos) != 2:
@@ -55,6 +58,28 @@ class Position:
         return '%s%s' % (files[self.pos[0]],
                          ranks[self.pos[1]])
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator[int]:
         for coordinate in self.pos:
             yield coordinate
+
+
+class Move:
+    """
+    Two Position aggregator with optional pawn promotion information
+    """
+    def __init__(self, a: Position, b: Position, promotion: Optional[Piece]):
+        self.a = a
+        self.b = b
+        self.promotion = promotion
+
+    def __repr__(self):
+        if self.promotion:
+            return 'Move: %s to %s with promotion to %s' % (self.a, self.b, self.promotion.name)
+        else:
+            return 'Move: %s to %s' % (self.a, self.b)
+
+    def __str__(self):
+        if self.promotion:
+            return '%s%s%s' % (self.a, self.b, self.promotion.char)
+        else:
+            return '%s%s' % (self.a, self.b)

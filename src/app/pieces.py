@@ -54,6 +54,6 @@ def from_str(piece: str) -> Piece:
     Method designed to return Piece object from given one-letter string.
     Needed only for processing FEN board-state format.
     """
-    if piece.lower() not in ['k', 'q', 'r', 'b', 'n', 'p']:
+    if piece.lower() not in ('k', 'q', 'r', 'b', 'n', 'p'):
         raise ValueError('"%s" not defined as Chess piece.', piece)
     return str_map[piece.lower()](White) if piece.isupper() else str_map[piece.lower()](Black)

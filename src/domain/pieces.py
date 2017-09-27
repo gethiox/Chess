@@ -1,7 +1,5 @@
+from string import ascii_lowercase
 from typing import Union, Tuple, List, Optional, Iterator
-
-ranks = '12345678'
-files = 'abcdefgh'
 
 
 class Side:
@@ -35,7 +33,7 @@ class Piece:
         self.__side = side
 
     @property
-    def side(self):
+    def side(self) -> Side:
         return self.__side
 
     def __repr__(self):
@@ -54,22 +52,39 @@ class Position:
         if isinstance(pos, tuple) or isinstance(pos, list):
             if len(pos) != 2:
                 raise ValueError('Position should be given as tuple/list with only two ints')
-            self.__pos = [pos[0], pos[1]]
+            self.__pos = (pos[0], pos[1])
         elif isinstance(pos, str):
             if len(pos) != 2:
                 raise ValueError('Position should be given as two letter coordinates (file, rank)')
-            self.__pos = [files.index(pos[0]), ranks.index(pos[1])]
+            self.__pos = (ascii_lowercase.index(pos[0]), int(pos[1]) - 1)
 
     @property
-    def pos(self):
+    def pos(self) -> Tuple[int, int]:
         return self.__pos
+
+    def __pos_to_str(self) -> str:
+        # y = str(self.__pos[1] + 1)
+
+        # output_chars = 1
+        # while (len(a)) ** output_chars <= x:
+        #     output_chars += 1
+        # print('chars:', output_chars)
+        # lel = []
+        # for i in range(output_chars):
+        #     val = (x // len(a) ** i) % (len(a))
+        #     if i == output_chars:
+        #         val -= 1
+        #     lel.append('%2d' % val)
+        #
+        # print('out:', ':'.join(lel))
+
+        return NotImplemented
 
     def __repr__(self):
         return 'Position: %s' % self
 
     def __str__(self):
-        return '%s%s' % (files[self.__pos[0]],
-                         ranks[self.__pos[1]])
+        return '%s' % self.__pos_to_str()
 
     def __iter__(self) -> Iterator[int]:
         for coordinate in self.__pos:

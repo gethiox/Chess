@@ -6,13 +6,18 @@ from app.pieces import from_str
 
 class Board:
     """
-    Board only stores list of Pieces and unfortunately not of their positions
-    Positions are hold by Pieces themselves just because it is interesting to implement it that way.
-    It is just my retarded project, what did you even expect from it?
+    Base board object, used to create variable-size boards
     """
 
-    def __init__(self):
+    def __init__(self, size_x: int, size_y: int):
+        self.__size_x = size_x
+        self.__size_y = size_y
+
         self.board = [[None for _ in range(8)] for _ in range(8)]
+
+    @property
+    def size(self) -> tuple:
+        return self.__size_x, self.__size_y
 
     def render(self):
         # TODO: More rendererers, if more than one will appear then refactor
@@ -73,10 +78,6 @@ class Board:
         # Pretty easy to understand
 
         return board_fen
-
-    def _clear(self):
-        """Should not be used but here you go, just for you"""
-        self.board = [[None for _ in range(8)] for _ in range(8)]
 
     def __repr__(self):
         return '<Board: %s>' % self.get_fen()

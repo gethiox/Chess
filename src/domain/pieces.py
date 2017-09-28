@@ -48,21 +48,31 @@ class Position:
     tuple with two board coordinates is too simple of course
     """
 
-    def __init__(self, pos: Union[str, Tuple[int], List[int]]):
+    def __init__(self, pos: Union[str, Tuple[int, int], List[int]]):
         if isinstance(pos, tuple) or isinstance(pos, list):
             if len(pos) != 2:
                 raise ValueError('Position should be given as tuple/list with only two ints')
-            self.__pos = (pos[0], pos[1])
+            self.__file = pos[0]
+            self.__rank = pos[1]
         elif isinstance(pos, str):
             if len(pos) != 2:
                 raise ValueError('Position should be given as two letter coordinates (file, rank)')
-            self.__pos = (ascii_lowercase.index(pos[0]), int(pos[1]) - 1)
+            self.__file = ascii_lowercase.index(pos[0])  # TODO: fix converting for values greater than ascii range
+            self.__rank = int(pos[1]) - 1
 
     @property
-    def pos(self) -> Tuple[int, int]:
-        return self.__pos
+    def file(self) -> int:
+        return self.__file
 
-    def __pos_to_str(self) -> str:
+    @property
+    def rank(self) -> int:
+        return self.__rank
+
+    def __repr__(self):
+        return 'Position: %s' % self
+
+    def __str__(self):
+        # TODO: implement Position converting into string format (eg "e4") for greater values than ascii range
         # y = str(self.__pos[1] + 1)
 
         # output_chars = 1
@@ -80,15 +90,17 @@ class Position:
 
         return NotImplemented
 
-    def __repr__(self):
-        return 'Position: %s' % self
-
-    def __str__(self):
-        return '%s' % self.__pos_to_str()
-
     def __iter__(self) -> Iterator[int]:
-        for coordinate in self.__pos:
+        for coordinate in (self.file, self.rank):
             yield coordinate
+
+    def __getitem__(self, item) -> int:
+        if item == 0:
+            return self.file
+        elif item == 1:
+            return self.rank
+        else:
+            raise IndexError("tuple index out of range")
 
 
 class Move:

@@ -108,7 +108,7 @@ class Move:
     Two Position aggregator with optional pawn promotion information
     """
 
-    def __init__(self, a: Position, b: Position, promotion: Optional[Piece]):
+    def __init__(self, a: Position, b: Position, promotion: Optional[Piece] = None):
         self.__a = a
         self.__b = b
         self.__promotion = promotion

@@ -2,7 +2,7 @@
   ||_| |_||  Welcome in GxChessApp2000!
   |_     _|
     |   |    Ultimate Chess app
-    |   |    writee in pure Python
+    |   |    written in pure Python
     |   |
   _/     \_  Need help?
- |_________| try 'rm -r chess/'
+ |_________| try 'rm -rf chess/'

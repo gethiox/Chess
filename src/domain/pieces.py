@@ -1,5 +1,8 @@
+import re
 from string import ascii_lowercase
 from typing import Union, Tuple, List, Optional, Iterator
+
+location_regex = re.compile(r'^(?P<file>[a-zA-Z]+)(?P<rank>[0-9]+)$')
 
 
 class Side:
@@ -55,10 +58,11 @@ class Position:
             self.__file = pos[0]
             self.__rank = pos[1]
         elif isinstance(pos, str):
-            if len(pos) != 2:
+            output = location_regex.search(pos)
+            if not output:
                 raise ValueError('Position should be given as two letter coordinates (file, rank)')
-            self.__file = ascii_lowercase.index(pos[0])  # TODO: fix converting for values greater than ascii range
-            self.__rank = int(pos[1]) - 1
+            self.__rank = self.__rank_from_str_to_int(output.group('rank'))
+            self.__file = self.__file_from_str_to_int(output.group('file'))
 
     @property
     def file(self) -> int:
@@ -68,27 +72,55 @@ class Position:
     def rank(self) -> int:
         return self.__rank
 
+    @staticmethod
+    def __rank_from_str_to_int(rank: str) -> int:
+        return int(rank) - 1
+
+    @staticmethod
+    def __rank_from_int_to_str(rank: int) -> str:
+        return str(rank + 1)
+
+    @staticmethod
+    def __file_from_str_to_int(rank: str) -> int:
+        # TODO: fix this shit
+        values = []
+        for l in rank:
+            values.append(ascii_lowercase.index(l.lower()))
+        print(rank)
+        print(values)
+        index_value = 0
+        counter = 0
+        for v in values:
+            if counter < 1:
+                index_value += v
+            else:
+                index_value += ((v + 1) * 25) ** counter
+                print(v, counter)
+            counter += 1
+        print(index_value)
+        return index_value
+
+    @staticmethod
+    def __file_from_int_to_str(file: int) -> str:
+        # TODO: fix this shit
+        output_chars = 1
+        while (len(ascii_lowercase)) ** output_chars <= file:
+            output_chars += 1
+        lel = []
+        for i in range(output_chars):
+            val = (file // len(ascii_lowercase) ** i) % (len(ascii_lowercase))
+            # if i == output_chars:
+            #     val -= 1
+            lel.append(val)
+
+        return "".join(ascii_lowercase[x] for x in reversed(lel))
+
     def __repr__(self):
         return 'Position: %s' % self
 
     def __str__(self):
-        # TODO: implement Position converting into string format (eg "e4") for greater values than ascii range
-        # y = str(self.__pos[1] + 1)
-
-        # output_chars = 1
-        # while (len(a)) ** output_chars <= x:
-        #     output_chars += 1
-        # print('chars:', output_chars)
-        # lel = []
-        # for i in range(output_chars):
-        #     val = (x // len(a) ** i) % (len(a))
-        #     if i == output_chars:
-        #         val -= 1
-        #     lel.append('%2d' % val)
-        #
-        # print('out:', ':'.join(lel))
-
-        return NotImplemented
+        return '%s%s' % (self.__file_from_int_to_str(self.file),
+                         self.__rank_from_int_to_str(self.rank))
 
     def __iter__(self) -> Iterator[int]:
         for coordinate in (self.file, self.rank):

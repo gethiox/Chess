@@ -82,35 +82,27 @@ class Position:
 
     @staticmethod
     def __file_from_str_to_int(rank: str) -> int:
-        # TODO: fix this shit
         values = []
         for l in rank:
             values.append(ascii_lowercase.index(l.lower()))
-        print(rank)
-        print(values)
         index_value = 0
         counter = 0
-        for v in values:
+        for v in reversed(values):
             if counter < 1:
                 index_value += v
             else:
-                index_value += ((v + 1) * 25) ** counter
-                print(v, counter)
+                index_value += (v * 26) ** counter
             counter += 1
-        print(index_value)
         return index_value
 
     @staticmethod
     def __file_from_int_to_str(file: int) -> str:
-        # TODO: fix this shit
         output_chars = 1
         while (len(ascii_lowercase)) ** output_chars <= file:
             output_chars += 1
         lel = []
         for i in range(output_chars):
             val = (file // len(ascii_lowercase) ** i) % (len(ascii_lowercase))
-            # if i == output_chars:
-            #     val -= 1
             lel.append(val)
 
         return "".join(ascii_lowercase[x] for x in reversed(lel))

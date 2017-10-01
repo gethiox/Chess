@@ -74,14 +74,28 @@ class Position:
 
     @staticmethod
     def __rank_from_str_to_int(rank: str) -> int:
+        """
+        Converting rank from standard string format to internal int value (starts from 0 instead of 1),
+        eg. 1 in standard string means 0 in internal int format (value is a second part of position, eg "a1")
+        """
         return int(rank) - 1
 
     @staticmethod
     def __rank_from_int_to_str(rank: int) -> str:
+        """
+        Converting rank from internal value to standard string format (starts from 1 instead of 0),
+        eg. 0 in internal int means 1 in standard string format (value is a second part of position, eg "a1")
+        """
         return str(rank + 1)
 
     @staticmethod
     def __file_from_str_to_int(rank: str) -> int:
+        """
+        Converting file from standard string format to internal int value,
+        eg. "A" means 0, "B": 1, "Z": 25, "BA": 26 (Note: 26 == "BA", not "AA" because "A" and "AA" is an equal value,
+        just like 01 == 1 in decimal system)
+        """
+        # Warning, my own, not very well tested implementation of base26 converter
         values = []
         for l in rank:
             values.append(ascii_lowercase.index(l.lower()))
@@ -97,15 +111,21 @@ class Position:
 
     @staticmethod
     def __file_from_int_to_str(file: int) -> str:
+        """
+        Converting file from internal int value to standard string format,
+        eg. 0 means "A", 1: "B", 25: "Z", 26: "BA" (Note: 26 == "BA", not "AA" because "A" and "AA" is an equal value,
+        just like 01 == 1 in decimal system)
+        """
+        # Warning, my own, not very well tested implementation of base26 converter
         output_chars = 1
         while (len(ascii_lowercase)) ** output_chars <= file:
             output_chars += 1
-        lel = []
+        values = []
         for i in range(output_chars):
             val = (file // len(ascii_lowercase) ** i) % (len(ascii_lowercase))
-            lel.append(val)
+            values.append(val)
 
-        return "".join(ascii_lowercase[x] for x in reversed(lel))
+        return "".join(ascii_lowercase[x] for x in reversed(values))
 
     def __repr__(self):
         return 'Position: %s' % self

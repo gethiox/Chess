@@ -21,9 +21,10 @@ class Board:
 
     def render(self):
         # TODO: More rendererers, if more than one will appear then refactor
+        # TODO: Re/move CLI renderer from this object, it is not supposed to be there
         tiny_rendererer(self.board)
 
-    def set_fen(self, board_fen: str):
+    def set_fen(self, board_fen: str):  # TODO: validate input string
         """
         Sets board state from FEN
         :param board_fen: string, min 15 letters (ranks separated by slash)

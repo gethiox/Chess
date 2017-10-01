@@ -9,15 +9,23 @@ class Board:
     Base board object, used to create variable-size boards
     """
 
-    def __init__(self, size_x: int = 8, size_y: int = 8):  # 8x8 as standard size of chess board
-        self.__size_x = size_x
-        self.__size_y = size_y
+    def __init__(self, files: int = 8, ranks: int = 8):  # 8x8 as standard size of chess board
+        self.__files = files
+        self.__ranks = ranks
 
-        self.board = [[None for _ in range(self.size[1])] for _ in range(self.size[0])]
+        self.board = [[None for _ in range(self.ranks)] for _ in range(self.files)]
 
     @property
     def size(self) -> tuple:
-        return self.__size_x, self.__size_y
+        return self.__files, self.__ranks
+
+    @property
+    def files(self):
+        return self.__files
+
+    @property
+    def ranks(self):
+        return self.__ranks
 
     def render(self):
         # TODO: More rendererers, if more than one will appear then refactor
@@ -29,21 +37,21 @@ class Board:
         Sets board state from FEN
         :param board_fen: string, min 15 letters (ranks separated by slash)
         """
-        board_tmp = [[None for _ in range(self.size[1])] for _ in range(self.size[0])]
+        board_tmp = [[None for _ in range(self.ranks)] for _ in range(self.files)]
 
         # thumbs up for more AVR-Based code like this, maybe assembly inside Python?
 
-        y = self.size[1] - 1
+        rank_counter = self.ranks - 1
         for rank in board_fen.split('/'):
-            x = 0
+            file_counter = 0
             for piece in rank:
                 if piece not in digits:
-                    board_tmp[x][y] = from_str(piece)
-                    x += 1
+                    board_tmp[file_counter][rank_counter] = from_str(piece)
+                    file_counter += 1
                 else:
                     for i in range(int(piece)):
-                        x += 1
-            y -= 1
+                        file_counter += 1
+            rank_counter -= 1
 
         self.board = board_tmp
 
@@ -56,11 +64,11 @@ class Board:
         # Here we go into C programming style
 
         no_pieces_counter = 0
-        y = self.size[1] - 1
-        while y >= 0:
-            x = 0
-            while x <= self.size[0] - 1:
-                piece = self.board[x][y]
+        rank_counter = self.ranks - 1
+        while rank_counter >= 0:
+            file_counter = 0
+            while file_counter <= self.files - 1:
+                piece = self.board[file_counter][rank_counter]
                 if piece:
                     if no_pieces_counter > 0:
                         board_fen += str(no_pieces_counter)
@@ -68,13 +76,13 @@ class Board:
                     board_fen += str(piece)
                 else:
                     no_pieces_counter += 1
-                x += 1
+                file_counter += 1
             if no_pieces_counter > 0:
                 board_fen += str(no_pieces_counter)
                 no_pieces_counter = 0
-            if y > 0:
+            if rank_counter > 0:
                 board_fen += '/'
-            y -= 1
+            rank_counter -= 1
 
         # Pretty easy to understand
 

@@ -97,15 +97,15 @@ class Position:
         """
         # Warning, my own, not very well tested implementation of base26 converter
         values = []
-        for l in rank:
-            values.append(ascii_lowercase.index(l.lower()))
+        for letter in rank:
+            values.append(ascii_lowercase.index(letter.lower()))
         index_value = 0
         counter = 0
-        for v in reversed(values):
+        for value in reversed(values):
             if counter < 1:
-                index_value += v
+                index_value += value
             else:
-                index_value += (v * 26) ** counter
+                index_value += (value * 26) ** counter
             counter += 1
         return index_value
 

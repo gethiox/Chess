@@ -9,11 +9,11 @@ class Board:
     Base board object, used to create variable-size boards
     """
 
-    def __init__(self, size_x: int, size_y: int):
+    def __init__(self, size_x: int = 8, size_y: int = 8):  # 8x8 as standard size of chess board
         self.__size_x = size_x
         self.__size_y = size_y
 
-        self.board = [[None for _ in range(8)] for _ in range(8)]
+        self.board = [[None for _ in range(self.size[1])] for _ in range(self.size[0])]
 
     @property
     def size(self) -> tuple:
@@ -28,11 +28,11 @@ class Board:
         Sets board state from FEN
         :param board_fen: string, min 15 letters (ranks separated by slash)
         """
-        board_tmp = [[None for _ in range(8)] for _ in range(8)]
+        board_tmp = [[None for _ in range(self.size[1])] for _ in range(self.size[0])]
 
         # thumbs up for more AVR-Based code like this, maybe assembly inside Python?
 
-        y = 7
+        y = self.size[1] - 1
         for rank in board_fen.split('/'):
             x = 0
             for piece in rank:
@@ -55,10 +55,10 @@ class Board:
         # Here we go into C programming style
 
         no_pieces_counter = 0
-        y = 7
+        y = self.size[1] - 1
         while y >= 0:
             x = 0
-            while x <= 7:
+            while x <= self.size[0] - 1:
                 piece = self.board[x][y]
                 if piece:
                     if no_pieces_counter > 0:

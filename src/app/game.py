@@ -32,7 +32,9 @@ class Board:
         # TODO: Re/move CLI renderer from this object, it is not supposed to be there
         tiny_rendererer(self.board)
 
-    def set_fen(self, board_fen: str):  # TODO: validate input string
+    def set_fen(self, board_fen: str):
+        # TODO: validate input string
+        # TODO: solve variable board problem, support it in some kind of way or disband
         """
         Sets board state from FEN
         :param board_fen: string, min 15 letters (ranks separated by slash)
@@ -56,6 +58,7 @@ class Board:
         self.board = board_tmp
 
     def get_fen(self) -> str:
+        # TODO: solve variable board problem, support it in some kind of way or disband
         """
         :return: FEN representation of board state
         """

@@ -12,9 +12,9 @@ class Board:
     """
 
     def __init__(self, files: int = 8, ranks: int = 8):  # 8x8 as standard size of chess board
-        self.__board_array = [[None for _ in range(self.ranks)] for _ in range(self.files)]
         self.__files = files
         self.__ranks = ranks
+        self.__board_array = [[None for _ in range(self.ranks)] for _ in range(self.files)]
 
     def _get_piece(self, position: Position) -> Optional[Piece]:
         current = self.__board_array[position.file][position.rank]

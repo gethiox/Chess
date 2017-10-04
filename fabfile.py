@@ -9,12 +9,17 @@ def _get_packages(exclude=('*tests*',)):
     return find_packages(where=SRC_DIR, exclude=exclude)
 
 
-def test():
+def test(cov=''):
     """
     Run test suite
     """
-    local("nosetests --rednose {dir}".format(
-        dir=SRC_DIR
+    flags = ''
+    if cov:
+        flags += '--with-coverage '
+
+    local("nosetests --rednose {flags} {dir}".format(
+        flags=flags,
+        dir=SRC_DIR,
     ))
 
 

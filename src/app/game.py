@@ -1,7 +1,9 @@
 from string import digits
+from typing import Optional
 
 from app.cli_board import tiny_rendererer
 from app.pieces import from_str
+from domain.pieces import Piece, Position
 
 
 class Board:
@@ -10,10 +12,34 @@ class Board:
     """
 
     def __init__(self, files: int = 8, ranks: int = 8):  # 8x8 as standard size of chess board
+        self.__board_array = [[None for _ in range(self.ranks)] for _ in range(self.files)]
         self.__files = files
         self.__ranks = ranks
 
-        self.board = [[None for _ in range(self.ranks)] for _ in range(self.files)]
+    def _get_piece(self, position: Position) -> Optional[Piece]:
+        current = self.__board_array[position.file][position.rank]
+        return current
+
+    def _put_piece(self, piece: Piece, position: Position) -> Optional[Piece]:
+        """
+        Put Piece on given Position
+        :param piece: Just any kind of Piece
+        :param position: Position object
+        :return: Piece that was standing before putting new (None if none)
+        """
+        current = self.__board_array[position.file][position.rank]
+        self.__board_array[position.file][position.rank] = piece
+        return current
+
+    def _remove_piece(self, position: Position) -> Optional[Position]:
+        """
+        Remove Piece from given Position
+        :param position: Position object
+        :return: Piece that are removed (None if none)
+        """
+        current = self.__board_array[position.file][position.rank]
+        self.__board_array[position.file][position.rank] = None
+        return current
 
     @property
     def size(self) -> tuple:
@@ -30,7 +56,7 @@ class Board:
     def render(self):
         # TODO: More rendererers, if more than one will appear then refactor
         # TODO: Re/move CLI renderer from this object, it is not supposed to be there
-        tiny_rendererer(self.board)
+        tiny_rendererer(self.__board_array)
 
     def set_fen(self, board_fen: str):
         # TODO: validate input string
@@ -55,7 +81,7 @@ class Board:
                         file_counter += 1
             rank_counter -= 1
 
-        self.board = board_tmp
+        self.__board_array = board_tmp
 
     def get_fen(self) -> str:
         # TODO: solve variable board problem, support it in some kind of way or disband
@@ -71,7 +97,7 @@ class Board:
         while rank_counter >= 0:
             file_counter = 0
             while file_counter <= self.files - 1:
-                piece = self.board[file_counter][rank_counter]
+                piece = self.__board_array[file_counter][rank_counter]
                 if piece:
                     if no_pieces_counter > 0:
                         board_fen += str(no_pieces_counter)

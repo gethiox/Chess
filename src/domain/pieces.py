@@ -19,6 +19,10 @@ class Side:
     def __str__(self):
         return self.__name
 
+    def __eq__(self, other):
+        if isinstance(other, Side):
+            return self.name == other.name
+
 
 White = Side("White")
 Black = Side("Black")
@@ -44,6 +48,10 @@ class Piece:
 
     def __str__(self):
         return self.char.upper() if self.__side == White else self.char.lower()
+
+    def __eq__(self, other):
+        if isinstance(other, Piece):
+            return self.name == other.name and self.side == other.side
 
 
 class Position:

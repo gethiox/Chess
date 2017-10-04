@@ -15,7 +15,7 @@ def test(cov=''):
     """
     flags = ''
     if cov:
-        flags += '--with-coverage '
+        flags += '--with-coverage --cover-html --cover-html-dir=coverage'
 
     local("nosetests --rednose {flags} {dir}".format(
         flags=flags,

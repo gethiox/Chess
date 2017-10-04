@@ -6,6 +6,39 @@ from domain.pieces import White, Black, Position
 
 
 class BoardTestCase(TestCase):
+    def board_get_put_remove_piece_test(self):
+        board = Board()
+        old_piece = board._put_piece(
+            piece=Rook(White),
+            position=Position('e4')
+        )
+        self.assertEqual(old_piece, None)
+        self.assertNotEqual(
+            board._get_piece(Position('e3')),
+            Rook(White)
+        )
+        self.assertEqual(
+            board._get_piece(Position('e4')),
+            Rook(White)
+        )
+
+        old_piece = board._put_piece(
+            piece=Queen(Black),
+            position=Position('e4')
+        )
+        self.assertEqual(old_piece, Rook(White))
+        self.assertEqual(
+            board._get_piece(Position('e4')),
+            Queen(Black)
+        )
+
+        old_piece = board._remove_piece(Position('e4'))
+        self.assertEqual(
+            board._get_piece(Position('e4')),
+            None
+        )
+        self.assertEqual(old_piece, Queen(Black))
+
     def read_fenstring_test(self):
         board = Board()
         board._put_piece(piece=King(White),

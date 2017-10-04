@@ -46,11 +46,11 @@ class Board:
         return self.__files, self.__ranks
 
     @property
-    def files(self):
+    def files(self) -> int:
         return self.__files
 
     @property
-    def ranks(self):
+    def ranks(self) -> int:
         return self.__ranks
 
     def render(self):

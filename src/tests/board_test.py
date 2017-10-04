@@ -42,3 +42,5 @@ class BoardTestCase(TestCase):
         board.set_fen('4k3/8/8/8/8/8/8/4K3')
         self.assertEqual(board._get_piece(position=Position('e1')), King(White))
         self.assertEqual(board._get_piece(position=Position('e8')), King(Black))
+        self.assertNotEqual(board._get_piece(position=Position('e8')), King(White))
+        self.assertNotEqual(board._get_piece(position=Position('e8')), Rook(Black))

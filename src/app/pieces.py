@@ -4,39 +4,87 @@ from domain.pieces import Piece, White, Black
 
 
 class King(Piece):
-    name = 'King'
-    char = 'k'
-    points = infinity
+    @property
+    def char(self):
+        return "k"
+
+    @property
+    def points(self):
+        return infinity
+
+    @property
+    def name(self):
+        return "King"
 
 
 class Queen(Piece):
-    name = 'Queen'
-    char = 'q'
-    points = 9
+    @property
+    def points(self) -> int:
+        return 9
+
+    @property
+    def char(self) -> str:
+        return "q"
+
+    @property
+    def name(self) -> str:
+        return "Queen"
 
 
 class Rook(Piece):
-    name = 'Rook'
-    char = 'r'
-    points = 5
+    @property
+    def points(self) -> int:
+        return 5
+
+    @property
+    def char(self) -> str:
+        return 'r'
+
+    @property
+    def name(self) -> str:
+        return "Rook"
 
 
 class Bishop(Piece):
-    name = 'Bishop'
-    char = 'b'
-    points = 3
+    @property
+    def points(self) -> int:
+        return 3
+
+    @property
+    def char(self) -> str:
+        return 'b'
+
+    @property
+    def name(self) -> str:
+        return 'Bishop'
 
 
 class Knight(Piece):
-    name = 'Knight'
-    char = 'n'
-    points = 3
+    @property
+    def points(self) -> int:
+        return 3
+
+    @property
+    def char(self) -> str:
+        return "n"
+
+    @property
+    def name(self) -> str:
+        return "Knight"
 
 
 class Pawn(Piece):
-    name = 'Pawn'
-    char = 'p'
-    points = 1
+    @property
+    def points(self) -> int:
+        return 1
+
+    @property
+    def char(self) -> str:
+        return "p"
+
+    @property
+    def name(self) -> str:
+        return "Pawn"
 
 
 str_map = {

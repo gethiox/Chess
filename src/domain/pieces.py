@@ -1,53 +1,72 @@
 import re
+from abc import ABCMeta, abstractmethod
 from string import ascii_lowercase
 from typing import Union, Tuple, List, Optional, Iterator
 
 location_regex = re.compile(r'^(?P<file>[a-zA-Z]+)(?P<rank>[0-9]+)$')
 
 
-class Side:
-    def __init__(self, name: str):
-        self.__name = name
-
+class Side(metaclass=ABCMeta):
     @property
-    def name(self):
-        return self.__name
+    @abstractmethod
+    def name(self) -> str:
+        """return defined side name"""
+        pass
 
     def __repr__(self):
-        return self.__name
+        return self.name
 
     def __str__(self):
-        return self.__name
+        return self.name
 
     def __eq__(self, other):
         if isinstance(other, Side):
             return self.name == other.name
 
 
-White = Side("White")
-Black = Side("Black")
+class White(Side):
+    @property
+    def name(self) -> str:
+        return "White"
 
 
-class Piece:
-    """
-    I don't know how to force overwrite these parameters when this class is used as Base instance.
-    """
-    name = 'Piece'
-    char = 'p'
-    points = 1
+class Black(Side):
+    @property
+    def name(self) -> str:
+        return "Black"
 
+
+class Piece(metaclass=ABCMeta):
     def __init__(self, side: Side):
         self.__side = side
+
+    @property
+    @abstractmethod
+    def name(self) -> str:
+        """return piece name starts with uppercase, eg. Pawn"""
+        pass
+
+    @property
+    @abstractmethod
+    def char(self) -> str:
+        """return one lowercase letter representation of piece, eg. p"""
+        pass
+
+    @property
+    @abstractmethod
+    def points(self) -> int:
+        """return int piece value representation, eg. 1"""
+        pass
 
     @property
     def side(self) -> Side:
         return self.__side
 
     def __repr__(self):
-        return '%s %s' % (self.__side, self.name)
+        return '%s %s' % (self.side, self.name)
 
     def __str__(self):
-        return self.char.upper() if self.__side == White else self.char.lower()
+        return self.char.upper() if self.side == White else self.char.lower()
 
     def __eq__(self, other):
         if isinstance(other, Piece):

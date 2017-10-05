@@ -13,6 +13,12 @@ class Side(metaclass=ABCMeta):
         """return defined side name"""
         pass
 
+    @property
+    @abstractmethod
+    def char(self):
+        """return defined one-char side name"""
+        pass
+
     def __repr__(self):
         return self.name
 
@@ -26,11 +32,19 @@ class Side(metaclass=ABCMeta):
 
 class White(Side):
     @property
+    def char(self):
+        return "w"
+
+    @property
     def name(self) -> str:
         return "White"
 
 
 class Black(Side):
+    @property
+    def char(self):
+        return "b"
+
     @property
     def name(self) -> str:
         return "Black"

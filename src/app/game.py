@@ -3,20 +3,47 @@ from typing import Optional
 
 from app.cli_board import tiny_rendererer
 from app.pieces import from_str
+from domain.game import Board
 from domain.pieces import Piece, Position
 
 
-class Board:
+class StandardBoard(Board):
     """
-    Base board object, used to create variable-size boards
+    Standard chess board, used to create variable-sized two dimensional boards
     """
+
+    @property
+    def name(self) -> str:
+        return "Standard Chess Board"
 
     def __init__(self, files: int = 8, ranks: int = 8):  # 8x8 as standard size of chess board
         self.__files = files
         self.__ranks = ranks
         self.__board_array = [[None for _ in range(self.ranks)] for _ in range(self.files)]
 
+    @property
+    def size(self) -> tuple:
+        return self.__files, self.__ranks
+
+    @property
+    def files(self) -> int:
+        return self.__files
+
+    @property
+    def ranks(self) -> int:
+        return self.__ranks
+
+    def render(self):
+        # TODO: More rendererers, if more than one will appear then refactor
+        # TODO: Re/move CLI renderer from this object, it is not supposed to be there
+        tiny_rendererer(self.__board_array)
+
     def _get_piece(self, position: Position) -> Optional[Piece]:
+        """
+        Get Piece on given Position
+        :param position: Position object
+        :return: Piece on given Position
+        """
         current = self.__board_array[position.file][position.rank]
         return current
 
@@ -40,23 +67,6 @@ class Board:
         current = self.__board_array[position.file][position.rank]
         self.__board_array[position.file][position.rank] = None
         return current
-
-    @property
-    def size(self) -> tuple:
-        return self.__files, self.__ranks
-
-    @property
-    def files(self) -> int:
-        return self.__files
-
-    @property
-    def ranks(self) -> int:
-        return self.__ranks
-
-    def render(self):
-        # TODO: More rendererers, if more than one will appear then refactor
-        # TODO: Re/move CLI renderer from this object, it is not supposed to be there
-        tiny_rendererer(self.__board_array)
 
     def set_fen(self, board_fen: str):
         # TODO: validate input string
@@ -117,16 +127,10 @@ class Board:
 
         return board_fen
 
-    def __repr__(self):
-        return '<Board: %s>' % self.get_fen()
-
-    def __str__(self):
-        return self.get_fen()
-
 
 class Chess:
     def __init__(self):
-        self.board = Board()
+        self.board = StandardBoard()
 
     def new_game(self):
         self.board.set_fen('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR')

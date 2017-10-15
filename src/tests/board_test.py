@@ -1,13 +1,13 @@
 from unittest import TestCase
 
-from app.game import Board
+from app.game import StandardBoard
 from app.pieces import King, Queen, Rook
 from domain.pieces import White, Black, Position
 
 
 class BoardTestCase(TestCase):
     def board_get_put_remove_piece_test(self):
-        board = Board()
+        board = StandardBoard()
         old_piece = board._put_piece(
             piece=Rook(White),
             position=Position('e4')
@@ -40,7 +40,7 @@ class BoardTestCase(TestCase):
         self.assertEqual(old_piece, Queen(Black))
 
     def read_fenstring_test(self):
-        board = Board()
+        board = StandardBoard()
         board._put_piece(piece=King(White),
                          position=Position('e1'))
         self.assertEqual(board.get_fen(), '8/8/8/8/8/8/8/4K3')
@@ -67,7 +67,7 @@ class BoardTestCase(TestCase):
         self.assertEqual(board.get_fen(), 'r2qk2r/8/8/8/8/8/8/R2QK2R')
 
     def write_fenstring_test(self):
-        board = Board()
+        board = StandardBoard()
         board.set_fen('8/8/8/8/8/8/8/4K3')
         self.assertEqual(board._get_piece(position=Position('e1')), King(White))
         self.assertEqual(board._get_piece(position=Position('e8')), None)

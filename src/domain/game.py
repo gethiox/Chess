@@ -1,8 +1,8 @@
 from abc import ABCMeta, abstractmethod
-from typing import Tuple
 from functools import lru_cache
+from typing import Tuple, Optional
 
-from domain.pieces import Move, Piece, Side
+from domain.pieces import Move, Piece, Side, Position
 
 
 class GameMode(metaclass=ABCMeta):
@@ -52,3 +52,66 @@ class GameMode(metaclass=ABCMeta):
         for side in self.sides:
             d.update({side.char: side})
         return d
+
+
+class Board(metaclass=ABCMeta):
+    """
+    Base board object
+    """
+
+    @property
+    @abstractmethod
+    def name(self) -> str:
+        """
+        Board type name
+        """
+        pass
+
+    @abstractmethod
+    def _get_piece(self, position: Position) -> Optional[Piece]:
+        """
+        Get Piece on given Position
+        :param position: Position object
+        :return: Piece on given Position
+        """
+        pass
+
+    @abstractmethod
+    def _put_piece(self, piece, position: Position) -> Optional[Piece]:
+        """
+        Put Piece on given Position
+        :param piece: Just any kind of Piece
+        :param position: Position object
+        :return: Piece that was standing before putting new (None if none)
+        """
+        pass
+
+    @abstractmethod
+    def _remove_piece(self, position: Position) -> Optional[Piece]:
+        """
+        Remove Piece from given Position
+        :param position: Position object
+        :return: Piece that are removed (None if none)
+        """
+        pass
+
+    @abstractmethod
+    def set_fen(self, board_fen: str):
+        """
+        Sets board state from FEN
+        :param board_fen: string, min 15 letters (ranks separated by slash)
+        """
+        pass
+
+    @abstractmethod
+    def get_fen(self) -> str:
+        """
+        :return: FEN representation of board state
+        """
+        pass
+
+    def __repr__(self):
+        return "<%s>" % self.name
+
+    def __str__(self):
+        return self.name

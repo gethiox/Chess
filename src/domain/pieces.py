@@ -87,7 +87,7 @@ class Piece(metaclass=ABCMeta):
             return self.name == other.name and self.side == other.side
 
 
-class Position:
+class Position:  # TODO: Make this class abstract due to implement Position objects for different Board types.
     """
     tuple with two board coordinates is too simple of course
     """

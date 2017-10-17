@@ -1,10 +1,4 @@
-import re
 from abc import ABCMeta, abstractmethod
-from typing import Optional
-
-from app.pieces import StandardPosition
-
-location_regex = re.compile(r'^(?P<file>[a-zA-Z]+)(?P<rank>[0-9]+)$')
 
 
 class Side(metaclass=ABCMeta):
@@ -100,38 +94,3 @@ class Position(metaclass=ABCMeta):
     def __getitem__(self, item):
         """Should be implemented for index access purpose (object[index]). 0 for X, 1 for Y, 2 for Z etc."""
         pass
-
-
-class Move:  # TODO: Next to abstract? fix constructor
-    """
-    Two Position aggregator with optional pawn promotion information
-    """
-
-    def __init__(self, a: StandardPosition, b: StandardPosition, promotion: Optional[Piece] = None):
-        self.__a = a
-        self.__b = b
-        self.__promotion = promotion
-
-    @property
-    def a(self):
-        return self.__a
-
-    @property
-    def b(self):
-        return self.__b
-
-    @property
-    def promotion(self):
-        return self.__promotion
-
-    def __repr__(self):
-        if self.__promotion:
-            return 'Move: %s to %s with promotion to %s' % (self.__a, self.__b, self.__promotion.name)
-        else:
-            return 'Move: %s to %s' % (self.__a, self.__b)
-
-    def __str__(self):
-        if self.__promotion:
-            return '%s%s%s' % (self.__a, self.__b, self.__promotion.char)
-        else:
-            return '%s%s' % (self.__a, self.__b)

@@ -2,8 +2,8 @@ from abc import ABCMeta, abstractmethod
 from functools import lru_cache
 from typing import Tuple, Optional
 
-from domain.pieces import Move, Piece, Side
-from app.pieces import StandardPosition
+from app.pieces import StandardPosition, Move
+from domain.pieces import Piece, Side
 
 
 class GameMode(metaclass=ABCMeta):

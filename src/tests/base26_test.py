@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from domain.pieces import StandardPosition
+from app.pieces import StandardPosition
 
 
 class MyTestCase(TestCase):

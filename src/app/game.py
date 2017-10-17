@@ -2,9 +2,9 @@ from string import digits
 from typing import Optional
 
 from app.cli_board import tiny_rendererer
-from app.pieces import from_str
+from app.pieces import from_str, StandardPosition
 from domain.game import Board
-from domain.pieces import Piece, StandardPosition
+from domain.pieces import Piece
 
 
 class StandardBoard(Board):

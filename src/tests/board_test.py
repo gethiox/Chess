@@ -1,8 +1,7 @@
 from unittest import TestCase
 
 from app.game import StandardBoard
-from app.pieces import King, Queen, Rook, White, Black
-from domain.pieces import StandardPosition
+from app.pieces import King, Queen, Rook, White, Black, StandardPosition
 
 
 class BoardTestCase(TestCase):

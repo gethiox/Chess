@@ -24,7 +24,7 @@ class Side(metaclass=ABCMeta):
         pass
 
     def __repr__(self):
-        return self.name
+        return "<%s Side>" % self.name
 
     def __str__(self):
         return self.name
@@ -60,7 +60,7 @@ class Piece(metaclass=ABCMeta):
         return self.__side
 
     def __repr__(self):
-        return '%s %s' % (self.side, self.name)
+        return '<%s %s>' % (self.side, self.name)
 
     def __str__(self):
         return self.char.upper() if self.side.capitalize else self.char.lower()
@@ -77,7 +77,7 @@ class Piece(metaclass=ABCMeta):
 
 class Position(metaclass=ABCMeta):
     def __repr__(self):
-        return '<Position: %s>' % self
+        return "<Position>"
 
     @abstractmethod
     def __str__(self):
@@ -91,5 +91,5 @@ class Position(metaclass=ABCMeta):
 
     @abstractmethod
     def __getitem__(self, item):
-        """Should be implemented for index access purpose (object[index]). 0 for X, 1 for Y, 2 for Z etc."""
+        """Should be implemented for index access purpose (Position[index]). 0 for X, 1 for Y, 2 for Z etc."""
         pass

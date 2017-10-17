@@ -263,7 +263,7 @@ class Move:  # TODO: Next to abstract? fix constructor
     def promotion(self):
         return self.__promotion
 
-    def __repr__(self):
+    def __repr__(self):  # TODO: update for positions objects without support of converting to string
         if self.__promotion:
             return 'Move: %s to %s with promotion to %s' % (self.__a, self.__b, self.__promotion.name)
         else:

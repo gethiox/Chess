@@ -112,7 +112,7 @@ class Board(metaclass=ABCMeta):
         pass
 
     def __repr__(self):
-        return "<%s>" % self.name
+        return "<%s Board>" % self.name
 
     def __str__(self):
         return self.name

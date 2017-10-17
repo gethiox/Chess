@@ -15,8 +15,17 @@ class Side(metaclass=ABCMeta):
 
     @property
     @abstractmethod
-    def char(self):
+    def char(self) -> str:
         """return defined one-char side name"""
+        pass
+
+    @property
+    @abstractmethod
+    def capitalize(self) -> bool:
+        """
+        Return True if Piece char representation should be capitalized
+        Should be implemented only for FEN boards representation purpose
+        """
         pass
 
     def __repr__(self):
@@ -28,26 +37,6 @@ class Side(metaclass=ABCMeta):
     def __eq__(self, other):
         if isinstance(other, Side):
             return self.name == other.name
-
-
-class White(Side):
-    @property
-    def char(self):
-        return "w"
-
-    @property
-    def name(self) -> str:
-        return "White"
-
-
-class Black(Side):
-    @property
-    def char(self):
-        return "b"
-
-    @property
-    def name(self) -> str:
-        return "Black"
 
 
 class Piece(metaclass=ABCMeta):
@@ -80,11 +69,31 @@ class Piece(metaclass=ABCMeta):
         return '%s %s' % (self.side, self.name)
 
     def __str__(self):
-        return self.char.upper() if self.side == White else self.char.lower()
+        return self.char.upper() if self.side.capitalize else self.char.lower()
 
     def __eq__(self, other):
         if isinstance(other, Piece):
-            return self.name == other.name and self.side == other.side
+            return self.points == other.points
+
+    def __ne__(self, other):
+        if isinstance(other, Piece):
+            return self.points != other.points
+
+    def __lt__(self, other):
+        if isinstance(other, Piece):
+            return self.points < other.points
+
+    def __le__(self, other):
+        if isinstance(other, Piece):
+            return self.points <= other.points
+
+    def __gt__(self, other):
+        if isinstance(other, Piece):
+            return self.points > other.points
+
+    def __ge__(self, other):
+        if isinstance(other, Piece):
+            return self.points >= other.points
 
 
 class Position:  # TODO: Make this class abstract due to implement Position objects for different Board types.

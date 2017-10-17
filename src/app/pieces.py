@@ -1,6 +1,6 @@
 from math import inf as infinity
 
-from domain.pieces import Piece, White, Black
+from domain.pieces import Piece, Side
 
 
 class King(Piece):
@@ -86,6 +86,37 @@ class Pawn(Piece):
     def name(self) -> str:
         return "Pawn"
 
+
+class WhiteSide(Side):
+    @property
+    def char(self):
+        return "w"
+
+    @property
+    def name(self) -> str:
+        return "White"
+
+    @property
+    def capitalize(self) -> bool:
+        return True
+
+
+class BlackSide(Side):
+    @property
+    def char(self):
+        return "b"
+
+    @property
+    def name(self) -> str:
+        return "Black"
+
+    @property
+    def capitalize(self) -> bool:
+        return False
+
+
+White = WhiteSide()
+Black = BlackSide()
 
 str_map = {
     'k': King,

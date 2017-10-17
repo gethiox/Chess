@@ -96,12 +96,32 @@ class Piece(metaclass=ABCMeta):
             return self.points >= other.points
 
 
-class Position:  # TODO: Make this class abstract due to implement Position objects for different Board types.
+class Position(metaclass=ABCMeta):
+    def __repr__(self):
+        return '<Position: %s>' % self
+
+    @abstractmethod
+    def __str__(self):
+        """Should be implemented for converting position to string purpose if possible, eg. 'e4'"""
+        pass
+
+    @abstractmethod
+    def __iter__(self):
+        """Should be implemented for converting to sequence purpose where first value is a X coordinate, second Y etc."""
+        pass
+
+    @abstractmethod
+    def __getitem__(self, item):
+        """Should be implemented for index access purpose (object[index]). 0 for X, 1 for Y, 2 for Z etc."""
+        pass
+
+
+class StandardPosition(Position):
     """
-    tuple with two board coordinates is too simple of course
+    tuple with two board coordinates is too simple of course, here is a standard 2D Position object implementation.
     """
 
-    def __init__(self, pos: Union[str, Tuple[int, int], List[int]]):
+    def __init__(self, pos: Union[str, Tuple[int, int], List[int]]):  # TODO: decide to support stable and one interface
         if isinstance(pos, tuple) or isinstance(pos, list):
             if len(pos) != 2:
                 raise ValueError('Position should be given as tuple/list with only two ints')
@@ -177,9 +197,6 @@ class Position:  # TODO: Make this class abstract due to implement Position obje
 
         return "".join(ascii_lowercase[x] for x in reversed(values))
 
-    def __repr__(self):
-        return 'Position: %s' % self
-
     def __str__(self):
         return '%s%s' % (self.__file_from_int_to_str(self.file),
                          self.__rank_from_int_to_str(self.rank))
@@ -197,12 +214,12 @@ class Position:  # TODO: Make this class abstract due to implement Position obje
             raise IndexError("tuple index out of range")
 
 
-class Move:
+class Move:  # TODO: Next to abstract? fix constructor
     """
     Two Position aggregator with optional pawn promotion information
     """
 
-    def __init__(self, a: Position, b: Position, promotion: Optional[Piece] = None):
+    def __init__(self, a: StandardPosition, b: StandardPosition, promotion: Optional[Piece] = None):
         self.__a = a
         self.__b = b
         self.__promotion = promotion

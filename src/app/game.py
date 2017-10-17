@@ -4,7 +4,7 @@ from typing import Optional
 from app.cli_board import tiny_rendererer
 from app.pieces import from_str
 from domain.game import Board
-from domain.pieces import Piece, Position
+from domain.pieces import Piece, StandardPosition
 
 
 class StandardBoard(Board):
@@ -38,7 +38,7 @@ class StandardBoard(Board):
         # TODO: Re/move CLI renderer from this object, it is not supposed to be there
         tiny_rendererer(self.__board_array)
 
-    def _get_piece(self, position: Position) -> Optional[Piece]:
+    def _get_piece(self, position: StandardPosition) -> Optional[Piece]:
         """
         Get Piece on given Position
         :param position: Position object
@@ -47,7 +47,7 @@ class StandardBoard(Board):
         current = self.__board_array[position.file][position.rank]
         return current
 
-    def _put_piece(self, piece: Piece, position: Position) -> Optional[Piece]:
+    def _put_piece(self, piece: Piece, position: StandardPosition) -> Optional[Piece]:
         """
         Put Piece on given Position
         :param piece: Just any kind of Piece
@@ -58,7 +58,7 @@ class StandardBoard(Board):
         self.__board_array[position.file][position.rank] = piece
         return current
 
-    def _remove_piece(self, position: Position) -> Optional[Position]:
+    def _remove_piece(self, position: StandardPosition) -> Optional[StandardPosition]:
         """
         Remove Piece from given Position
         :param position: Position object

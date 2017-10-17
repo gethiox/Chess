@@ -2,7 +2,7 @@ from abc import ABCMeta, abstractmethod
 from functools import lru_cache
 from typing import Tuple, Optional
 
-from domain.pieces import Move, Piece, Side, Position
+from domain.pieces import Move, Piece, Side, StandardPosition
 
 
 class GameMode(metaclass=ABCMeta):
@@ -68,7 +68,7 @@ class Board(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def _get_piece(self, position: Position) -> Optional[Piece]:
+    def _get_piece(self, position: StandardPosition) -> Optional[Piece]:
         """
         Get Piece on given Position
         :param position: Position object
@@ -77,7 +77,7 @@ class Board(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def _put_piece(self, piece, position: Position) -> Optional[Piece]:
+    def _put_piece(self, piece, position: StandardPosition) -> Optional[Piece]:
         """
         Put Piece on given Position
         :param piece: Just any kind of Piece
@@ -87,7 +87,7 @@ class Board(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def _remove_piece(self, position: Position) -> Optional[Piece]:
+    def _remove_piece(self, position: StandardPosition) -> Optional[Piece]:
         """
         Remove Piece from given Position
         :param position: Position object

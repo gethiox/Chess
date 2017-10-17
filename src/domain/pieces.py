@@ -30,8 +30,7 @@ class Side(metaclass=ABCMeta):
         return self.name
 
     def __eq__(self, other):
-        if isinstance(other, Side):
-            return self.name == other.name
+        return isinstance(other, type(self))
 
 
 class Piece(metaclass=ABCMeta):

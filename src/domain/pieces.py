@@ -73,27 +73,12 @@ class Piece(metaclass=ABCMeta):
 
     def __eq__(self, other):
         if isinstance(other, Piece):
-            return self.points == other.points
+            return isinstance(other, type(self)) and other.side == self.side
 
     def __ne__(self, other):
         if isinstance(other, Piece):
-            return self.points != other.points
-
-    def __lt__(self, other):
-        if isinstance(other, Piece):
-            return self.points < other.points
-
-    def __le__(self, other):
-        if isinstance(other, Piece):
-            return self.points <= other.points
-
-    def __gt__(self, other):
-        if isinstance(other, Piece):
-            return self.points > other.points
-
-    def __ge__(self, other):
-        if isinstance(other, Piece):
-            return self.points >= other.points
+            return not (isinstance(other, type(self)) and other.side == self.side)
+        return True
 
 
 class Position(metaclass=ABCMeta):

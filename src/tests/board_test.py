@@ -13,6 +13,8 @@ class BoardTestCase(TestCase):
             position=StandardPosition('e4')
         )
         self.assertEqual(old_piece, None)
+        print(board._get_piece(StandardPosition('e3')))
+        print(Rook(White))
         self.assertNotEqual(
             board._get_piece(StandardPosition('e3')),
             Rook(White)

@@ -241,7 +241,7 @@ class StandardPosition(Position):
             raise IndexError("tuple index out of range")
 
 
-class Move:  # TODO: Next to abstract? fix constructor
+class Move:
     """
     Two Position aggregator with optional pawn promotion information
     """

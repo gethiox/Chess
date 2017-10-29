@@ -1,7 +1,6 @@
 from string import digits
 from typing import Optional
 
-from app.cli_board import tiny_rendererer
 from app.pieces import from_str, StandardPosition
 from domain.game import Board
 from domain.pieces import Piece
@@ -20,6 +19,7 @@ class StandardBoard(Board):
         self.__files = files
         self.__ranks = ranks
         self.__board_array = [[None for _ in range(self.ranks)] for _ in range(self.files)]
+        # TODO: Use legit arrays from numpy but maybe it is not necessary
 
     @property
     def size(self) -> tuple:
@@ -32,11 +32,6 @@ class StandardBoard(Board):
     @property
     def ranks(self) -> int:
         return self.__ranks
-
-    def render(self):
-        # TODO: More rendererers, if more than one will appear then refactor
-        # TODO: Re/move CLI renderer from this object, it is not supposed to be there
-        tiny_rendererer(self.__board_array)
 
     def _get_piece(self, position: StandardPosition) -> Optional[Piece]:
         """
@@ -70,13 +65,14 @@ class StandardBoard(Board):
 
     def set_fen(self, board_fen: str):
         # TODO: validate input string
-        # TODO: solve variable board problem, support it in some kind of way or disband
         """
         Sets board state from FEN
         :param board_fen: string, min 15 letters (ranks separated by slash)
         """
-        board_tmp = [[None for _ in range(self.ranks)] for _ in range(self.files)]
+        if self.files != 8 or self.ranks != 8:  # FEN is not supported on other-sized board than 8x8
+            raise NotImplemented
 
+        board_tmp = [[None for _ in range(self.ranks)] for _ in range(self.files)]
         # thumbs up for more AVR-Based code like this, maybe assembly inside Python?
 
         rank_counter = self.ranks - 1
@@ -94,12 +90,13 @@ class StandardBoard(Board):
         self.__board_array = board_tmp
 
     def get_fen(self) -> str:
-        # TODO: solve variable board problem, support it in some kind of way or disband
         """
         :return: FEN representation of board state
         """
-        board_fen = ''
+        if self.files != 8 or self.ranks != 8:  # FEN is not supported on other-sized board than 8x8
+            raise NotImplemented
 
+        board_fen = ''
         # Here we go into C programming style
 
         no_pieces_counter = 0
@@ -124,13 +121,15 @@ class StandardBoard(Board):
             rank_counter -= 1
 
         # Pretty easy to understand
-
         return board_fen
 
 
-class Chess:
-    def __init__(self):
-        self.board = StandardBoard()
+class Player:
+    def __init__(self, full_name: str = "Unknown"):
+        self.name = full_name
 
-    def new_game(self):
-        self.board.set_fen('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR')
+    def __str__(self):
+        return self.name
+
+    def __repr__(self):
+        return "<Player: \"%s\">" % self.name

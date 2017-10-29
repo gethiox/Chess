@@ -1,4 +1,5 @@
 from abc import ABCMeta, abstractmethod
+from typing import Type
 
 
 class Side(metaclass=ABCMeta):
@@ -34,7 +35,7 @@ class Side(metaclass=ABCMeta):
 
 
 class Piece(metaclass=ABCMeta):
-    def __init__(self, side: Side):
+    def __init__(self, side: Type[Side]):
         self.__side = side
 
     @property
@@ -56,7 +57,7 @@ class Piece(metaclass=ABCMeta):
         pass
 
     @property
-    def side(self) -> Side:
+    def side(self) -> Type[Side]:
         return self.__side
 
     def __repr__(self):

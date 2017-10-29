@@ -1,9 +1,10 @@
 from abc import ABCMeta, abstractmethod
-from functools import lru_cache
-from typing import Tuple, Optional
+from datetime import datetime
+from typing import Optional, Sequence, Type
 
-from app.pieces import StandardPosition, Move
-from domain.pieces import Piece, Side
+from app.game import Player
+from app.pieces import Move, Black, White
+from domain.pieces import Piece, Side, Position
 
 
 class GameMode(metaclass=ABCMeta):
@@ -26,7 +27,7 @@ class GameMode(metaclass=ABCMeta):
 
     @property
     @abstractmethod
-    def pieces(self) -> Tuple[Piece]:
+    def pieces(self) -> Sequence[Type[Piece]]:
         """
         :return: Tuple of Pieces supported with implemented GameMode
         """
@@ -34,25 +35,59 @@ class GameMode(metaclass=ABCMeta):
 
     @property
     @abstractmethod
-    def sides(self) -> Tuple[Side]:
+    def sides(self) -> Sequence[Type[Side]]:
         """
         :return: tuple of players sides
         """
         pass
 
-    @lru_cache(maxsize=1)
-    def __pieces_dict(self):
-        d = {}
-        for piece in self.pieces:
-            d.update({piece.char: piece})
-        return d
 
-    @lru_cache(maxsize=1)
-    def __sides_dict(self):
-        d = {}
-        for side in self.sides:
-            d.update({side.char: side})
-        return d
+class Game(metaclass=ABCMeta):
+    """
+    Generic Game logic base class
+    """
+
+    def __init__(self, player1: Player, player2: Player, mode: Type[GameMode]):
+        self.__players = {
+            White: player1,
+            Black: player2,
+        }
+        self.mode = mode
+
+        self.__start_time = None
+        self.__create_time = datetime.now()
+
+        self.__moves = 0
+        self.__half_moves = 0
+
+    @property
+    def players(self) -> Sequence[Player]:
+        return tuple(player for _, player in self.__players.items())
+
+    @property
+    def start_time(self) -> datetime:
+        return self.__start_time
+
+    @property
+    def creation_date(self) -> datetime:
+        return self.__create_time
+
+    @property
+    def on_move(self) -> Side:
+        sides = tuple(self.__players.keys())
+        return sides[self.__half_moves % len(self.players)]
+
+    def start_game(self):
+        self.__start_time = datetime.now()
+
+    @abstractmethod
+    def game_state(self) -> Side:
+        """ 
+        method return game state which depends on specific rules for every game mode.
+        Look into "Normal" game mode class for inspirations (if is even implemented right now)
+        :return: not_yet_started OR on_move_side OR winner_side
+        """
+        pass
 
 
 class Board(metaclass=ABCMeta):
@@ -69,7 +104,7 @@ class Board(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def _get_piece(self, position: StandardPosition) -> Optional[Piece]:
+    def _get_piece(self, position: Type[Position]) -> Optional[Type[Piece]]:
         """
         Get Piece on given Position
         :param position: Position object
@@ -78,7 +113,7 @@ class Board(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def _put_piece(self, piece, position: StandardPosition) -> Optional[Piece]:
+    def _put_piece(self, piece, position: Type[Position]) -> Optional[Type[Piece]]:
         """
         Put Piece on given Position
         :param piece: Just any kind of Piece
@@ -88,7 +123,7 @@ class Board(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def _remove_piece(self, position: StandardPosition) -> Optional[Piece]:
+    def _remove_piece(self, position: Type[Position]) -> Optional[Type[Piece]]:
         """
         Remove Piece from given Position
         :param position: Position object

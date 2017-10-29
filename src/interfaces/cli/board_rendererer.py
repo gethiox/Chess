@@ -3,7 +3,7 @@ from typing import List, Optional
 from domain.pieces import Piece
 
 
-def tiny_rendererer(board_array: List[List[Optional[Piece]]]):
+def tiny(board_array: List[List[Optional[Piece]]]):
     # TODO: inject Board object, add support for variable board size
 
     board_str = ''

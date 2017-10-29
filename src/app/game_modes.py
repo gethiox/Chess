@@ -1,40 +1,25 @@
 # see more: https://en.wikipedia.org/wiki/List_of_chess_variants
+from typing import Sequence, Type
 
-from abc import abstractmethod
-from time import time
-
-from domain.pieces import Side
-
-
-class GameMode:
-    """
-    Generic Game Mode class
-    """
-    start_time = None
-
-    @property
-    @abstractmethod
-    def on_move(self) -> Side:
-        """ REQUIRED
-        :return: Side
-        """
-        return NotImplemented
-
-    def start_game(self):
-        self.start_time = time()
-
-    @abstractmethod
-    def game_state(self):
-        """ REQUIRED
-        method return game state which depends on specific rules for every game mode.
-        Look into "Normal" game mode class for inspirations (if is even implemented right now)
-        :return: not_yet_started OR on_move_side OR winner_side
-        """
-        raise NotImplemented
+from app.pieces import Move, King, Pawn, Knight, Bishop, Rook, Queen, Black, White
+from domain.game import GameMode
+from domain.pieces import Side, Piece
 
 
 class Normal(GameMode):
-    pass
+    def assert_move(self, move: Move) -> bool:
+        pass
+
+    @property
+    def sides(self) -> Sequence[Type[Side]]:
+        return White, Black
+
+    def init_board_state(self) -> str:
+        pass
+
+    @property
+    def pieces(self) -> Sequence[Type[Piece]]:
+        return King, Queen, Rook, Bishop, Knight, Pawn
 
 
 class Chess960(GameMode):

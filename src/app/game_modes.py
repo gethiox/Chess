@@ -14,7 +14,7 @@ class Normal(GameMode):
     def sides(self) -> Sequence[Type[Side]]:
         return White, Black
 
-    def init_board_state(self) -> str:
+    def init_board_state(self):
         pass
 
     @property

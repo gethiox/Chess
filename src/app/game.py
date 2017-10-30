@@ -1,5 +1,5 @@
 from string import digits
-from typing import Optional
+from typing import Optional, Tuple, Type
 
 from app.pieces import from_str, StandardPosition
 from domain.game import Board
@@ -22,7 +22,7 @@ class StandardBoard(Board):
         # TODO: Use legit arrays from numpy but maybe it is not necessary
 
     @property
-    def size(self) -> tuple:
+    def size(self) -> Tuple[int, int]:
         return self.__files, self.__ranks
 
     @property
@@ -33,7 +33,7 @@ class StandardBoard(Board):
     def ranks(self) -> int:
         return self.__ranks
 
-    def _get_piece(self, position: StandardPosition) -> Optional[Piece]:
+    def _get_piece(self, position: StandardPosition) -> Optional[Type[Piece]]:
         """
         Get Piece on given Position
         :param position: Position object
@@ -42,7 +42,7 @@ class StandardBoard(Board):
         current = self.__board_array[position.file][position.rank]
         return current
 
-    def _put_piece(self, piece: Piece, position: StandardPosition) -> Optional[Piece]:
+    def _put_piece(self, piece: Type[Piece], position: StandardPosition) -> Optional[Type[Piece]]:
         """
         Put Piece on given Position
         :param piece: Just any kind of Piece

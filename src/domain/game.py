@@ -1,6 +1,6 @@
 from abc import ABCMeta, abstractmethod
 from datetime import datetime
-from typing import Optional, Sequence, Type
+from typing import Optional, Sequence, Type, Tuple
 
 from app.game import Player
 from app.pieces import Move, Black, White
@@ -61,7 +61,7 @@ class Game(metaclass=ABCMeta):
         self.__half_moves = 0
 
     @property
-    def players(self) -> Sequence[Player]:
+    def players(self) -> Tuple[Player, ...]:
         return tuple(player for _, player in self.__players.items())
 
     @property
@@ -73,7 +73,7 @@ class Game(metaclass=ABCMeta):
         return self.__create_time
 
     @property
-    def on_move(self) -> Side:
+    def on_move(self) -> Type[Side]:
         sides = tuple(self.__players.keys())
         return sides[self.__half_moves % len(self.players)]
 
@@ -81,7 +81,7 @@ class Game(metaclass=ABCMeta):
         self.__start_time = datetime.now()
 
     @abstractmethod
-    def game_state(self) -> Side:
+    def game_state(self) -> Type[Side]:
         """ 
         method return game state which depends on specific rules for every game mode.
         Look into "Normal" game mode class for inspirations (if is even implemented right now)

@@ -82,7 +82,7 @@ class Game(metaclass=ABCMeta):
 
     @abstractmethod
     def game_state(self) -> Type[Side]:
-        """ 
+        """
         method return game state which depends on specific rules for every game mode.
         Look into "Normal" game mode class for inspirations (if is even implemented right now)
         :return: not_yet_started OR on_move_side OR winner_side

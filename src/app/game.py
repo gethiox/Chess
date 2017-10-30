@@ -1,5 +1,5 @@
 from string import digits
-from typing import Optional, Tuple, Type
+from typing import Optional, Tuple, Type, Sequence
 
 from app.pieces import from_str, StandardPosition
 from domain.game import Board
@@ -20,6 +20,10 @@ class StandardBoard(Board):
         self.__ranks = ranks
         self.__board_array = [[None for _ in range(self.ranks)] for _ in range(self.files)]
         # TODO: Use legit arrays from numpy but maybe it is not necessary
+
+    @property
+    def array(self) -> Sequence[Sequence[Optional[Type[Piece]]]]:
+        return self.__board_array
 
     @property
     def size(self) -> Tuple[int, int]:

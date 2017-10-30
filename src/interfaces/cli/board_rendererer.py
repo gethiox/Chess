@@ -1,18 +1,15 @@
-from typing import List, Optional
-
-from domain.pieces import Piece
+from app.game import StandardBoard
 
 
-def tiny(board_array: List[List[Optional[Piece]]]):
-    # TODO: inject Board object, add support for variable board size
-
+def tiny(board: StandardBoard):
+    # TODO: add support for variable board size
     board_str = ''
 
     rank_counter = 7
     while rank_counter >= 0:
         file_counter = 0
         while file_counter <= 7:
-            piece = board_array[file_counter][rank_counter]
+            piece = board.array[file_counter][rank_counter]
             if piece:
                 board_str += str(piece)
             else:

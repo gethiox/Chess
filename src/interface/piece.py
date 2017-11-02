@@ -1,14 +1,15 @@
 from abc import ABCMeta, abstractmethod
-from typing import Type, Sequence
+from typing import Type, Sequence, TYPE_CHECKING
 
-from domain.board import Board
-from domain.move import Move
-from domain.position import Position
-from domain.side import Side
+if TYPE_CHECKING:
+    from interface.move import Move
+    from interface.position import Position
+    from interface.side import Side
+    from interface.board import Board
 
 
 class Piece(metaclass=ABCMeta):
-    def __init__(self, side: Type[Side]):
+    def __init__(self, side: Type['Side']):
         self.__side = side
 
     @property
@@ -30,12 +31,12 @@ class Piece(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def available_moves(self, board: Type[Board], position: Type[Position]) -> Sequence[Type[Move]]:
+    def available_moves(self, board: Type['Board'], position: Type['Position']) -> Sequence[Type['Move']]:
         """return sequence of available Moves"""
         pass
 
     @property
-    def side(self) -> Type[Side]:
+    def side(self) -> Type['Side']:
         return self.__side
 
     def __repr__(self):
@@ -45,10 +46,10 @@ class Piece(metaclass=ABCMeta):
         return self.char.upper() if self.side.capitalize else self.char.lower()
 
     def __eq__(self, other):
-        if isinstance(other, Piece):
+        if isinstance(other, type(self)):
             return isinstance(other, type(self)) and other.side == self.side
 
     def __ne__(self, other):
-        if isinstance(other, Piece):
+        if isinstance(other, type(self)):
             return not (isinstance(other, type(self)) and other.side == self.side)
         return True

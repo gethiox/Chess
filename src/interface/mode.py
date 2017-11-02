@@ -1,9 +1,10 @@
 from abc import ABCMeta, abstractmethod
-from typing import Sequence, Type
+from typing import Sequence, Type, TYPE_CHECKING
 
-from domain.move import Move
-from domain.piece import Piece
-from domain.side import Side
+if TYPE_CHECKING:
+    from interface.move import Move
+    from interface.piece import Piece
+    from interface.side import Side
 
 
 class GameMode(metaclass=ABCMeta):
@@ -16,7 +17,7 @@ class GameMode(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def assert_move(self, move: Move) -> bool:
+    def assert_move(self, move: 'Move') -> bool:
         """
         Assert if given move in current game state and game mode is legal
         :param move: Move type
@@ -26,7 +27,7 @@ class GameMode(metaclass=ABCMeta):
 
     @property
     @abstractmethod
-    def pieces(self) -> Sequence[Type[Piece]]:
+    def pieces(self) -> Sequence[Type['Piece']]:
         """
         :return: Tuple of Pieces supported with implemented GameMode
         """
@@ -34,7 +35,7 @@ class GameMode(metaclass=ABCMeta):
 
     @property
     @abstractmethod
-    def sides(self) -> Sequence[Type[Side]]:
+    def sides(self) -> Sequence[Type['Side']]:
         """
         :return: tuple of players sides
         """

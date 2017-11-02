@@ -1,10 +1,14 @@
 # see more: https://en.wikipedia.org/wiki/List_of_chess_variants
-from typing import Sequence, Type
+from typing import Sequence, Type, TYPE_CHECKING
 
-from app.pieces import StandardMove, King, Pawn, Knight, Bishop, Rook, Queen, Black, White
-from domain.mode import GameMode
-from domain.piece import Piece
-from domain.side import Side
+from app.move import StandardMove
+from app.pieces import King, Pawn, Knight, Bishop, Rook, Queen
+from app.sides import White, Black
+from interface.mode import GameMode
+
+if TYPE_CHECKING:
+    from interface.piece import Piece
+    from interface.side import Side
 
 
 class Normal(GameMode):
@@ -12,14 +16,14 @@ class Normal(GameMode):
         pass
 
     @property
-    def sides(self) -> Sequence[Type[Side]]:
+    def sides(self) -> Sequence[Type['Side']]:
         return White, Black
 
     def init_board_state(self):
         pass
 
     @property
-    def pieces(self) -> Sequence[Type[Piece]]:
+    def pieces(self) -> Sequence[Type['Piece']]:
         return King, Queen, Rook, Bishop, Knight, Pawn
 
 

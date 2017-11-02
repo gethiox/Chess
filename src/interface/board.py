@@ -1,8 +1,9 @@
 from abc import ABCMeta, abstractmethod
-from typing import Type, Optional
+from typing import Type, Optional, TYPE_CHECKING
 
-from domain.piece import Piece
-from domain.position import Position
+if TYPE_CHECKING:
+    from interface.piece import Piece
+    from interface.position import Position
 
 
 class Board(metaclass=ABCMeta):
@@ -27,7 +28,7 @@ class Board(metaclass=ABCMeta):
         """  # TODO: maybe make not only read-only
 
     @abstractmethod
-    def _get_piece(self, position: Type[Position]) -> Optional[Type[Piece]]:
+    def _get_piece(self, position: Type['Position']) -> Optional[Type['Piece']]:
         """
         Get Piece on given Position
         :param position: Position object
@@ -36,7 +37,7 @@ class Board(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def _put_piece(self, piece, position: Type[Position]) -> Optional[Type[Piece]]:
+    def _put_piece(self, piece, position: Type['Position']) -> Optional[Type['Piece']]:
         """
         Put Piece on given Position
         :param piece: Just any kind of Piece
@@ -46,7 +47,7 @@ class Board(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def _remove_piece(self, position: Type[Position]) -> Optional[Type[Piece]]:
+    def _remove_piece(self, position: Type['Position']) -> Optional[Type['Piece']]:
         """
         Remove Piece from given Position
         :param position: Position object

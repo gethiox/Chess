@@ -1,12 +1,13 @@
 from abc import ABCMeta, abstractmethod
-from typing import Optional
+from typing import Optional, TYPE_CHECKING, Type
 
-from domain.piece import Piece
-from domain.position import Position
+if TYPE_CHECKING:
+    from interface.piece import Piece
+    from interface.position import Position
 
 
 class Move(metaclass=ABCMeta):
-    def __init__(self, a: Position, b: Position, promotion: Optional[Piece] = None):
+    def __init__(self, a: Type['Position'], b: Type['Position'], promotion: Optional[Type['Piece']] = None):
         self.__a = a
         self.__b = b
         self.__promotion = promotion
@@ -25,15 +26,15 @@ class Move(metaclass=ABCMeta):
 
     @property
     @abstractmethod
-    def b(self) -> Position:
+    def b(self) -> Type['Position']:
         pass
 
     @property
     @abstractmethod
-    def a(self) -> Position:
+    def a(self) -> Type['Position']:
         pass
 
     @property
     @abstractmethod
-    def promotion(self) -> Piece:
+    def promotion(self) -> Type['Piece']:
         pass

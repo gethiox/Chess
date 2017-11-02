@@ -1,9 +1,12 @@
 from string import digits
-from typing import Optional, Tuple, Type, Sequence
+from typing import Optional, Tuple, Type, Sequence, TYPE_CHECKING
 
-from app.pieces import from_str, StandardPosition
-from domain.board import Board
-from domain.piece import Piece
+from app.pieces import from_str
+from app.position import StandardPosition
+from interface.board import Board
+
+if TYPE_CHECKING:
+    from interface.piece import Piece
 
 
 class StandardBoard(Board):
@@ -22,7 +25,7 @@ class StandardBoard(Board):
         # TODO: Use legit arrays from numpy but maybe it is not necessary
 
     @property
-    def array(self) -> Sequence[Sequence[Optional[Type[Piece]]]]:
+    def array(self) -> Sequence[Sequence[Optional[Type['Piece']]]]:
         return self.__board_array
 
     @property
@@ -37,7 +40,7 @@ class StandardBoard(Board):
     def ranks(self) -> int:
         return self.__ranks
 
-    def _get_piece(self, position: StandardPosition) -> Optional[Type[Piece]]:
+    def _get_piece(self, position: StandardPosition) -> Optional[Type['Piece']]:
         """
         Get Piece on given Position
         :param position: Position object
@@ -46,7 +49,7 @@ class StandardBoard(Board):
         current = self.__board_array[position.file][position.rank]
         return current
 
-    def _put_piece(self, piece: Type[Piece], position: StandardPosition) -> Optional[Type[Piece]]:
+    def _put_piece(self, piece: Type['Piece'], position: StandardPosition) -> Optional[Type['Piece']]:
         """
         Put Piece on given Position
         :param piece: Just any kind of Piece

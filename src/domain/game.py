@@ -1,45 +1,10 @@
 from abc import ABCMeta, abstractmethod
 from datetime import datetime
-from typing import Optional, Sequence, Type, Tuple
+from typing import Type, Tuple
 
-from app.game import Player
-from app.pieces import Move, Black, White
-from domain.pieces import Piece, Side, Position
-
-
-class GameMode(metaclass=ABCMeta):
-    @abstractmethod
-    def init_board_state(self) -> str:
-        """
-        Sets Board init state for this game mode
-        :return FEN strong of part with board only
-        """
-        pass
-
-    @abstractmethod
-    def assert_move(self, move: Move) -> bool:
-        """
-        Assert if given move in current game state and game mode is legal
-        :param move: Move type
-        :return: bool, positive if given move is legal
-        """
-        pass
-
-    @property
-    @abstractmethod
-    def pieces(self) -> Sequence[Type[Piece]]:
-        """
-        :return: Tuple of Pieces supported with implemented GameMode
-        """
-        pass
-
-    @property
-    @abstractmethod
-    def sides(self) -> Sequence[Type[Side]]:
-        """
-        :return: tuple of players sides
-        """
-        pass
+from domain.mode import GameMode
+from domain.player import Player
+from domain.side import Side
 
 
 class Game(metaclass=ABCMeta):
@@ -48,10 +13,10 @@ class Game(metaclass=ABCMeta):
     """
 
     def __init__(self, player1: Player, player2: Player, mode: Type[GameMode]):
-        self.__players = {
-            White: player1,
-            Black: player2,
-        }
+        self.__players = [
+            player1,
+            player2,
+        ]
         self.mode = mode
 
         self.__start_time = None
@@ -88,74 +53,3 @@ class Game(metaclass=ABCMeta):
         :return: not_yet_started OR on_move_side OR winner_side
         """
         pass
-
-
-class Board(metaclass=ABCMeta):
-    """
-    Base board object
-    """
-
-    @property
-    @abstractmethod
-    def name(self) -> str:
-        """
-        Board type name
-        """
-        pass
-
-    @property
-    @abstractmethod
-    def array(self):
-        """
-        Read-only, direct access to the board array
-        :return: n-dimensional array
-        """  # TODO: maybe make not only read-only
-
-    @abstractmethod
-    def _get_piece(self, position: Type[Position]) -> Optional[Type[Piece]]:
-        """
-        Get Piece on given Position
-        :param position: Position object
-        :return: Piece on given Position
-        """
-        pass
-
-    @abstractmethod
-    def _put_piece(self, piece, position: Type[Position]) -> Optional[Type[Piece]]:
-        """
-        Put Piece on given Position
-        :param piece: Just any kind of Piece
-        :param position: Position object
-        :return: Piece that was standing before putting new (None if none)
-        """
-        pass
-
-    @abstractmethod
-    def _remove_piece(self, position: Type[Position]) -> Optional[Type[Piece]]:
-        """
-        Remove Piece from given Position
-        :param position: Position object
-        :return: Piece that are removed (None if none)
-        """
-        pass
-
-    @abstractmethod
-    def set_fen(self, board_fen: str):
-        """
-        Sets board state from FEN
-        :param board_fen: string, min 15 letters (ranks separated by slash)
-        """
-        pass
-
-    @abstractmethod
-    def get_fen(self) -> str:
-        """
-        :return: FEN representation of board state
-        """
-        pass
-
-    def __repr__(self):
-        return "<%s Board>" % self.name
-
-    def __str__(self):
-        return self.name

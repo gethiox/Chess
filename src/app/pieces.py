@@ -1,9 +1,12 @@
 import re
 from math import inf as infinity
 from string import ascii_lowercase
-from typing import Union, Tuple, List, Iterator, Optional
+from typing import Union, Tuple, List, Iterator
 
-from domain.pieces import Piece, Side, Position
+from domain.move import Move
+from domain.piece import Piece
+from domain.position import Position
+from domain.side import Side
 
 location_regex = re.compile(r'^(?P<file>[a-zA-Z]+)(?P<rank>[0-9]+)$')
 
@@ -241,15 +244,10 @@ class StandardPosition(Position):
             raise IndexError("tuple index out of range")
 
 
-class Move:
+class StandardMove(Move):
     """
     Two Position aggregator with optional pawn promotion information
     """
-
-    def __init__(self, a: Position, b: Position, promotion: Optional[Piece] = None):
-        self.__a = a
-        self.__b = b
-        self.__promotion = promotion
 
     @property
     def a(self):
@@ -262,15 +260,3 @@ class Move:
     @property
     def promotion(self):
         return self.__promotion
-
-    def __repr__(self):  # TODO: update for positions objects without support of converting to string
-        if self.__promotion:
-            return 'Move: %s to %s with promotion to %s' % (self.__a, self.__b, self.__promotion.name)
-        else:
-            return 'Move: %s to %s' % (self.__a, self.__b)
-
-    def __str__(self):
-        if self.__promotion:
-            return '%s%s%s' % (self.__a, self.__b, self.__promotion.char)
-        else:
-            return '%s%s' % (self.__a, self.__b)

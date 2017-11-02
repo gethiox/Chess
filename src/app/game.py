@@ -2,8 +2,8 @@ from string import digits
 from typing import Optional, Tuple, Type, Sequence
 
 from app.pieces import from_str, StandardPosition
-from domain.game import Board
-from domain.pieces import Piece
+from domain.board import Board
+from domain.piece import Piece
 
 
 class StandardBoard(Board):
@@ -126,14 +126,3 @@ class StandardBoard(Board):
 
         # Pretty easy to understand
         return board_fen
-
-
-class Player:
-    def __init__(self, full_name: str = "Unknown"):
-        self.name = full_name
-
-    def __str__(self):
-        return self.name
-
-    def __repr__(self):
-        return "<Player: \"%s\">" % self.name

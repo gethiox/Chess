@@ -1,13 +1,14 @@
 # see more: https://en.wikipedia.org/wiki/List_of_chess_variants
 from typing import Sequence, Type
 
-from app.pieces import Move, King, Pawn, Knight, Bishop, Rook, Queen, Black, White
-from domain.game import GameMode
-from domain.pieces import Side, Piece
+from app.pieces import StandardMove, King, Pawn, Knight, Bishop, Rook, Queen, Black, White
+from domain.mode import GameMode
+from domain.piece import Piece
+from domain.side import Side
 
 
 class Normal(GameMode):
-    def assert_move(self, move: Move) -> bool:
+    def assert_move(self, move: StandardMove) -> bool:
         pass
 
     @property

@@ -1,14 +1,14 @@
 from abc import ABCMeta, abstractmethod
-from typing import Type, TYPE_CHECKING, Tuple, TypeVar, Sequence
+from typing import Type, TYPE_CHECKING, Tuple, Sequence
 
 if TYPE_CHECKING:
     from interface.side import Side
 
-Vector = TypeVar[Tuple[int, int]]  # Determine movement vector
-AnyDirection = TypeVar[bool]  # Determine if movement Vector cover all combinations in any direction
-Distance = TypeVar[int]  # Determine maximum move/capture distance (iterations of Vector)
-SelfCapture = TypeVar[bool]  # Determine if self-capture is allowed (any variant even supports it?)
-CaptureBreak = TypeVar[bool]  # Determine if a capture breaks availability to move behind enemy piece
+Vector = Tuple[int, int]  # Determine movement vector
+AnyDirection = bool  # Determine if movement Vector cover all combinations in any direction
+Distance = int  # Determine maximum move/capture distance (iterations of Vector)
+SelfCapture = bool  # Determine if self-capture is allowed (any variant even supports it?)
+CaptureBreak = bool  # Determine if a capture breaks availability to move behind enemy piece
 
 
 class Movement(metaclass=ABCMeta):

@@ -4,7 +4,7 @@ from app.position import StandardPosition
 
 
 class MyTestCase(TestCase):
-    def read_test(self):
+    def test_read(self):
         pos = StandardPosition((0, 0))
         self.assertEqual(str(pos), 'a1')
 
@@ -17,7 +17,7 @@ class MyTestCase(TestCase):
         pos = StandardPosition((7, 0))
         self.assertEqual(str(pos), 'h1')
 
-    def write_test(self):
+    def test_write(self):
         pos = StandardPosition('a1')
         self.assertEqual(tuple(pos), (0, 0))
 
@@ -30,7 +30,7 @@ class MyTestCase(TestCase):
         pos = StandardPosition('h1')
         self.assertEqual(tuple(pos), (7, 0))
 
-    def read_above_standard_test(self):
+    def test_read_above_standard(self):
         pos = StandardPosition((25, 99))
         self.assertEqual(str(pos), 'z100')  # 'b1 means the same as ab1 just like decimals - 001 == 1'
 
@@ -46,7 +46,7 @@ class MyTestCase(TestCase):
         pos = StandardPosition((676, 99))
         self.assertEqual(str(pos), 'baa100')
 
-    def write_above_standard_test(self):
+    def test_write_above_standard(self):
         pos = StandardPosition('z100')
         self.assertEqual(tuple(pos), (25, 99))
 

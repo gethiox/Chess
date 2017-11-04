@@ -10,7 +10,7 @@ class BoardTestCase(unittest.TestCase):
     def test_board_get_put_remove_piece(self):
         board = StandardBoard()
         old_piece = board._put_piece(
-            piece=Rook(White),
+            piece=Rook(White),  # TODO: Understand the difference between Type[Something] and Something (typehints)
             position=StandardPosition('e4')
         )
         self.assertEqual(old_piece, None)

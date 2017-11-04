@@ -1,5 +1,5 @@
 from string import digits
-from typing import Optional, Tuple, Type, Sequence, TYPE_CHECKING
+from typing import Optional, Tuple, Sequence, TYPE_CHECKING
 
 from app.pieces import from_str
 from app.position import StandardPosition
@@ -25,7 +25,7 @@ class StandardBoard(Board):
         # TODO: Use legit arrays from numpy but maybe it is not necessary
 
     @property
-    def array(self) -> Sequence[Sequence[Optional[Type['Piece']]]]:
+    def array(self) -> Sequence[Sequence[Optional['Piece']]]:
         return self.__board_array
 
     @property
@@ -40,7 +40,7 @@ class StandardBoard(Board):
     def ranks(self) -> int:
         return self.__ranks
 
-    def _get_piece(self, position: StandardPosition) -> Optional[Type['Piece']]:
+    def _get_piece(self, position: StandardPosition) -> Optional['Piece']:
         """
         Get Piece on given Position
         :param position: Position object
@@ -49,7 +49,7 @@ class StandardBoard(Board):
         current = self.__board_array[position.file][position.rank]
         return current
 
-    def _put_piece(self, piece: Type['Piece'], position: StandardPosition) -> Optional[Type['Piece']]:
+    def _put_piece(self, piece: 'Piece', position: StandardPosition) -> Optional['Piece']:
         """
         Put Piece on given Position
         :param piece: Just any kind of Piece
@@ -60,7 +60,7 @@ class StandardBoard(Board):
         self.__board_array[position.file][position.rank] = piece
         return current
 
-    def _remove_piece(self, position: StandardPosition) -> Optional[StandardPosition]:
+    def _remove_piece(self, position: StandardPosition) -> Optional['Piece']:
         """
         Remove Piece from given Position
         :param position: Position object

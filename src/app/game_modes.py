@@ -27,45 +27,45 @@ class Normal(GameMode):
         return King, Queen, Rook, Bishop, Knight, Pawn
 
 
-class Chess960(GameMode):
-    pass
-
-
-class Crazyhouse(GameMode):
-    pass
-
-
-class KingOfTheHill(GameMode):
-    pass
-
-
-class ThreeCheck(GameMode):
-    pass
-
-
-class Horde(GameMode):
-    pass
-
-
-class PreChess(GameMode):
-    """Could be interesting to implement"""
-    pass
-
-
-class UpsideDown(GameMode):
-    pass
-
-
-class Double(GameMode):
-    """Could be interesting to implement as well"""
-    pass
-
-
-class Antichess(GameMode):
-    """Just because LiChess supports it"""
-    pass
-
-
-class RacingKings(GameMode):
-    """Like above"""
-    pass
+# class Chess960(GameMode):
+#     pass
+#
+#
+# class Crazyhouse(GameMode):
+#     pass
+#
+#
+# class KingOfTheHill(GameMode):
+#     pass
+#
+#
+# class ThreeCheck(GameMode):
+#     pass
+#
+#
+# class Horde(GameMode):
+#     pass
+#
+#
+# class PreChess(GameMode):
+#     """Could be interesting to implement"""
+#     pass
+#
+#
+# class UpsideDown(GameMode):
+#     pass
+#
+#
+# class Double(GameMode):
+#     """Could be interesting to implement as well"""
+#     pass
+#
+#
+# class Antichess(GameMode):
+#     """Just because LiChess supports it"""
+#     pass
+#
+#
+# class RacingKings(GameMode):
+#     """Like above"""
+#     pass

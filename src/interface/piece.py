@@ -11,7 +11,23 @@ SelfCapture = bool  # Determine if self-capture is allowed (any variant even sup
 CaptureBreak = bool  # Determine if a capture breaks availability to move behind enemy piece
 
 
-class Movement(metaclass=ABCMeta):
+class MoveDescription:
+    def __init__(self, vector: Tuple[int, int], any_direction: bool, distance: int, capture_break: bool = True):
+        self.vector = vector
+        self.any_direction = any_direction
+        self.distance = distance
+        self.capture_break = capture_break
+
+
+class CaptureDescription:
+    def __init__(self, vector: Tuple[int, int], any_direction: bool, distance: int, self_capture: bool = False):
+        self.vector = vector
+        self.any_direction = any_direction
+        self.distance = distance
+        self.self_capture = self_capture
+
+
+class Movement:
     """
     This object explains for game engine basics of available piece movements, eg. where can go and where can capture.
     Explanation doesn't relate to GameMode specific movements which depends on game state, eg en passant (last pawn 
@@ -22,15 +38,32 @@ class Movement(metaclass=ABCMeta):
     If not, Use this interface to implement your stupid movement ability.
     """
 
-    @property
-    @abstractmethod
-    def capture(self) -> Sequence[Tuple[Vector, AnyDirection, Distance, SelfCapture]]:
-        pass
+    def __init__(self, move_descriptions: Sequence[MoveDescription],
+                 capture_descriptions: Sequence[CaptureDescription] = None):
+        self.__move_descriptions = move_descriptions
+        if capture_descriptions is not None:
+            self.__capture_descriptions = capture_descriptions
+        else:
+            new_capture_descriptions = []
+            for move_description in move_descriptions:
+                new_capture_descriptions.append(
+                    CaptureDescription(
+                        vector=move_description.vector,
+                        any_direction=move_description.any_direction,
+                        distance=move_description.distance,
+                        self_capture=False
+                    )
+                )
+            self.__capture_descriptions = new_capture_descriptions
 
     @property
     @abstractmethod
-    def move(self) -> Sequence[Tuple[Vector, AnyDirection, Distance, CaptureBreak]]:
-        pass
+    def move(self) -> Sequence[MoveDescription]:
+        return self.__move_descriptions
+
+    @property
+    def capture(self) -> Sequence[CaptureDescription]:
+        return self.__capture_descriptions
 
 
 class Piece(metaclass=ABCMeta):
@@ -55,8 +88,9 @@ class Piece(metaclass=ABCMeta):
         """return int piece value representation, eg. 1"""
         pass
 
+    @property
     @abstractmethod
-    def movement(self) -> Type['Movement']:
+    def movement(self) -> 'Movement':
         """return something that describe piece movement and is easy to use by game engine, any ideas?"""
         pass
 

@@ -1,13 +1,7 @@
 from math import inf as infinity
-from typing import TYPE_CHECKING, Type, Sequence
 
 from app.sides import White, Black
-from interface.piece import Piece
-
-if TYPE_CHECKING:
-    from interface.move import Move
-    from interface.position import Position
-    from interface.board import Board
+from interface.piece import Piece, Movement, MoveDescription, CaptureDescription
 
 
 class King(Piece):
@@ -23,8 +17,14 @@ class King(Piece):
     def name(self):
         return "King"
 
-    def available_moves(self, board: Type['Board'], position: Type['Position']) -> Sequence[Type['Move']]:
-        raise NotImplemented
+    @property
+    def movement(self) -> 'Movement':
+        return Movement(
+            move_descriptions=[
+                MoveDescription(vector=(0, 1), any_direction=True, distance=1, capture_break=True),
+                MoveDescription(vector=(1, 1), any_direction=True, distance=1, capture_break=True),
+            ],
+        )
 
 
 class Queen(Piece):
@@ -40,8 +40,14 @@ class Queen(Piece):
     def name(self) -> str:
         return "Queen"
 
-    def available_moves(self, board: Type['Board'], position: Type['Position']) -> Sequence[Type['Move']]:
-        raise NotImplemented
+    @property
+    def movement(self) -> 'Movement':
+        return Movement(
+            move_descriptions=[
+                MoveDescription(vector=(0, 1), any_direction=True, distance=infinity, capture_break=True),
+                MoveDescription(vector=(1, 1), any_direction=True, distance=infinity, capture_break=True),
+            ],
+        )
 
 
 class Rook(Piece):
@@ -57,8 +63,13 @@ class Rook(Piece):
     def name(self) -> str:
         return "Rook"
 
-    def available_moves(self, board: Type['Board'], position: Type['Position']) -> Sequence[Type['Move']]:
-        raise NotImplemented
+    @property
+    def movement(self) -> 'Movement':
+        return Movement(
+            move_descriptions=[
+                MoveDescription(vector=(0, 1), any_direction=True, distance=infinity, capture_break=True),
+            ],
+        )
 
 
 class Bishop(Piece):
@@ -74,8 +85,13 @@ class Bishop(Piece):
     def name(self) -> str:
         return 'Bishop'
 
-    def available_moves(self, board: Type['Board'], position: Type['Position']) -> Sequence[Type['Move']]:
-        raise NotImplemented
+    @property
+    def movement(self) -> 'Movement':
+        return Movement(
+            move_descriptions=[
+                MoveDescription(vector=(1, 1), any_direction=True, distance=infinity, capture_break=True),
+            ],
+        )
 
 
 class Knight(Piece):
@@ -91,8 +107,13 @@ class Knight(Piece):
     def name(self) -> str:
         return "Knight"
 
-    def available_moves(self, board: Type['Board'], position: Type['Position']) -> Sequence[Type['Move']]:
-        raise NotImplemented
+    @property
+    def movement(self) -> 'Movement':
+        return Movement(
+            move_descriptions=[
+                MoveDescription(vector=(1, 2), any_direction=True, distance=1, capture_break=False),
+            ],
+        )
 
 
 class Pawn(Piece):
@@ -108,8 +129,17 @@ class Pawn(Piece):
     def name(self) -> str:
         return "Pawn"
 
-    def available_moves(self, board: Type['Board'], position: Type['Position']) -> Sequence[Type['Move']]:
-        raise NotImplemented
+    @property
+    def movement(self) -> 'Movement':
+        return Movement(
+            move_descriptions=[
+                MoveDescription(vector=(0, 1), any_direction=False, distance=1, capture_break=True),
+            ],
+            capture_descriptions=[
+                CaptureDescription(vector=(1, 1), any_direction=False, distance=1, self_capture=False),
+                CaptureDescription(vector=(-1, 1), any_direction=False, distance=1, self_capture=False),
+            ]
+        )
 
 
 str_map = {
@@ -122,7 +152,7 @@ str_map = {
 }
 
 
-def from_str(piece: str) -> Type['Piece']:  # TODO: Use another solution
+def from_str(piece: str) -> 'Piece':  # TODO: Use another solution
     """ 
     Method designed to return Piece object from given one-letter string.
     Needed only for processing FEN board-state format.

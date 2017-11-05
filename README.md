@@ -1,4 +1,4 @@
-See [example.py](docs/CONTRIBUTING.md)
+See [example.py](src/example.py)
 
 ```python3
 player1 = Player("Some white player")

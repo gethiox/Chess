@@ -55,3 +55,7 @@ class Variant(metaclass=ABCMeta):
     @abstractmethod
     def available_moves(self, position: Type['Position']) -> Sequence[Type['Position']]:
         pass
+
+    @abstractmethod
+    def available_captures(self, position: Type['Position']) -> Sequence[Type['Position']]:
+        pass

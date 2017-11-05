@@ -153,6 +153,7 @@ class Normal(Variant):
 
     def attacked_fields(self, position: 'StandardPosition') -> Sequence['StandardPosition']:
         # TODO: REFACTOR
+        # TODO: less ctrl+c ctrl+v, seriously
         piece = self.board.get_piece(position)
         if not piece:
             raise ValueError('write here something')
@@ -176,8 +177,11 @@ class Normal(Variant):
                             break
 
                         new_piece = self.board.get_piece(new_position)
-                        if (new_piece and new_piece.side != piece.side) or not new_piece:
+                        if not new_piece:
                             new_positions.append(new_position)
+                        elif new_piece and new_piece.side != piece.side:
+                            new_positions.append(new_position)
+                            break
                         distance += 1
                 else:
                     for distance in range(1, c_desc.distance + 1):
@@ -189,8 +193,11 @@ class Normal(Variant):
                             break
 
                         new_piece = self.board.get_piece(new_position)
-                        if (new_piece and new_piece.side != piece.side) or not new_piece:
+                        if not new_piece:
                             new_positions.append(new_position)
+                        elif new_piece and new_piece.side != piece.side:
+                            new_positions.append(new_position)
+                            break
 
         return new_positions
 

@@ -4,9 +4,9 @@ See [example.py](src/example.py)
 player1 = Player("Some white player")
 player2 = Player("Some black player")
 
-game = Game(player1=player1, player2=player2, variant=Normal(StandardBoard()))
-board_rendererer.tiny(game.variant.board)
-print("FEN: %s\n" % game.variant.board.get_fen())
+game = Game(player1=player1, player2=player2, variant=Normal())
+board_rendererer.tiny(game.board)
+print("FEN: %s\n" % game.board.get_fen())
 
 moves = [
     StandardMove(source=StandardPosition('f2'), destination=StandardPosition('f3')),
@@ -17,13 +17,33 @@ moves = [
 
 for move in moves:
     game.move(move)
-    board_rendererer.tiny(game.variant.board)
+    board_rendererer.tiny(game.board)
     print("move: %s\n" % move)
 
 print('Pieces on the board:')
-print(game.variant.board.pieces(), '\n')
+print(game.board.pieces(), '\n')
 
-board_rendererer.normal(game.variant.board)
+board_rendererer.normal(game.board)
+
+pos = StandardPosition("a2")
+piece = game.board.get_piece(pos)
+print("Piece: %s %s (%s)\nMoves: %s\nCaptures: %s" % (
+    piece.side,
+    piece.name,
+    str(pos),
+    [str(pos) for pos in game.variant.available_moves(pos)],
+    [str(pos) for pos in game.variant.available_captures(pos)],
+))
+
+pos = StandardPosition("h4")
+piece = game.board.get_piece(pos)
+print("Piece: %s %s (%s)\nMoves: %s\nCaptures: %s" % (
+    piece.side,
+    piece.name,
+    str(pos),
+    [str(pos) for pos in game.variant.available_moves(pos)],
+    [str(pos) for pos in game.variant.available_captures(pos)],
+))
 ```
 
 Output:
@@ -79,7 +99,17 @@ R N B Q K B N R
 move: d8h4
 
 Pieces on the board:
-{<Position a1>: <White Rook>, <Position b1>: <White Knight>, <Position c1>: <White Bishop>, <Position d1>: <White Queen>, <Position e1>: <White King>, <Position f1>: <White Bishop>, <Position g1>: <White Knight>, <Position h1>: <White Rook>, <Position a2>: <White Pawn>, <Position b2>: <White Pawn>, <Position c2>: <White Pawn>, <Position d2>: <White Pawn>, <Position e2>: <White Pawn>, <Position h2>: <White Pawn>, <Position f3>: <White Pawn>, <Position g4>: <White Pawn>, <Position h4>: <Black Queen>, <Position e5>: <Black Pawn>, <Position a7>: <Black Pawn>, <Position b7>: <Black Pawn>, <Position c7>: <Black Pawn>, <Position d7>: <Black Pawn>, <Position f7>: <Black Pawn>, <Position g7>: <Black Pawn>, <Position h7>: <Black Pawn>, <Position a8>: <Black Rook>, <Position b8>: <Black Knight>, <Position c8>: <Black Bishop>, <Position e8>: <Black King>, <Position f8>: <Black Bishop>, <Position g8>: <Black Knight>, <Position h8>: <Black Rook>}
+{<Position a1>: <White Rook>, <Position b1>: <White Knight>, <Position c1>: <White Bishop>,
+ <Position d1>: <White Queen>, <Position e1>: <White King>, <Position f1>: <White Bishop>,
+ <Position g1>: <White Knight>, <Position h1>: <White Rook>, <Position a2>: <White Pawn>,
+ <Position b2>: <White Pawn>, <Position c2>: <White Pawn>, <Position d2>: <White Pawn>,
+ <Position e2>: <White Pawn>, <Position h2>: <White Pawn>, <Position f3>: <White Pawn>,
+ <Position g4>: <White Pawn>, <Position h4>: <Black Queen>, <Position e5>: <Black Pawn>,
+ <Position a7>: <Black Pawn>, <Position b7>: <Black Pawn>, <Position c7>: <Black Pawn>,
+ <Position d7>: <Black Pawn>, <Position f7>: <Black Pawn>, <Position g7>: <Black Pawn>,
+ <Position h7>: <Black Pawn>, <Position a8>: <Black Rook>, <Position b8>: <Black Knight>,
+ <Position c8>: <Black Bishop>, <Position e8>: <Black King>, <Position f8>: <Black Bishop>,
+ <Position g8>: <Black Knight>, <Position h8>: <Black Rook>}
 
 +---+---+---+---+---+---+---+---+
 | r | n | b |   | k | b | n | r |
@@ -98,4 +128,10 @@ Pieces on the board:
 +---+---+---+---+---+---+---+---+
 | R | N | B | Q | K | B | N | R |
 +---+---+---+---+---+---+---+---+
+Piece: White Pawn (a2)
+Moves: ['a3']
+Captures: []
+Piece: Black Queen (h4)
+Moves: ['h5', 'h6', 'h3', 'g5', 'f6', 'e7', 'd8', 'g3', 'f2']
+Captures: ['h2', 'g4', 'e1']
 ```

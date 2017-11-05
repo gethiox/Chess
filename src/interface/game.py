@@ -2,8 +2,10 @@ from abc import ABCMeta, abstractmethod
 from datetime import datetime
 from typing import Type, Tuple, TYPE_CHECKING
 
+from app.sides import White, Black
+
 if TYPE_CHECKING:
-    from interface.mode import GameMode
+    from interface.variant import Variant
     from app.player import Player
     from interface.side import Side
 
@@ -13,11 +15,11 @@ class Game(metaclass=ABCMeta):
     Generic Game logic base class
     """
 
-    def __init__(self, player1: 'Player', player2: 'Player', mode: Type['GameMode']):
-        self.__players = [
-            player1,
-            player2,
-        ]
+    def __init__(self, player1: 'Player', player2: 'Player', mode: Type['Variant']):
+        self.__players = {
+            White: player1,
+            Black: player2,
+        }
         self.mode = mode
 
         self.__start_time = None

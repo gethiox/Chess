@@ -4,14 +4,14 @@ from typing import Sequence, Type, TYPE_CHECKING
 from app.move import StandardMove
 from app.pieces import King, Pawn, Knight, Bishop, Rook, Queen
 from app.sides import White, Black
-from interface.mode import GameMode
+from interface.variant import Variant
 
 if TYPE_CHECKING:
     from interface.piece import Piece
     from interface.side import Side
 
 
-class Normal(GameMode):
+class Normal(Variant):
     def assert_move(self, move: StandardMove) -> bool:
         pass
 
@@ -27,45 +27,45 @@ class Normal(GameMode):
         return King, Queen, Rook, Bishop, Knight, Pawn
 
 
-# class Chess960(GameMode):
+# class Chess960(Variant):
 #     pass
 #
 #
-# class Crazyhouse(GameMode):
+# class Crazyhouse(Variant):
 #     pass
 #
 #
-# class KingOfTheHill(GameMode):
+# class KingOfTheHill(Variant):
 #     pass
 #
 #
-# class ThreeCheck(GameMode):
+# class ThreeCheck(Variant):
 #     pass
 #
 #
-# class Horde(GameMode):
+# class Horde(Variant):
 #     pass
 #
 #
-# class PreChess(GameMode):
+# class PreChess(Variant):
 #     """Could be interesting to implement"""
 #     pass
 #
 #
-# class UpsideDown(GameMode):
+# class UpsideDown(Variant):
 #     pass
 #
 #
-# class Double(GameMode):
+# class Double(Variant):
 #     """Could be interesting to implement as well"""
 #     pass
 #
 #
-# class Antichess(GameMode):
+# class Antichess(Variant):
 #     """Just because LiChess supports it"""
 #     pass
 #
 #
-# class RacingKings(GameMode):
+# class RacingKings(Variant):
 #     """Like above"""
 #     pass

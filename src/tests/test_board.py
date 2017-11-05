@@ -1,6 +1,6 @@
 import unittest
 
-from app.game import StandardBoard
+from app.board import StandardBoard
 from app.pieces import King, Queen, Rook
 from app.position import StandardPosition
 from app.sides import White, Black

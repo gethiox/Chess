@@ -7,7 +7,7 @@ if TYPE_CHECKING:
     from interface.side import Side
 
 
-class GameMode(metaclass=ABCMeta):
+class Variant(metaclass=ABCMeta):
     @abstractmethod
     def init_board_state(self) -> str:
         """

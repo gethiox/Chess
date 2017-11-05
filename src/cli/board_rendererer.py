@@ -1,4 +1,4 @@
-from app.game import StandardBoard
+from app.board import StandardBoard
 
 
 def tiny(board: StandardBoard):

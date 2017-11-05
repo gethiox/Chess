@@ -38,8 +38,8 @@ if __name__ == "__main__":
         piece.side,
         piece.name,
         str(pos),
-        [str(pos) for pos in game._variant.available_moves(pos)],
-        [str(pos) for pos in game._variant.available_captures(pos)],
+        [str(pos) for pos in game.variant.available_moves(pos)],
+        [str(pos) for pos in game.variant.available_captures(pos)],
     ))
 
     pos = StandardPosition("h4")
@@ -48,6 +48,6 @@ if __name__ == "__main__":
         piece.side,
         piece.name,
         str(pos),
-        [str(pos) for pos in game._variant.available_moves(pos)],
-        [str(pos) for pos in game._variant.available_captures(pos)],
+        [str(pos) for pos in game.variant.available_moves(pos)],
+        [str(pos) for pos in game.variant.available_captures(pos)],
     ))

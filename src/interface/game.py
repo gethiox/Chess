@@ -21,8 +21,8 @@ class Game:
             White: player1,
             Black: player2,
         }
-        self._variant = variant
-        self._variant.init_board_state()
+        self.variant = variant
+        self.variant.init_board_state()
         self.__board = variant.board
 
         self.__start_time = None
@@ -53,7 +53,7 @@ class Game:
         return sides[self.__half_moves % len(self.players)]
 
     def move(self, move: Type['Move']) -> bool:
-        if self._variant.assert_move(move):
+        if self.variant.assert_move(move):
             piece = self.board.remove_piece(position=move.source)
             self.board.put_piece(piece=piece, position=move.destination)
             return True

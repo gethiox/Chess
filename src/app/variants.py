@@ -81,9 +81,7 @@ class Normal(Variant):
                             (position[0] + int(vector[0] * distance),
                              position[1] + int(vector[1] * distance))
                         )
-                        try:  # TODO: proper validation mechanism
-                            self.board.get_piece(new_position)
-                        except:
+                        if not self.board.validate_position(new_position):
                             break
 
                         new_piece = self.board.get_piece(new_position)
@@ -97,9 +95,7 @@ class Normal(Variant):
                             (position[0] + int(vector[0] * distance),
                              position[1] + int(vector[1] * distance))
                         )
-                        try:  # TODO: proper validation mechanism
-                            self.board.get_piece(new_position)
-                        except:
+                        if not self.board.validate_position(new_position):
                             break
 
                         new_piece = self.board.get_piece(new_position)
@@ -131,9 +127,7 @@ class Normal(Variant):
                             (position[0] + int(vector[0] * distance),
                              position[1] + int(vector[1] * distance))
                         )
-                        try:  # TODO: proper validation mechanism
-                            self.board.get_piece(new_position)
-                        except:
+                        if not self.board.validate_position(new_position):
                             break
 
                         new_piece = self.board.get_piece(new_position)
@@ -147,9 +141,7 @@ class Normal(Variant):
                             (position[0] + int(vector[0] * distance),
                              position[1] + int(vector[1] * distance))
                         )
-                        try:  # TODO: proper validation mechanism
-                            self.board.get_piece(new_position)
-                        except:
+                        if not self.board.validate_position(new_position):
                             break
 
                         new_piece = self.board.get_piece(new_position)
@@ -159,7 +151,50 @@ class Normal(Variant):
 
         return new_positions
 
-    def attacked_fields(self, side: Type['Side']) -> Sequence[Type['StandardPosition']]:
+    def attacked_fields(self, position: 'StandardPosition') -> Sequence['StandardPosition']:
+        # TODO: REFACTOR
+        piece = self.board.get_piece(position)
+        if not piece:
+            raise ValueError('write here something')
+
+        new_positions = []
+        for c_desc in piece.movement.capture:
+            if c_desc.any_direction:
+                vectors = self.__transpose_vector(c_desc.vector)
+            else:
+                vectors = [c_desc.vector]
+
+            for vector in vectors:
+                if c_desc.distance is infinity:
+                    distance = 1
+                    while True:
+                        new_position = StandardPosition(
+                            (position[0] + int(vector[0] * distance),
+                             position[1] + int(vector[1] * distance))
+                        )
+                        if not self.board.validate_position(new_position):
+                            break
+
+                        new_piece = self.board.get_piece(new_position)
+                        if (new_piece and new_piece.side != piece.side) or not new_piece:
+                            new_positions.append(new_position)
+                        distance += 1
+                else:
+                    for distance in range(1, c_desc.distance + 1):
+                        new_position = StandardPosition(
+                            (position[0] + int(vector[0] * distance),
+                             position[1] + int(vector[1] * distance))
+                        )
+                        if not self.board.validate_position(new_position):
+                            break
+
+                        new_piece = self.board.get_piece(new_position)
+                        if (new_piece and new_piece.side != piece.side) or not new_piece:
+                            new_positions.append(new_position)
+
+        return new_positions
+
+    def attacked_fields_by_side(self, side: Type['Side']) -> Sequence[Type['StandardPosition']]:
         pass
 
     @staticmethod

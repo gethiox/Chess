@@ -142,3 +142,10 @@ class StandardBoard(Board):
                         {position: piece}
                     )
         return pieces
+
+    def validate_position(self, position: StandardPosition) -> bool:
+        if position.file < 0 or position.rank < 0:
+            return False
+        if position.file >= self.files or position.rank >= self.ranks:
+            return False
+        return True

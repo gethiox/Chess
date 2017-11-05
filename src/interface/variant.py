@@ -49,13 +49,17 @@ class Variant(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def attacked_fields(self, side: Type['Side']) -> Sequence[Type['Position']]:
-        pass
-
-    @abstractmethod
     def available_moves(self, position: Type['Position']) -> Sequence[Type['Position']]:
         pass
 
     @abstractmethod
     def available_captures(self, position: Type['Position']) -> Sequence[Type['Position']]:
+        pass
+
+    @abstractmethod
+    def attacked_fields(self, position: Type['Position']) -> Sequence[Type['Position']]:
+        pass
+
+    @abstractmethod
+    def attacked_fields_by_side(self, side: Type['Side']) -> Sequence[Type['Position']]:
         pass

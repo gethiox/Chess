@@ -34,20 +34,22 @@ if __name__ == "__main__":
 
     pos = StandardPosition("a2")
     piece = game.board.get_piece(pos)
-    print("Piece: %s %s (%s)\nMoves: %s\nCaptures: %s" % (
+    print("Piece: %s %s (%s)\nMoves: %s\nCaptures: %s\nAttacked Fields: %s" % (
         piece.side,
         piece.name,
         str(pos),
         [str(pos) for pos in game.variant.available_moves(pos)],
         [str(pos) for pos in game.variant.available_captures(pos)],
+        [str(pos) for pos in game.variant.attacked_fields(pos)],
     ))
 
     pos = StandardPosition("h4")
     piece = game.board.get_piece(pos)
-    print("Piece: %s %s (%s)\nMoves: %s\nCaptures: %s" % (
+    print("Piece: %s %s (%s)\nMoves: %s\nCaptures: %s\nAttacked Fields: %s" % (
         piece.side,
         piece.name,
         str(pos),
         [str(pos) for pos in game.variant.available_moves(pos)],
         [str(pos) for pos in game.variant.available_captures(pos)],
+        [str(pos) for pos in game.variant.attacked_fields(pos)],
     ))

@@ -12,7 +12,7 @@ class Position(metaclass=ABCMeta):
 
     @abstractmethod
     def __iter__(self):
-        """Should be implemented for converting to sequence purpose where first value is a X coordinate, second Y etc."""
+        """Should be implemented for converting to sequence where first value is a X coordinate, second Y etc."""
         pass
 
     @abstractmethod

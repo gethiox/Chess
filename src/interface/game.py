@@ -2,9 +2,10 @@ from datetime import datetime
 from typing import Type, Tuple, TYPE_CHECKING
 
 from app.sides import White, Black
-from interface.move import Move
 
 if TYPE_CHECKING:
+    from interface.move import Move
+    from interface.board import Board
     from interface.variant import Variant
     from app.player import Player
     from interface.side import Side
@@ -21,6 +22,7 @@ class Game:
             Black: player2,
         }
         self.variant = variant
+        self.__board = variant.board
         self.variant.init_board_state()
 
         self.__start_time = None
@@ -28,6 +30,10 @@ class Game:
 
         self.__moves = 0
         self.__half_moves = 0
+
+    @property
+    def board(self) -> Type['Board']:
+        return self.__board
 
     @property
     def players(self) -> Tuple['Player', ...]:
@@ -46,10 +52,10 @@ class Game:
         sides = tuple(self.__players.keys())
         return sides[self.__half_moves % len(self.players)]
 
-    def move(self, move: 'Move') -> bool:
+    def move(self, move: Type['Move']) -> bool:
         if self.variant.assert_move(move):
-            piece = self.variant.board.remove_piece(move.source)
-            self.variant.board.put_piece(piece, move.destination)
+            piece = self.board.remove_piece(position=move.source)
+            self.board.put_piece(piece=piece, position=move.destination)
             return True
         return False
 

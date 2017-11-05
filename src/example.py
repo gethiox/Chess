@@ -11,9 +11,9 @@ if __name__ == "__main__":
     player1 = Player("Some white player")
     player2 = Player("Some black player")
 
-    game = Game(player1=player1, player2=player2, variant=Normal(StandardBoard()))
-    board_rendererer.tiny(game.variant.board)
-    print("FEN: %s\n" % game.variant.board.get_fen())
+    game = Game(player1=player1, player2=player2, variant=Normal())
+    board_rendererer.tiny(game.board)
+    print("FEN: %s\n" % game.board.get_fen())
 
     moves = [
         StandardMove(source=StandardPosition('f2'), destination=StandardPosition('f3')),
@@ -24,10 +24,10 @@ if __name__ == "__main__":
 
     for move in moves:
         game.move(move)
-        board_rendererer.tiny(game.variant.board)
+        board_rendererer.tiny(game.board)
         print("move: %s\n" % move)
 
     print('Pieces on the board:')
     print(game.variant.board.pieces(), '\n')
 
-    board_rendererer.normal(game.variant.board)
+    board_rendererer.normal(game.board)

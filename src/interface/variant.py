@@ -10,12 +10,10 @@ if TYPE_CHECKING:
 
 
 class Variant(metaclass=ABCMeta):
-    def __init__(self, board: 'Board'):
-        self.__board = board
-
     @property
-    def board(self):
-        return self.__board
+    @abstractmethod
+    def board(self) -> Type['Board']:
+        pass
 
     @abstractmethod
     def init_board_state(self) -> str:
@@ -26,7 +24,7 @@ class Variant(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def assert_move(self, move: 'Move') -> bool:
+    def assert_move(self, move: Type['Move']) -> bool:
         """
         Assert if given move in current game state and game mode is legal
         :param move: Move type

@@ -1,6 +1,7 @@
 # see more: https://en.wikipedia.org/wiki/List_of_chess_variants
 from typing import Sequence, Type, TYPE_CHECKING
 
+from app.board import StandardBoard
 from app.move import StandardMove
 from app.pieces import King, Pawn, Knight, Bishop, Rook, Queen
 from app.position import StandardPosition
@@ -15,6 +16,13 @@ if TYPE_CHECKING:
 
 
 class Normal(Variant):
+    def __init__(self):
+        self.__board = StandardBoard()
+
+    @property
+    def board(self) -> StandardBoard:
+        return self.__board
+
     def assert_move(self, move: StandardMove) -> bool:
         return True  # TODO
 

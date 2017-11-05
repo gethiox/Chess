@@ -23,6 +23,9 @@ class Side(metaclass=ABCMeta):
         """
         pass
 
+    def __hash__(self):
+        return hash((self.name, self.char))
+
     def __repr__(self):
         return "<%s Side>" % self.name
 

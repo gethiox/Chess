@@ -31,3 +31,23 @@ if __name__ == "__main__":
     print(game.board.pieces(), '\n')
 
     board_rendererer.normal(game.board)
+
+    pos = StandardPosition("a2")
+    piece = game.board.get_piece(pos)
+    print("Piece: %s %s (%s)\nMoves: %s\nCaptures: %s" % (
+        piece.side,
+        piece.name,
+        str(pos),
+        [str(pos) for pos in game._variant.available_moves(pos)],
+        [str(pos) for pos in game._variant.available_captures(pos)],
+    ))
+
+    pos = StandardPosition("h4")
+    piece = game.board.get_piece(pos)
+    print("Piece: %s %s (%s)\nMoves: %s\nCaptures: %s" % (
+        piece.side,
+        piece.name,
+        str(pos),
+        [str(pos) for pos in game._variant.available_moves(pos)],
+        [str(pos) for pos in game._variant.available_captures(pos)],
+    ))

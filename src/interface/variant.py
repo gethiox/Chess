@@ -53,5 +53,5 @@ class Variant(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def available_moves(self, position: Type['Position']) -> Sequence[Type['Move']]:
+    def available_moves(self, position: Type['Position']) -> Sequence[Type['Position']]:
         pass

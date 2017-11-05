@@ -1,6 +1,7 @@
 # see more: https://en.wikipedia.org/wiki/List_of_chess_variants
-from typing import Sequence, Type, TYPE_CHECKING
+from typing import Sequence, Type, TYPE_CHECKING, Tuple
 
+from math import inf as infinity
 from app.board import StandardBoard
 from app.move import StandardMove
 from app.pieces import King, Pawn, Knight, Bishop, Rook, Queen
@@ -9,8 +10,6 @@ from app.sides import White, Black
 from interface.variant import Variant
 
 if TYPE_CHECKING:
-    from interface.move import Move
-    from interface.position import Position
     from interface.piece import Piece
     from interface.side import Side
 
@@ -61,20 +60,121 @@ class Normal(Variant):
     def pieces(self) -> Sequence[Type['Piece']]:
         return King, Queen, Rook, Bishop, Knight, Pawn
 
-    def available_moves(self, position: Type['Position']) -> Sequence[Type['Move']]:
-        pass  # TODO
-        # moves = []
-        # piece = self.board.get_piece(position)
-        # if not piece:
-        #     return moves
-        #
-        # for move_description in piece.movement.move:
-        #     pass
-        # for capture_description in piece.movement.capture:
-        #     pass
+    def available_moves(self, position: 'StandardPosition') -> Sequence['StandardPosition']:
+        # TODO: REFACTOR
+        piece = self.board.get_piece(position)
+        if not piece:
+            raise ValueError('write here something')
 
-    def attacked_fields(self, side: Type['Side']) -> Sequence[Type['Position']]:
+        new_positions = []
+        for m_desc in piece.movement.move:
+            if m_desc.any_direction:
+                vectors = self.__transpose_vector(m_desc.vector)
+            else:
+                vectors = [m_desc.vector]
+
+            for vector in vectors:
+                if m_desc.distance is infinity:
+                    distance = 1
+                    while True:
+                        new_position = StandardPosition(
+                            (position[0] + int(vector[0] * distance),
+                             position[1] + int(vector[1] * distance))
+                        )
+                        try:  # TODO: proper validation mechanism
+                            self.board.get_piece(new_position)
+                        except:
+                            break
+
+                        new_piece = self.board.get_piece(new_position)
+                        if new_piece is not None:
+                            break
+                        new_positions.append(new_position)
+                        distance += 1
+                else:
+                    for distance in range(1, m_desc.distance + 1):
+                        new_position = StandardPosition(
+                            (position[0] + int(vector[0] * distance),
+                             position[1] + int(vector[1] * distance))
+                        )
+                        try:  # TODO: proper validation mechanism
+                            self.board.get_piece(new_position)
+                        except:
+                            break
+
+                        new_piece = self.board.get_piece(new_position)
+                        if new_piece is not None:
+                            break
+                        new_positions.append(new_position)
+
+        return new_positions
+
+    def available_captures(self, position: 'StandardPosition') -> Sequence['StandardPosition']:
+        # TODO: less ctrl+c ctrl+v
+        # TODO: REFACTOR
+        piece = self.board.get_piece(position)
+        if not piece:
+            raise ValueError('write here something')
+
+        new_positions = []
+        for c_desc in piece.movement.capture:
+            if c_desc.any_direction:
+                vectors = self.__transpose_vector(c_desc.vector)
+            else:
+                vectors = [c_desc.vector]
+
+            for vector in vectors:
+                if c_desc.distance is infinity:
+                    distance = 1
+                    while True:
+                        new_position = StandardPosition(
+                            (position[0] + int(vector[0] * distance),
+                             position[1] + int(vector[1] * distance))
+                        )
+                        try:  # TODO: proper validation mechanism
+                            self.board.get_piece(new_position)
+                        except:
+                            break
+
+                        new_piece = self.board.get_piece(new_position)
+                        if new_piece and new_piece.side != piece.side:
+                            new_positions.append(new_position)
+                            break
+                        distance += 1
+                else:
+                    for distance in range(1, c_desc.distance + 1):
+                        new_position = StandardPosition(
+                            (position[0] + int(vector[0] * distance),
+                             position[1] + int(vector[1] * distance))
+                        )
+                        try:  # TODO: proper validation mechanism
+                            self.board.get_piece(new_position)
+                        except:
+                            break
+
+                        new_piece = self.board.get_piece(new_position)
+                        if new_piece and new_piece.side != piece.side:
+                            new_positions.append(new_position)
+                            break
+
+        return new_positions
+
+    def attacked_fields(self, side: Type['Side']) -> Sequence[Type['StandardPosition']]:
         pass
+
+    @staticmethod
+    def __transpose_vector(vector: Tuple[int, int]) -> Sequence[Tuple[int, int]]:
+        transpoed = [
+            (vector[0], vector[1]),
+            (vector[1], vector[0]),
+            (vector[1], vector[0] * -1),
+            (vector[0], vector[1] * -1),
+            (vector[0] * -1, vector[1] * -1),
+            (vector[1] * -1, vector[0] * -1),
+            (vector[1] * -1, vector[0]),
+            (vector[0] * -1, vector[1]),
+        ]
+        return list(set(transpoed))
 
 # class Chess960(Variant):
 #     pass

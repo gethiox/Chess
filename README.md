@@ -1,6 +1,6 @@
 See [example.py](src/example.py)
 
-```python3
+```python
 player1 = Player("Some white player")
 player2 = Player("Some black player")
 

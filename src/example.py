@@ -28,5 +28,6 @@ if __name__ == "__main__":
         print("move: %s\n" % move)
 
     print('Pieces on the board:')
-    for position, piece in game.variant.board.pieces():
-        print("%s: %s %s" % (position, piece.side, piece.name))
+    print(game.variant.board.pieces())
+
+    board_rendererer.normal(game.variant.board)

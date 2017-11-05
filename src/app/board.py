@@ -1,5 +1,5 @@
 from string import digits
-from typing import Optional, Tuple, Sequence, TYPE_CHECKING, Type
+from typing import Optional, Tuple, Sequence, TYPE_CHECKING, Dict
 
 from app.pieces import from_str
 from app.position import StandardPosition
@@ -131,14 +131,14 @@ class StandardBoard(Board):
         # Pretty easy to understand
         return board_fen
 
-    def pieces(self) -> Sequence[Tuple[Type['Position'], Type['Piece']]]:
-        pieces = []
+    def pieces(self) -> Dict['Position', 'Piece']:
+        pieces = {}
         for rank in range(self.files):
             for file in range(self.ranks):
                 position = StandardPosition((file, rank))
                 piece = self.get_piece(position=position)
                 if piece:
-                    pieces.append(
-                        (position, piece)
+                    pieces.update(
+                        {position: piece}
                     )
         return pieces

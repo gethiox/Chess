@@ -92,6 +92,9 @@ class StandardPosition(Position):
         return '%s%s' % (self.__file_from_int_to_str(self.file),
                          self.__rank_from_int_to_str(self.rank))
 
+    def __repr__(self):
+        return "<Position %s>" % self
+
     def __iter__(self) -> Iterator[int]:
         for coordinate in (self.file, self.rank):
             yield coordinate

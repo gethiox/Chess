@@ -153,7 +153,7 @@ str_map = {
 
 
 def from_str(piece: str) -> 'Piece':  # TODO: Use another solution
-    """ 
+    """
     Method designed to return Piece object from given one-letter string.
     Needed only for processing FEN board-state format.
     """

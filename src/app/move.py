@@ -7,13 +7,13 @@ class StandardMove(Move):
     """
 
     @property
-    def a(self):
-        return self.__a
+    def source(self):
+        return self._source
 
     @property
-    def b(self):
-        return self.__b
+    def destination(self):
+        return self._destination
 
     @property
     def promotion(self):
-        return self.__promotion
+        return self._promotion

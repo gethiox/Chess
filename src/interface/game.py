@@ -1,8 +1,8 @@
-from abc import ABCMeta, abstractmethod
 from datetime import datetime
 from typing import Type, Tuple, TYPE_CHECKING
 
 from app.sides import White, Black
+from interface.move import Move
 
 if TYPE_CHECKING:
     from interface.variant import Variant
@@ -10,17 +10,18 @@ if TYPE_CHECKING:
     from interface.side import Side
 
 
-class Game(metaclass=ABCMeta):
+class Game:
     """
     Generic Game logic base class
     """
 
-    def __init__(self, player1: 'Player', player2: 'Player', mode: Type['Variant']):
+    def __init__(self, player1: 'Player', player2: 'Player', variant: 'Variant'):
         self.__players = {
             White: player1,
             Black: player2,
         }
-        self.mode = mode
+        self.variant = variant
+        self.variant.init_board_state()
 
         self.__start_time = None
         self.__create_time = datetime.now()
@@ -45,10 +46,16 @@ class Game(metaclass=ABCMeta):
         sides = tuple(self.__players.keys())
         return sides[self.__half_moves % len(self.players)]
 
+    def move(self, move: 'Move') -> bool:
+        if self.variant.assert_move(move):
+            piece = self.variant.board.remove_piece(move.source)
+            self.variant.board.put_piece(piece, move.destination)
+            return True
+        return False
+
     def start_game(self):
         self.__start_time = datetime.now()
 
-    @abstractmethod
     def game_state(self) -> Type['Side']:
         """
         method return game state which depends on specific rules for every game mode.

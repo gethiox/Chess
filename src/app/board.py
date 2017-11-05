@@ -1,5 +1,5 @@
 from string import digits
-from typing import Optional, Tuple, Sequence, TYPE_CHECKING
+from typing import Optional, Tuple, Sequence, TYPE_CHECKING, Type
 
 from app.pieces import from_str
 from app.position import StandardPosition
@@ -7,6 +7,7 @@ from interface.board import Board
 
 if TYPE_CHECKING:
     from interface.piece import Piece
+    from interface.position import Position
 
 
 class StandardBoard(Board):
@@ -40,7 +41,7 @@ class StandardBoard(Board):
     def ranks(self) -> int:
         return self.__ranks
 
-    def _get_piece(self, position: StandardPosition) -> Optional['Piece']:
+    def get_piece(self, position: StandardPosition) -> Optional['Piece']:
         """
         Get Piece on given Position
         :param position: Position object
@@ -49,7 +50,7 @@ class StandardBoard(Board):
         current = self.__board_array[position.file][position.rank]
         return current
 
-    def _put_piece(self, piece: 'Piece', position: StandardPosition) -> Optional['Piece']:
+    def put_piece(self, piece: 'Piece', position: StandardPosition) -> Optional['Piece']:
         """
         Put Piece on given Position
         :param piece: Just any kind of Piece
@@ -60,7 +61,7 @@ class StandardBoard(Board):
         self.__board_array[position.file][position.rank] = piece
         return current
 
-    def _remove_piece(self, position: StandardPosition) -> Optional['Piece']:
+    def remove_piece(self, position: StandardPosition) -> Optional['Piece']:
         """
         Remove Piece from given Position
         :param position: Position object
@@ -129,3 +130,15 @@ class StandardBoard(Board):
 
         # Pretty easy to understand
         return board_fen
+
+    def pieces(self) -> Sequence[Tuple[Type['Position'], Type['Piece']]]:
+        pieces = []
+        for rank in range(self.files):
+            for file in range(self.ranks):
+                position = StandardPosition((file, rank))
+                piece = self.get_piece(position=position)
+                if piece:
+                    pieces.append(
+                        (position, piece)
+                    )
+        return pieces

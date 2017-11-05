@@ -2,12 +2,21 @@ from abc import ABCMeta, abstractmethod
 from typing import Sequence, Type, TYPE_CHECKING
 
 if TYPE_CHECKING:
+    from interface.board import Board
     from interface.move import Move
     from interface.piece import Piece
     from interface.side import Side
+    from interface.position import Position
 
 
 class Variant(metaclass=ABCMeta):
+    def __init__(self, board: 'Board'):
+        self.__board = board
+
+    @property
+    def board(self):
+        return self.__board
+
     @abstractmethod
     def init_board_state(self) -> str:
         """
@@ -39,4 +48,12 @@ class Variant(metaclass=ABCMeta):
         """
         :return: tuple of players sides
         """
+        pass
+
+    @abstractmethod
+    def attacked_fields(self, side: Type['Side']) -> Sequence[Type['Position']]:
+        pass
+
+    @abstractmethod
+    def available_moves(self, position: Type['Position']) -> Sequence[Type['Move']]:
         pass

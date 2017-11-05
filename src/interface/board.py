@@ -1,5 +1,5 @@
 from abc import ABCMeta, abstractmethod
-from typing import Type, Optional, TYPE_CHECKING
+from typing import Type, Optional, TYPE_CHECKING, Tuple, Sequence
 
 if TYPE_CHECKING:
     from interface.piece import Piece
@@ -29,7 +29,7 @@ class Board(metaclass=ABCMeta):
         pass  # TODO: maybe make not only read-only
 
     @abstractmethod
-    def _get_piece(self, position: Type['Position']) -> Optional[Type['Piece']]:
+    def get_piece(self, position: Type['Position']) -> Optional[Type['Piece']]:
         """
         Get Piece on given Position
         :param position: Position object
@@ -38,7 +38,7 @@ class Board(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def _put_piece(self, piece, position: Type['Position']) -> Optional[Type['Piece']]:
+    def put_piece(self, piece, position: Type['Position']) -> Optional[Type['Piece']]:
         """
         Put Piece on given Position
         :param piece: Just any kind of Piece
@@ -48,7 +48,7 @@ class Board(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def _remove_piece(self, position: Type['Position']) -> Optional[Type['Piece']]:
+    def remove_piece(self, position: Type['Position']) -> Optional[Type['Piece']]:
         """
         Remove Piece from given Position
         :param position: Position object
@@ -71,8 +71,14 @@ class Board(metaclass=ABCMeta):
         """
         pass
 
+    @abstractmethod
+    def pieces(self) -> Sequence[Tuple[Type['Position'], Type['Piece']]]:
+        """
+        :return: a sequence of tuples - (Piece, Position)
+        """
+
     def __repr__(self):
-        return "<%s Board>" % self.name
+        return "<%s>" % self.name
 
     def __str__(self):
         return self.name

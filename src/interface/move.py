@@ -1,5 +1,5 @@
 from abc import ABCMeta, abstractmethod
-from typing import Optional, TYPE_CHECKING, Type
+from typing import TYPE_CHECKING, Type
 
 if TYPE_CHECKING:
     from interface.piece import Piece
@@ -7,31 +7,31 @@ if TYPE_CHECKING:
 
 
 class Move(metaclass=ABCMeta):
-    def __init__(self, a: Type['Position'], b: Type['Position'], promotion: Optional[Type['Piece']] = None):
-        self.__a = a
-        self.__b = b
-        self.__promotion = promotion
+    def __init__(self, source: 'Position', destination: 'Position', promotion: 'Piece' = None):
+        self._source = source
+        self._destination = destination
+        self._promotion = promotion
 
     def __repr__(self):  # TODO: update for positions objects without support of converting to string
-        if self.__promotion:
-            return 'Move: %s to %s with promotion to %s' % (self.__a, self.__b, self.__promotion.name)
+        if self._promotion:
+            return 'Move: %s to %s with promotion to %s' % (self._source, self._destination, self._promotion.name)
         else:
-            return 'Move: %s to %s' % (self.__a, self.__b)
+            return 'Move: %s to %s' % (self._source, self._destination)
 
     def __str__(self):
-        if self.__promotion:
-            return '%s%s%s' % (self.__a, self.__b, self.__promotion.char)
+        if self._promotion:
+            return '%s%s%s' % (self._source, self._destination, self._promotion.char)
         else:
-            return '%s%s' % (self.__a, self.__b)
+            return '%s%s' % (self._source, self._destination)
 
     @property
     @abstractmethod
-    def b(self) -> Type['Position']:
+    def destination(self) -> Type['Position']:
         pass
 
     @property
     @abstractmethod
-    def a(self) -> Type['Position']:
+    def source(self) -> Type['Position']:
         pass
 
     @property

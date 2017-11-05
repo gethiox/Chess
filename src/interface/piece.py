@@ -30,9 +30,9 @@ class CaptureDescription:
 class Movement:
     """
     This object explains for game engine basics of available piece movements, eg. where can go and where can capture.
-    Explanation doesn't relate to GameMode specific movements which depends on game state, eg en passant (last pawn 
+    Explanation doesn't relate to GameMode specific movements which depends on game state, eg en passant (last pawn
     move), or castling (King or Rook was ever moved, is field between King's source and destination attacked)
-    Movement is separated to two section - capture and move. It may determine different Piece mechanics, eg. for 
+    Movement is separated to two section - capture and move. It may determine different Piece mechanics, eg. for
     a pawn - can move forward but capture only diagonal in the front. This interface should be flexible to determine
     any type of movement, even as the stupidest as human being can imagine (as long as not depend on the game state).
     If not, Use this interface to implement your stupid movement ability.

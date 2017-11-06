@@ -234,7 +234,6 @@ class Normal(Variant):
         return transpoed
 
 
-
 # class Chess960(Variant):
 #     pass
 #

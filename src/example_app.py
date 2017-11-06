@@ -2,7 +2,6 @@
 from app.move import StandardMove
 from app.player import Player
 from app.position import StandardPosition
-from app.sides import White, Black
 from app.variants import Normal
 from cli import board_rendererer
 from interface.game import Game

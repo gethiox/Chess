@@ -75,10 +75,7 @@ class Normal(Variant):
 
         new_positions = []
         for m_desc in piece.movement.move:
-            if m_desc.any_direction:
-                vectors = self.__transpose_vector(m_desc.vector)
-            else:
-                vectors = [m_desc.vector]
+            vectors = self.__transform_vector(m_desc.vector, m_desc.any_direction, piece.side)
 
             for vector in vectors:
                 if m_desc.distance is infinity:
@@ -121,10 +118,7 @@ class Normal(Variant):
 
         new_positions = []
         for c_desc in piece.movement.capture:
-            if c_desc.any_direction:
-                vectors = self.__transpose_vector(c_desc.vector)
-            else:
-                vectors = [c_desc.vector]
+            vectors = self.__transform_vector(c_desc.vector, c_desc.any_direction, piece.side)
 
             for vector in vectors:
                 if c_desc.distance is infinity:
@@ -167,10 +161,7 @@ class Normal(Variant):
 
         new_positions = []
         for c_desc in piece.movement.capture:
-            if c_desc.any_direction:
-                vectors = self.__transpose_vector(c_desc.vector)
-            else:
-                vectors = [c_desc.vector]
+            vectors = self.__transform_vector(c_desc.vector, c_desc.any_direction, piece.side)
 
             for vector in vectors:
                 if c_desc.distance is infinity:
@@ -220,18 +211,29 @@ class Normal(Variant):
         return list(set(positions))
 
     @staticmethod
-    def __transpose_vector(vector: Tuple[int, int]) -> Sequence[Tuple[int, int]]:
-        transpoed = [
-            (vector[0], vector[1]),
-            (vector[1], vector[0]),
-            (vector[1], vector[0] * -1),
-            (vector[0], vector[1] * -1),
-            (vector[0] * -1, vector[1] * -1),
-            (vector[1] * -1, vector[0] * -1),
-            (vector[1] * -1, vector[0]),
-            (vector[0] * -1, vector[1]),
-        ]
-        return list(set(transpoed))
+    def __transform_vector(vector: Tuple[int, int], all_directions: bool, side) -> Sequence[Tuple[int, int]]:
+        # TODO: standard interface for resolving all vector combinations and for transforming not-all-directions vector
+        # TODO: eg. a pawn, for Whites move forward means incrementing rank value, for Black - decrementing
+        if all_directions:
+            transpoed = [
+                (vector[0], vector[1]),
+                (vector[1], vector[0]),
+                (vector[1], vector[0] * -1),
+                (vector[0], vector[1] * -1),
+                (vector[0] * -1, vector[1] * -1),
+                (vector[1] * -1, vector[0] * -1),
+                (vector[1] * -1, vector[0]),
+                (vector[0] * -1, vector[1]),
+            ]
+            return list(set(transpoed))
+
+        if side == Black:
+            transpoed = [(vector[0] * -1, vector[1] * -1)]
+        else:
+            transpoed = [vector]
+        return transpoed
+
+
 
 # class Chess960(Variant):
 #     pass

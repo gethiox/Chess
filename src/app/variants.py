@@ -23,7 +23,14 @@ class Normal(Variant):
         return self.__board
 
     def assert_move(self, move: StandardMove) -> bool:
-        return True  # TODO
+        source, destination = move.source, move.destination
+        piece = self.board.get_piece(source)
+        if not piece:
+            return False
+        if destination not in self.available_moves(source):
+            if destination not in self.attacked_fields(source):
+                return False
+        return True
 
     @property
     def sides(self) -> Sequence[Type['Side']]:

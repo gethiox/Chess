@@ -99,6 +99,11 @@ class StandardPosition(Position):
         for coordinate in (self.file, self.rank):
             yield coordinate
 
+    def __eq__(self, other):
+        if isinstance(other, type(self)):
+            if other.rank == self.rank and other.file == self.file:
+                return True
+
     def __getitem__(self, item) -> int:
         if item == 0:
             return self.file

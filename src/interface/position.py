@@ -19,3 +19,8 @@ class Position(metaclass=ABCMeta):
     def __getitem__(self, item):
         """Should be implemented for index access purpose (Position[index]). 0 for X, 1 for Y, 2 for Z etc."""
         pass
+
+    @abstractmethod
+    def __eq__(self, other):
+        """Implement for finding same position in sequence"""
+        pass

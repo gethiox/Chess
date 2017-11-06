@@ -1,7 +1,7 @@
 # see more: https://en.wikipedia.org/wiki/List_of_chess_variants
+from math import inf as infinity
 from typing import Sequence, Type, TYPE_CHECKING, Tuple
 
-from math import inf as infinity
 from app.board import StandardBoard
 from app.move import StandardMove
 from app.pieces import King, Pawn, Knight, Bishop, Rook, Queen
@@ -202,7 +202,15 @@ class Normal(Variant):
         return new_positions
 
     def attacked_fields_by_side(self, side: Type['Side']) -> Sequence[Type['StandardPosition']]:
-        pass
+        positions = []
+        for position, piece in self.board.pieces().items():
+            if piece.side != side:
+                continue
+            positions.extend(
+                self.attacked_fields(position)
+            )
+
+        return list(set(positions))
 
     @staticmethod
     def __transpose_vector(vector: Tuple[int, int]) -> Sequence[Tuple[int, int]]:

@@ -7,7 +7,6 @@ from interface.board import Board
 
 if TYPE_CHECKING:
     from interface.piece import Piece
-    from interface.position import Position
 
 
 class StandardBoard(Board):
@@ -131,7 +130,7 @@ class StandardBoard(Board):
         # Pretty easy to understand
         return board_fen
 
-    def pieces(self) -> Dict['Position', 'Piece']:
+    def pieces(self) -> Dict['StandardPosition', 'Piece']:
         pieces = {}
         for rank in range(self.files):
             for file in range(self.ranks):

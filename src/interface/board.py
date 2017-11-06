@@ -79,8 +79,8 @@ class Board(metaclass=ABCMeta):
 
     @abstractmethod
     def validate_position(self, position: Type['Position']) -> bool:
-        """ 
-        :return: bool, True if given position belongs to dimensions of this board ('eg. a1'), False if not ('eg. z9')  
+        """
+        :return: bool, True if given position belongs to dimensions of this board ('eg. a1'), False if not ('eg. z9')
         """
 
     def __repr__(self):

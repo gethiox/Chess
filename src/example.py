@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-from app.board import StandardBoard
 from app.move import StandardMove
 from app.player import Player
 from app.position import StandardPosition
+from app.sides import White, Black
 from app.variants import Normal
 from cli import board_rendererer
 from interface.game import Game
@@ -34,7 +34,7 @@ if __name__ == "__main__":
 
     pos = StandardPosition("a2")
     piece = game.board.get_piece(pos)
-    print("Piece: %s %s (%s)\nMoves: %s\nCaptures: %s\nAttacked Fields: %s" % (
+    print("Piece: %s %s (%s)\nMoves: %s\nCaptures: %s\nAttacked Fields: %s\n" % (
         piece.side,
         piece.name,
         str(pos),
@@ -45,7 +45,7 @@ if __name__ == "__main__":
 
     pos = StandardPosition("h4")
     piece = game.board.get_piece(pos)
-    print("Piece: %s %s (%s)\nMoves: %s\nCaptures: %s\nAttacked Fields: %s" % (
+    print("Piece: %s %s (%s)\nMoves: %s\nCaptures: %s\nAttacked Fields: %s\n" % (
         piece.side,
         piece.name,
         str(pos),
@@ -53,3 +53,8 @@ if __name__ == "__main__":
         [str(pos) for pos in game.variant.available_captures(pos)],
         [str(pos) for pos in game.variant.attacked_fields(pos)],
     ))
+
+    print("attacked fields by White:")
+    print("%s" % [str(pos) for pos in game.variant.attacked_fields_by_side(White)])
+    print("attacked fields by Black:")
+    print("%s" % [str(pos) for pos in game.variant.attacked_fields_by_side(Black)])

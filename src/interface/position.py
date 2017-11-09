@@ -24,3 +24,7 @@ class Position(metaclass=ABCMeta):
     def __eq__(self, other):
         """Implement for finding same position in sequence"""
         pass
+
+    @abstractmethod
+    def __hash__(self):
+        pass

@@ -111,3 +111,6 @@ class StandardPosition(Position):
             return self.rank
         else:
             raise IndexError("tuple index out of range")
+
+    def __hash__(self):
+        return hash((self.file, self.rank))

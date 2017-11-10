@@ -1,5 +1,5 @@
 from abc import ABCMeta, abstractmethod
-from typing import Sequence, Type, TYPE_CHECKING
+from typing import Sequence, Type, TYPE_CHECKING, Set
 
 if TYPE_CHECKING:
     from interface.board import Board
@@ -49,17 +49,17 @@ class Variant(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def available_moves(self, position: Type['Position']) -> Sequence[Type['Position']]:
+    def available_moves(self, position: Type['Position']) -> Set[Type['Position']]:
         pass
 
     @abstractmethod
-    def available_captures(self, position: Type['Position']) -> Sequence[Type['Position']]:
+    def available_captures(self, position: Type['Position']) -> Set[Type['Position']]:
         pass
 
     @abstractmethod
-    def attacked_fields(self, position: Type['Position']) -> Sequence[Type['Position']]:
+    def attacked_fields(self, position: Type['Position']) -> Set[Type['Position']]:
         pass
 
     @abstractmethod
-    def attacked_fields_by_side(self, side: Type['Side']) -> Sequence[Type['Position']]:
+    def attacked_fields_by_side(self, side: Type['Side']) -> Set[Type['Position']]:
         pass

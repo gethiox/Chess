@@ -1,6 +1,6 @@
 # see more: https://en.wikipedia.org/wiki/List_of_chess_variants
 from math import inf as infinity
-from typing import Sequence, Type, TYPE_CHECKING, Tuple
+from typing import Sequence, Type, TYPE_CHECKING, Tuple, Set
 
 from app.board import StandardBoard
 from app.move import StandardMove
@@ -67,13 +67,13 @@ class Normal(Variant):
     def pieces(self) -> Sequence[Type['Piece']]:
         return King, Queen, Rook, Bishop, Knight, Pawn
 
-    def available_moves(self, position: 'StandardPosition') -> Sequence['StandardPosition']:
+    def available_moves(self, position: 'StandardPosition') -> Set['StandardPosition']:
         # TODO: REFACTOR
         piece = self.board.get_piece(position)
         if not piece:
             raise ValueError('write here something')
 
-        new_positions = []
+        new_positions = set()
         for m_desc in piece.movement.move:
             vectors = self.__transform_vector(m_desc.vector, m_desc.any_direction, piece.side)
 
@@ -91,7 +91,7 @@ class Normal(Variant):
                         new_piece = self.board.get_piece(new_position)
                         if new_piece is not None:
                             break
-                        new_positions.append(new_position)
+                        new_positions.add(new_position)
                         distance += 1
                 else:
                     for distance in range(1, m_desc.distance + 1):
@@ -105,18 +105,18 @@ class Normal(Variant):
                         new_piece = self.board.get_piece(new_position)
                         if new_piece is not None:
                             break
-                        new_positions.append(new_position)
+                        new_positions.add(new_position)
 
         return new_positions
 
-    def available_captures(self, position: 'StandardPosition') -> Sequence['StandardPosition']:
+    def available_captures(self, position: 'StandardPosition') -> Set['StandardPosition']:
         # TODO: less ctrl+c ctrl+v
         # TODO: REFACTOR
         piece = self.board.get_piece(position)
         if not piece:
             raise ValueError('write here something')
 
-        new_positions = []
+        new_positions = set()
         for c_desc in piece.movement.capture:
             vectors = self.__transform_vector(c_desc.vector, c_desc.any_direction, piece.side)
 
@@ -133,7 +133,7 @@ class Normal(Variant):
 
                         new_piece = self.board.get_piece(new_position)
                         if new_piece and new_piece.side != piece.side:
-                            new_positions.append(new_position)
+                            new_positions.add(new_position)
                             break
                         distance += 1
                 else:
@@ -147,19 +147,19 @@ class Normal(Variant):
 
                         new_piece = self.board.get_piece(new_position)
                         if new_piece and new_piece.side != piece.side:
-                            new_positions.append(new_position)
+                            new_positions.add(new_position)
                             break
 
         return new_positions
 
-    def attacked_fields(self, position: 'StandardPosition') -> Sequence['StandardPosition']:
+    def attacked_fields(self, position: 'StandardPosition') -> Set['StandardPosition']:
         # TODO: REFACTOR
         # TODO: less ctrl+c ctrl+v, seriously
         piece = self.board.get_piece(position)
         if not piece:
             raise ValueError('write here something')
 
-        new_positions = []
+        new_positions = set()
         for c_desc in piece.movement.capture:
             vectors = self.__transform_vector(c_desc.vector, c_desc.any_direction, piece.side)
 
@@ -176,9 +176,9 @@ class Normal(Variant):
 
                         new_piece = self.board.get_piece(new_position)
                         if not new_piece:
-                            new_positions.append(new_position)
+                            new_positions.add(new_position)
                         elif new_piece and new_piece.side != piece.side:
-                            new_positions.append(new_position)
+                            new_positions.add(new_position)
                             break
                         distance += 1
                 else:
@@ -192,23 +192,23 @@ class Normal(Variant):
 
                         new_piece = self.board.get_piece(new_position)
                         if not new_piece:
-                            new_positions.append(new_position)
+                            new_positions.add(new_position)
                         elif new_piece and new_piece.side != piece.side:
-                            new_positions.append(new_position)
+                            new_positions.add(new_position)
                             break
 
         return new_positions
 
-    def attacked_fields_by_side(self, side: Type['Side']) -> Sequence[Type['StandardPosition']]:
-        positions = []
+    def attacked_fields_by_side(self, side: Type['Side']) -> Set[Type['StandardPosition']]:
+        positions = set()
         for position, piece in self.board.pieces().items():
             if piece.side != side:
                 continue
-            positions.extend(
+            positions.add(
                 self.attacked_fields(position)
             )
 
-        return list(set(positions))
+        return positions
 
     @staticmethod
     def __transform_vector(vector: Tuple[int, int], all_directions: bool, side) -> Sequence[Tuple[int, int]]:

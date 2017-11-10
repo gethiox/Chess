@@ -28,6 +28,10 @@ class Normal(Variant):
         if not piece:
             return False
         if destination not in self.available_moves(source):
+            return False
+        if destination not in self.available_captures(source):
+            return False
+        if destination not in self.available_moves(source):
             if destination not in self.attacked_fields(source):
                 return False
         return True

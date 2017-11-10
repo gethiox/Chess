@@ -180,6 +180,8 @@ class Normal(Variant):
                         elif new_piece and new_piece.side != piece.side:
                             new_positions.add(new_position)
                             break
+                        elif new_piece and new_piece.side == piece.side:
+                            break
                         distance += 1
                 else:
                     for distance in range(1, c_desc.distance + 1):
@@ -196,19 +198,17 @@ class Normal(Variant):
                         elif new_piece and new_piece.side != piece.side:
                             new_positions.add(new_position)
                             break
+                        elif new_piece and new_piece.side == piece.side:
+                            break
 
         return new_positions
 
     def attacked_fields_by_side(self, side: Type['Side']) -> Set[Type['StandardPosition']]:
-        positions = set()
-        for position, piece in self.board.pieces().items():
-            if piece.side != side:
-                continue
-            positions.add(
-                self.attacked_fields(position)
-            )
+        return {pos for position, piece in self.board.pieces().items()
+                for pos in self.attacked_fields(position)
+                if piece.side == side}
 
-        return positions
+    # def __movement_to_positions(self, movement: 'Movement') -> Set['StandardPosition']:
 
     @staticmethod
     def __transform_vector(vector: Tuple[int, int], all_directions: bool, side) -> Sequence[Tuple[int, int]]:
@@ -232,7 +232,6 @@ class Normal(Variant):
         else:
             transpoed = [vector]
         return transpoed
-
 
 # class Chess960(Variant):
 #     pass

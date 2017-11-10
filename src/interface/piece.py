@@ -12,7 +12,7 @@ CaptureBreak = bool  # Determine if a capture breaks availability to move behind
 
 
 class MoveDescription:
-    def __init__(self, vector: Tuple[int, int], any_direction: bool, distance: int, capture_break: bool = True):
+    def __init__(self, vector: Vector, any_direction: bool, distance: int, capture_break: bool = True):
         self.vector = vector
         self.any_direction = any_direction
         self.distance = distance
@@ -20,7 +20,7 @@ class MoveDescription:
 
 
 class CaptureDescription:
-    def __init__(self, vector: Tuple[int, int], any_direction: bool, distance: int, self_capture: bool = False):
+    def __init__(self, vector: Vector, any_direction: bool, distance: int, self_capture: bool = False):
         self.vector = vector
         self.any_direction = any_direction
         self.distance = distance
@@ -38,26 +38,24 @@ class Movement:
     If not, Use this interface to implement your stupid movement ability.
     """
 
-    def __init__(self, move_descriptions: Sequence[MoveDescription],
+    def __init__(self,
+                 move_descriptions: Sequence[MoveDescription],
                  capture_descriptions: Sequence[CaptureDescription] = None):
+
         self.__move_descriptions = move_descriptions
         if capture_descriptions is not None:
             self.__capture_descriptions = capture_descriptions
         else:
-            new_capture_descriptions = []
-            for move_description in move_descriptions:
-                new_capture_descriptions.append(
-                    CaptureDescription(
-                        vector=move_description.vector,
-                        any_direction=move_description.any_direction,
-                        distance=move_description.distance,
-                        self_capture=False
-                    )
-                )
-            self.__capture_descriptions = new_capture_descriptions
+            self.__capture_descriptions = [
+                CaptureDescription(
+                    vector=move_description.vector,
+                    any_direction=move_description.any_direction,
+                    distance=move_description.distance,
+                    self_capture=False
+                ) for move_description in move_descriptions
+            ]
 
     @property
-    @abstractmethod
     def move(self) -> Sequence[MoveDescription]:
         return self.__move_descriptions
 

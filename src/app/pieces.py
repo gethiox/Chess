@@ -136,8 +136,8 @@ class Pawn(Piece):
                 MoveDescription(vector=(0, 1), any_direction=False, distance=1, capture_break=True),
             ],
             capture_descriptions=[
-                CaptureDescription(vector=(1, 1), any_direction=False, distance=1, self_capture=False),
-                CaptureDescription(vector=(-1, 1), any_direction=False, distance=1, self_capture=False),
+                CaptureDescription(vector=(1, 1), any_direction=False, distance=1, capture_break=False, self_capture=False),
+                CaptureDescription(vector=(-1, 1), any_direction=False, distance=1, capture_break=False, self_capture=False),
             ]
         )
 

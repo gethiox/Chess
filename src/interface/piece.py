@@ -20,10 +20,11 @@ class MoveDescription:
 
 
 class CaptureDescription:
-    def __init__(self, vector: Vector, any_direction: bool, distance: int, self_capture: bool = False):
+    def __init__(self, vector: Vector, any_direction: bool, distance: int, capture_break: bool = True, self_capture: bool = False):
         self.vector = vector
         self.any_direction = any_direction
         self.distance = distance
+        self.capture_break = capture_break
         self.self_capture = self_capture
 
 
@@ -51,6 +52,7 @@ class Movement:
                     vector=move_description.vector,
                     any_direction=move_description.any_direction,
                     distance=move_description.distance,
+                    capture_break=move_description.capture_break,
                     self_capture=False
                 ) for move_description in move_descriptions
             ]

@@ -9,7 +9,7 @@ def _get_packages(exclude=('*tests*',)):
     return find_packages(where=SRC_DIR, exclude=exclude)
 
 
-def test(cov=''):
+def nosetests(cov=''):
     """
     Run test suite
     """
@@ -19,6 +19,15 @@ def test(cov=''):
 
     local("nosetests --rednose {flags} {dir}".format(
         flags=flags,
+        dir=SRC_DIR,
+    ))
+
+
+def pytest():
+    """
+    Run test suite
+    """
+    local("PYTHONPATH={dir} pytest".format(
         dir=SRC_DIR,
     ))
 

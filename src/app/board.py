@@ -130,6 +130,7 @@ class StandardBoard(Board):
         # Pretty easy to understand
         return board_fen
 
+    @property
     def pieces(self) -> Dict['StandardPosition', 'Piece']:
         pieces = {}
         for rank in range(self.files):

@@ -71,6 +71,7 @@ class Board(metaclass=ABCMeta):
         """
         pass
 
+    @property
     @abstractmethod
     def pieces(self) -> Dict['Position', 'Piece']:
         """

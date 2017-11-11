@@ -107,30 +107,11 @@ class Normal(Variant):
         if not piece:
             raise ValueError('Any piece on %s' % position)
 
-        new_positions = set()
-        for c_desc in piece.movement.capture:
-            vectors = self.__transform_vector(c_desc.vector, c_desc.any_direction, piece.side)
-
-            for vector in vectors:
-                if c_desc.distance is infinity:
-                    loop = itertools.count(1)
-                else:
-                    loop = range(1, c_desc.distance + 1)
-
-                for distance in loop:
-                    new_position = StandardPosition(
-                        (position[0] + int(vector[0] * distance),
-                         position[1] + int(vector[1] * distance))
-                    )
-                    if not self.board.validate_position(new_position):
-                        break
-
-                    new_piece = self.board.get_piece(new_position)
-                    if new_piece and new_piece.side != piece.side:
-                        new_positions.add(new_position)
-                        break
-
-        return new_positions
+        attacked_fields = self.attacked_fields(position)
+        return {
+            new_position for new_position, new_piece in self.board.pieces.items()
+            if new_piece.side != piece.side and new_position in attacked_fields
+        }
 
     def attacked_fields(self, position: 'StandardPosition') -> Set['StandardPosition']:
         # TODO: REFACTOR
@@ -140,9 +121,7 @@ class Normal(Variant):
 
         new_positions = set()
         for c_desc in piece.movement.capture:
-            vectors = self.__transform_vector(c_desc.vector, c_desc.any_direction, piece.side)
-
-            for vector in vectors:
+            for vector in self.__transform_vector(c_desc.vector, c_desc.any_direction, piece.side):
                 if c_desc.distance is infinity:
                     loop = itertools.count(1)
                 else:
@@ -168,7 +147,7 @@ class Normal(Variant):
         return new_positions
 
     def attacked_fields_by_side(self, side: Type['Side']) -> Set[Type['StandardPosition']]:
-        return {pos for position, piece in self.board.pieces().items()
+        return {pos for position, piece in self.board.pieces.items()
                 for pos in self.attacked_fields(position)
                 if piece.side == side}
 

@@ -1,8 +1,12 @@
+from os.path import dirname
+
 from fabric.context_managers import lcd
 from fabric.operations import local
+from fabric.state import env
 from setuptools import find_packages
 
-SRC_DIR = 'src'
+ROOT_DIR = dirname(env['real_fabfile'])
+SRC_DIR = '{}/src/'.format(ROOT_DIR)
 
 
 def _get_packages(exclude=('*tests*',)):
@@ -17,19 +21,18 @@ def nosetests(cov=''):
     if cov:
         flags += '--with-coverage --cover-html --cover-html-dir=coverage'
 
-    local("nosetests --rednose {flags} {dir}".format(
-        flags=flags,
-        dir=SRC_DIR,
-    ))
+    with lcd(SRC_DIR):
+        local("nosetests --rednose {flags}".format(
+            flags=flags,
+        ))
 
 
 def pytest():
     """
     Run test suite
     """
-    local("PYTHONPATH={dir} pytest".format(
-        dir=SRC_DIR,
-    ))
+    with lcd(SRC_DIR):
+        local("python -m pytest")
 
 
 def qa():
@@ -46,6 +49,5 @@ def fmt():
     """
     Run pep8
     """
-    local('autopep8 --in-place --aggressive --max-line-length=120 -r {dir}'.format(
-        dir=SRC_DIR
-    ))
+    with lcd(SRC_DIR):
+        local('autopep8 --in-place --aggressive --max-line-length=120 -r .')

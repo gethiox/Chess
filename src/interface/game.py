@@ -70,7 +70,6 @@ class Game:
         self.__start_time = datetime.now()
 
     def game_state(self) -> Type['Side']:
-
         """
         method return game state which depends on specific rules for every game mode.
         Look into "Normal" game mode class for inspirations (if is even implemented right now)

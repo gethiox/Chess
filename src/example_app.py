@@ -11,10 +11,13 @@ if __name__ == "__main__":
 
     game = Game(player1=player, player2=player, variant=Normal())
     board_rendererer.normal(game.board)
-    print("Insert move, eg. \"e2e4\"")
+    print("Insert move, eg. \"e2e4\" (tyoe \'board\' to show board)")
     try:
         while True:
             move_str = input("Move: ")
+            if move_str == "board":
+                board_rendererer.normal(game.board)
+                continue
             try:
                 source = StandardPosition(move_str[:2])
                 destination = StandardPosition(move_str[2:])
@@ -24,12 +27,12 @@ if __name__ == "__main__":
             if not game.board.validate_position(source) or not game.board.validate_position(destination):
                 print("You give position above actual board range (%dx%d)" % game.board.size)
                 continue
-            move = StandardMove(source=source, destination=destination)
-            if not game.variant.assert_move(move):
-                print("%s is not a valid move" % move)
-                continue
 
-            game.move(move)
+            move = StandardMove(source=source, destination=destination)
+            moved = game.move(move)
+            if moved is False:
+                print('give me a valid chess move')
+                continue
             board_rendererer.normal(game.board)
 
     except KeyboardInterrupt:

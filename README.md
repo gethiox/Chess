@@ -1,3 +1,5 @@
+Branch is highly experimental and should be not considered as useful
+
 You can play with pieces here - complete game logic not yet implemented
 
 See [example_app.py](src/example_app.py)

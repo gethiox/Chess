@@ -1,6 +1,6 @@
 # see more: https://en.wikipedia.org/wiki/List_of_chess_variants
 import itertools
-from copy import copy
+from copy import deepcopy
 from math import inf as infinity
 from typing import Sequence, Type, TYPE_CHECKING, Tuple, Set
 
@@ -67,7 +67,7 @@ class Normal(Variant):
             return False
         if destination not in self.standard_moves(source).union(self.attacked_fields(source)):
             return False
-        test_board = copy(self.board)
+        test_board = deepcopy(self.board)
         test_piece = test_board.remove_piece(source)
         test_board.put_piece(test_piece, destination)
         for pos, p in test_board.pieces.items():

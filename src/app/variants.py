@@ -1,5 +1,6 @@
 # see more: https://en.wikipedia.org/wiki/List_of_chess_variants
 import itertools
+from copy import copy
 from math import inf as infinity
 from typing import Sequence, Type, TYPE_CHECKING, Tuple, Set
 
@@ -18,28 +19,19 @@ if TYPE_CHECKING:
 class Normal(Variant):
     def __init__(self):
         self.__board = StandardBoard()
+        self.init_board_state()
 
     @property
     def board(self) -> StandardBoard:
         return self.__board
 
-    def assert_move(self, move: StandardMove) -> bool:
-        source, destination = move.source, move.destination
-        piece = self.board.get_piece(source)
-        if not piece:
-            return False
-        if destination not in self.available_moves(source):
-            return False
-        if destination not in self.available_captures(source):
-            return False
-        if destination not in self.available_moves(source):
-            if destination not in self.attacked_fields(source):
-                return False
-        return True
-
     @property
     def sides(self) -> Sequence[Type['Side']]:
         return White, Black
+
+    @property
+    def pieces(self) -> Set[Type['Piece']]:
+        return {King, Queen, Rook, Bishop, Knight, Pawn}
 
     def init_board_state(self):
         self.board.put_piece(piece=Rook(White), position=StandardPosition((0, 0)))
@@ -68,13 +60,29 @@ class Normal(Variant):
 
         return self.board.get_fen()
 
-    @property
-    def pieces(self) -> Sequence[Type['Piece']]:
-        return King, Queen, Rook, Bishop, Knight, Pawn
+    def assert_move(self, move: 'StandardMove') -> bool:
+        source, destination = move.source, move.destination
+        piece = self.board.get_piece(source)
+        if not piece:
+            return False
+        if destination not in self.standard_moves(source).union(self.attacked_fields(source)):
+            return False
+        test_board = copy(self.board)
+        test_piece = test_board.remove_piece(source)
+        test_board.put_piece(test_piece, destination)
+        for pos, p in test_board.pieces.items():
+            if p == King(piece.side) and pos in self.attacked_fields_by_sides(
+                set(self.sides).difference({piece.side})
+            ):
+                return False
 
-    def available_moves(self, position: 'StandardPosition') -> Set['StandardPosition']:
+        return True
+
+    def standard_moves(self, position: 'StandardPosition', board: StandardBoard = None) -> Set['StandardPosition']:
         # TODO: REFACTOR
-        piece = self.board.get_piece(position)
+        if not board:
+            board = self.board
+        piece = board.get_piece(position)
         if not piece:
             raise ValueError('Any piece on %s' % position)
 
@@ -91,31 +99,34 @@ class Normal(Variant):
                         (position[0] + int(vector[0] * distance),
                          position[1] + int(vector[1] * distance))
                     )
-                    if not self.board.validate_position(new_position):
+                    if not board.validate_position(new_position):
                         break
 
-                    new_piece = self.board.get_piece(new_position)
+                    new_piece = board.get_piece(new_position)
                     if new_piece is not None:
                         break
                     new_positions.add(new_position)
 
         return new_positions
 
-    def available_captures(self, position: 'StandardPosition') -> Set['StandardPosition']:
-        # TODO: REFACTOR
-        piece = self.board.get_piece(position)
+    def standard_captures(self, position: 'StandardPosition', board: StandardBoard = None) -> Set['StandardPosition']:
+        if not board:
+            board = self.board
+        piece = board.get_piece(position)
         if not piece:
             raise ValueError('Any piece on %s' % position)
 
-        attacked_fields = self.attacked_fields(position)
+        attacked_fields = self.attacked_fields(position, board)
         return {
-            new_position for new_position, new_piece in self.board.pieces.items()
+            new_position for new_position, new_piece in board.pieces.items()
             if new_piece.side != piece.side and new_position in attacked_fields
         }
 
-    def attacked_fields(self, position: 'StandardPosition') -> Set['StandardPosition']:
+    def attacked_fields(self, position: 'StandardPosition', board: StandardBoard = None) -> Set['StandardPosition']:
         # TODO: REFACTOR
-        piece = self.board.get_piece(position)
+        if not board:
+            board = self.board
+        piece = board.get_piece(position)
         if not piece:
             raise ValueError('Any piece on %s' % position)
 
@@ -132,10 +143,10 @@ class Normal(Variant):
                         (position[0] + int(vector[0] * distance),
                          position[1] + int(vector[1] * distance))
                     )
-                    if not self.board.validate_position(new_position):
+                    if not board.validate_position(new_position):
                         break
 
-                    new_piece = self.board.get_piece(new_position)
+                    new_piece = board.get_piece(new_position)
                     if not new_piece:
                         new_positions.add(new_position)
                     elif new_piece and new_piece.side != piece.side:
@@ -146,9 +157,11 @@ class Normal(Variant):
 
         return new_positions
 
-    def attacked_fields_by_side(self, side: Type['Side']) -> Set[Type['StandardPosition']]:
+    def attacked_fields_by_sides(self, side: Set[Type['Side']], board: 'StandardBoard' = None) -> Set['StandardPosition']:
+        if not board:
+            board = self.board
         return {pos for position, piece in self.board.pieces.items()
-                for pos in self.attacked_fields(position)
+                for pos in self.attacked_fields(position, board)
                 if piece.side == side}
 
     @staticmethod

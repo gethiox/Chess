@@ -38,8 +38,8 @@ if __name__ == "__main__":
         piece.side,
         piece.name,
         str(pos),
-        [str(pos) for pos in game.variant.available_moves(pos)],
-        [str(pos) for pos in game.variant.available_captures(pos)],
+        [str(pos) for pos in game.variant.standard_moves(pos)],
+        [str(pos) for pos in game.variant.standard_captures(pos)],
         [str(pos) for pos in game.variant.attacked_fields(pos)],
     ))
 
@@ -49,12 +49,12 @@ if __name__ == "__main__":
         piece.side,
         piece.name,
         str(pos),
-        [str(pos) for pos in game.variant.available_moves(pos)],
-        [str(pos) for pos in game.variant.available_captures(pos)],
+        [str(pos) for pos in game.variant.standard_moves(pos)],
+        [str(pos) for pos in game.variant.standard_captures(pos)],
         [str(pos) for pos in game.variant.attacked_fields(pos)],
     ))
 
     print("attacked fields by White:")
-    print("%s" % [str(pos) for pos in game.variant.attacked_fields_by_side(White)])
+    print("%s" % [str(pos) for pos in game.variant.attacked_fields_by_sides(White)])
     print("attacked fields by Black:")
-    print("%s" % [str(pos) for pos in game.variant.attacked_fields_by_side(Black)])
+    print("%s" % [str(pos) for pos in game.variant.attacked_fields_by_sides(Black)])

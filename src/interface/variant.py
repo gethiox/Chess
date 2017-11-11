@@ -49,11 +49,11 @@ class Variant(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def available_moves(self, position: Type['Position']) -> Set[Type['Position']]:
+    def standard_moves(self, position: Type['Position']) -> Set[Type['Position']]:
         pass
 
     @abstractmethod
-    def available_captures(self, position: Type['Position']) -> Set[Type['Position']]:
+    def standard_captures(self, position: Type['Position']) -> Set[Type['Position']]:
         pass
 
     @abstractmethod
@@ -61,5 +61,5 @@ class Variant(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def attacked_fields_by_side(self, side: Type['Side']) -> Set[Type['Position']]:
+    def attacked_fields_by_sides(self, side: Type['Side']) -> Set[Type['Position']]:
         pass

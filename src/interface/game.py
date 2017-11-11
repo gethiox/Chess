@@ -4,6 +4,7 @@ from typing import Type, Tuple, TYPE_CHECKING, List
 from app.sides import White, Black
 
 if TYPE_CHECKING:
+    from interface.piece import Piece
     from interface.move import Move
     from interface.board import Board
     from interface.variant import Variant
@@ -26,13 +27,25 @@ class Game:
         self.__start_time = None
         self.__create_time = datetime.now()
 
-        self.__moves = 0
-        self.__half_moves = 0
+        self.__half_moves = 1
         self.__moves_history = []
+        self.__taken_pieces = []
+
+    @property
+    def half_moves(self):
+        return self.__half_moves
+
+    @property
+    def moves(self):
+        return (self.__half_moves + 1) // len(self.players)
 
     @property
     def moves_history(self) -> List[Type['Move']]:
         return self.__moves_history
+
+    @property
+    def taken_pieces(self) -> List[Type['Piece']]:
+        return self.__taken_pieces
 
     @property
     def board(self) -> Type['Board']:
@@ -57,14 +70,19 @@ class Game:
     @property
     def on_move(self) -> Type['Side']:
         sides = tuple(self.__players.keys())
-        return sides[self.__half_moves % len(self.players)]
+        return sides[(self.__half_moves - 1) % len(self.players)]
 
-    def move(self, move: Type['Move']):
+    def move(self, move: Type['Move']) -> bool:
         if not self.variant.assert_move(move):
-            raise ValueError("Move not allowed")
-        piece = self.board.remove_piece(position=move.source)
-        self.board.put_piece(piece=piece, position=move.destination)
+            return False
+        if self.board.get_piece(position=move.source).side != self.on_move:
+            return False
+        moved_piece = self.board.remove_piece(position=move.source)
+        taken_piece = self.board.put_piece(piece=moved_piece, position=move.destination)
         self.moves_history.append(move)
+        self.taken_pieces.append(taken_piece)
+        self.__half_moves += 1
+        return True
 
     def start_game(self):
         self.__start_time = datetime.now()

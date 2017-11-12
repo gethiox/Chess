@@ -1,15 +1,13 @@
 from datetime import datetime
-from typing import Type, Tuple, TYPE_CHECKING, List
+from typing import Type, Tuple, TYPE_CHECKING
 
 from app.sides import White, Black
 
 if TYPE_CHECKING:
-    from interface.piece import Piece
     from interface.move import Move
     from interface.board import Board
     from interface.variant import Variant
     from app.player import Player
-    from interface.side import Side
 
 
 class Game:
@@ -26,26 +24,6 @@ class Game:
 
         self.__start_time = None
         self.__create_time = datetime.now()
-
-        self.__half_moves = 1
-        self.__moves_history = []
-        self.__taken_pieces = []
-
-    @property
-    def half_moves(self):
-        return self.__half_moves
-
-    @property
-    def moves(self):
-        return (self.__half_moves + 1) // len(self.players)
-
-    @property
-    def moves_history(self) -> List[Type['Move']]:
-        return self.__moves_history
-
-    @property
-    def taken_pieces(self) -> List[Type['Piece']]:
-        return self.__taken_pieces
 
     @property
     def board(self) -> Type['Board']:
@@ -67,30 +45,8 @@ class Game:
     def creation_date(self) -> datetime:
         return self.__create_time
 
-    @property
-    def on_move(self) -> Type['Side']:
-        sides = tuple(self.__players.keys())
-        return sides[(self.__half_moves - 1) % len(self.players)]
-
     def move(self, move: Type['Move']) -> bool:
-        if not self.variant.assert_move(move):
-            return False
-        if self.board.get_piece(position=move.source).side != self.on_move:
-            return False
-        moved_piece = self.board.remove_piece(position=move.source)
-        taken_piece = self.board.put_piece(piece=moved_piece, position=move.destination)
-        self.moves_history.append(move)
-        self.taken_pieces.append(taken_piece)
-        self.__half_moves += 1
-        return True
+        return self.variant.move(move)
 
     def start_game(self):
         self.__start_time = datetime.now()
-
-    def game_state(self) -> Type['Side']:
-        """
-        method return game state which depends on specific rules for every game mode.
-        Look into "Normal" game mode class for inspirations (if is even implemented right now)
-        :return: not_yet_started OR on_move_side OR winner_side
-        """
-        pass

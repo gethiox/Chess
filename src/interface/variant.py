@@ -1,5 +1,5 @@
 from abc import ABCMeta, abstractmethod
-from typing import Sequence, Type, TYPE_CHECKING, Set
+from typing import Sequence, Type, TYPE_CHECKING, Set, List
 
 if TYPE_CHECKING:
     from interface.board import Board
@@ -42,7 +42,7 @@ class Variant(metaclass=ABCMeta):
 
     @property
     @abstractmethod
-    def sides(self) -> Sequence[Type['Side']]:
+    def sides(self) -> List[Type['Side']]:
         """
         :return: tuple of players sides
         """

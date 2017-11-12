@@ -34,6 +34,9 @@ if __name__ == "__main__":
                 print('give me a valid chess move')
                 continue
             board_rendererer.normal(game.board)
+            if game.variant.game_state:
+                print('game is over! Winner: %s' % game.variant.game_state)
+                break
 
     except KeyboardInterrupt:
         print('\nThanks for moving pieces!')

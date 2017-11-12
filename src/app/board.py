@@ -132,15 +132,24 @@ class StandardBoard(Board):
 
     @property
     def pieces(self) -> Dict['StandardPosition', 'Piece']:
+        return self.find_pieces(None)
+
+    def find_pieces(self, requested_piece: Optional['Piece']) -> Dict['StandardPosition', 'Piece']:
         pieces = {}
         for rank in range(self.files):
             for file in range(self.ranks):
                 position = StandardPosition((file, rank))
                 piece = self.get_piece(position=position)
-                if piece:
-                    pieces.update(
-                        {position: piece}
-                    )
+                if requested_piece:
+                    if piece == requested_piece:
+                        pieces.update(
+                            {position: piece}
+                        )
+                else:
+                    if piece:
+                        pieces.update(
+                            {position: piece}
+                        )
         return pieces
 
     def validate_position(self, position: StandardPosition) -> bool:

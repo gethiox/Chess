@@ -55,6 +55,6 @@ if __name__ == "__main__":
     ))
 
     print("attacked fields by White:")
-    print("%s" % [str(pos) for pos in game.variant.attacked_fields_by_sides(White)])
+    print("%s" % [str(pos) for pos in game.variant.attacked_fields_by_sides({White})])
     print("attacked fields by Black:")
-    print("%s" % [str(pos) for pos in game.variant.attacked_fields_by_sides(Black)])
+    print("%s" % [str(pos) for pos in game.variant.attacked_fields_by_sides({Black})])

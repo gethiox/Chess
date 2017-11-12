@@ -2,7 +2,7 @@
 import itertools
 from copy import deepcopy
 from math import inf as infinity
-from typing import Sequence, Type, TYPE_CHECKING, Tuple, Set
+from typing import Type, TYPE_CHECKING, Tuple, Set, List, Optional
 
 from app.board import StandardBoard
 from app.move import StandardMove
@@ -17,17 +17,55 @@ if TYPE_CHECKING:
 
 
 class Normal(Variant):
-    def __init__(self):
+    def __init__(self, init_board_state: bool = True):
         self.__board = StandardBoard()
-        self.init_board_state()
+        if init_board_state:
+            self.init_board_state()
+
+        self.__half_moves = 1
+        self.__moves_history = []
+        self.__board_history = []
+
+    @property
+    def half_moves(self):
+        return self.__half_moves
+
+    @property
+    def moves(self):
+        return (self.__half_moves + 1) // len(self.sides)
+
+    @property
+    def moves_history(self) -> List['StandardMove']:
+        return self.__moves_history
+
+    @property
+    def last_move(self) -> Optional['StandardMove']:
+        try:
+            return self.moves_history[-1]
+        except IndexError:
+            return None
+
+    @property
+    def on_move(self) -> Type['Side']:
+        return self.sides[(self.__half_moves - 1) % len(self.sides)]
+
+    @property
+    def game_state(self) -> Optional[Set['Side']]:
+        king_pos, _ = list(self.board.find_pieces(King(self.on_move)).items())[0]
+        if not self.all_available_moves:
+            if king_pos in self.attacked_fields_by_sides(set(self.sides).difference({self.on_move})):
+                return set(self.sides).difference({self.on_move})
+            else:
+                return set(self.sides)
+        return None
 
     @property
     def board(self) -> StandardBoard:
         return self.__board
 
     @property
-    def sides(self) -> Sequence[Type['Side']]:
-        return White, Black
+    def sides(self) -> List[Type['Side']]:
+        return [White, Black]
 
     @property
     def pieces(self) -> Set[Type['Piece']]:
@@ -70,12 +108,20 @@ class Normal(Variant):
         test_board = deepcopy(self.board)
         test_piece = test_board.remove_piece(source)
         test_board.put_piece(test_piece, destination)
-        for pos, p in test_board.pieces.items():
-            if p == King(piece.side) and pos in self.attacked_fields_by_sides(
-                set(self.sides).difference({piece.side})
-            ):
-                return False
+        pos, _ = list(test_board.find_pieces(King(self.on_move)).items())[0]
+        if pos in self.attacked_fields_by_sides(set(self.sides).difference({piece.side}), test_board):
+            return False
+        return True
 
+    def move(self, move: 'StandardMove') -> bool:
+        if not self.assert_move(move):
+            return False
+        if self.board.get_piece(position=move.source).side != self.on_move:
+            return False
+        moved_piece = self.board.remove_piece(position=move.source)
+        self.board.put_piece(piece=moved_piece, position=move.destination)
+        self.moves_history.append(move)
+        self.__half_moves += 1
         return True
 
     def standard_moves(self, position: 'StandardPosition', board: StandardBoard = None) -> Set['StandardPosition']:
@@ -157,12 +203,25 @@ class Normal(Variant):
 
         return new_positions
 
-    def attacked_fields_by_sides(self, side: Set[Type['Side']], board: 'StandardBoard' = None) -> Set['StandardPosition']:
+    def attacked_fields_by_sides(self, sides: Set[Type['Side']], board: 'StandardBoard' = None) -> Set['StandardPosition']:
         if not board:
             board = self.board
-        return {pos for position, piece in self.board.pieces.items()
+
+        return {pos for position, piece in board.pieces.items()
                 for pos in self.attacked_fields(position, board)
-                if piece.side == side}
+                for side in sides if piece.side == side}
+
+    @property
+    def all_available_moves(self):
+        moves = set()
+        for pos, piece in self.board.pieces.items():
+            if piece.side != self.on_move:
+                continue
+            for destination in self.standard_moves(pos):
+                move = StandardMove(pos, destination)
+                if self.assert_move(move):
+                    moves.add(move)
+        return moves
 
     @staticmethod
     def __transform_vector(vector: Tuple[int, int], all_directions: bool, side) -> Set[Tuple[int, int]]:

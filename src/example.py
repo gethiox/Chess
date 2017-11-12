@@ -1,60 +1,54 @@
 #!/usr/bin/env python3
+from time import time
+
 from app.move import StandardMove
 from app.player import Player
 from app.position import StandardPosition
-from app.sides import White, Black
 from app.variants import Normal
 from cli import board_rendererer
 from interface.game import Game
 
+
+def generate_moves(str_moves):
+    for str_move in str_moves:
+        yield StandardMove(StandardPosition(str_move[:2]), StandardPosition(str_move[-2:]))
+
+
 if __name__ == "__main__":
-    player1 = Player("Some white player")
-    player2 = Player("Some black player")
+    game = Game(Player('White Player'), Player('Black Player'), Normal())
+    variant = game.variant
 
-    game = Game(player1=player1, player2=player2, variant=Normal())
-    board_rendererer.tiny(game.board)
-    print("FEN: %s\n" % game.board.get_fen())
+    board_rendererer.tiny(variant.board)
+    print()
+    for move in generate_moves(['f2f3', 'e7e6', 'g2g3', 'd8e7', 'g3g4', 'e7h4']):
+        t_start = time()
+        status = variant.move(move)
+        t_stop = time()
+        if status:
+            print('%s is a valid move' % move)
+        else:
+            print('%s is not a valid move, game state not changed' % move)
 
-    moves = [
-        StandardMove(source=StandardPosition('f2'), destination=StandardPosition('f3')),
-        StandardMove(source=StandardPosition('e7'), destination=StandardPosition('e5')),
-        StandardMove(source=StandardPosition('g2'), destination=StandardPosition('g4')),
-        StandardMove(source=StandardPosition('d8'), destination=StandardPosition('h4')),
-    ]
-
-    for move in moves:
-        game.move(move)
-        board_rendererer.tiny(game.board)
-        print("move: %s\n" % move)
-
-    print('Pieces on the board:')
-    print(game.board.pieces, '\n')
-
-    board_rendererer.normal(game.board)
-
-    pos = StandardPosition("a2")
-    piece = game.board.get_piece(pos)
-    print("Piece: %s %s (%s)\nMoves: %s\nCaptures: %s\nAttacked Fields: %s\n" % (
-        piece.side,
-        piece.name,
-        str(pos),
-        [str(pos) for pos in game.variant.standard_moves(pos)],
-        [str(pos) for pos in game.variant.standard_captures(pos)],
-        [str(pos) for pos in game.variant.attacked_fields(pos)],
-    ))
-
-    pos = StandardPosition("h4")
-    piece = game.board.get_piece(pos)
-    print("Piece: %s %s (%s)\nMoves: %s\nCaptures: %s\nAttacked Fields: %s\n" % (
-        piece.side,
-        piece.name,
-        str(pos),
-        [str(pos) for pos in game.variant.standard_moves(pos)],
-        [str(pos) for pos in game.variant.standard_captures(pos)],
-        [str(pos) for pos in game.variant.attacked_fields(pos)],
-    ))
-
-    print("attacked fields by White:")
-    print("%s" % [str(pos) for pos in game.variant.attacked_fields_by_sides({White})])
-    print("attacked fields by Black:")
-    print("%s" % [str(pos) for pos in game.variant.attacked_fields_by_sides({Black})])
+        board_rendererer.tiny(variant.board)
+        t_p_start = time()
+        print(
+            "\n"
+            "half move: {half}\n"
+            "move: {moves}\n"
+            "on move: {on_move}\n"
+            "last move: {last_move}\n"
+            "available moves: {available_moves}\n"
+            "winner side(s): {game_status}\n"
+            "".format(half=variant.half_moves,
+                      moves=variant.moves,
+                      on_move=variant.on_move,
+                      last_move=variant.last_move,
+                      available_moves=len(variant.all_available_moves),
+                      game_status=variant.game_state)
+        )
+        t_p_stop = time()
+        # print('          ( move validation and execution time: {:.4f} )\n'
+        #       ' ( data collection time for above informations: {:.4f} )'.format(
+        #     t_stop - t_start,
+        #     t_p_stop - t_p_start,
+        # ))

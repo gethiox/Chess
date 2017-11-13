@@ -103,7 +103,7 @@ class Normal(Variant):
         piece = self.board.get_piece(source)
         if not piece:
             return False
-        if destination not in self.standard_moves(source).union(self.attacked_fields(source)):
+        if destination not in self.standard_moves(source).union(self.standard_captures(source)):
             return False
         test_board = deepcopy(self.board)
         test_piece = test_board.remove_piece(source)

@@ -2,7 +2,7 @@
 import itertools
 from copy import deepcopy
 from math import inf as infinity
-from typing import Type, TYPE_CHECKING, Tuple, Set, List, Optional
+from typing import Type, TYPE_CHECKING, Tuple, Set, List, Optional, Dict
 
 from app.board import StandardBoard
 from app.move import StandardMove
@@ -10,6 +10,8 @@ from app.pieces import King, Pawn, Knight, Bishop, Rook, Queen
 from app.position import StandardPosition
 from app.sides import White, Black
 from interface.variant import Variant
+
+from exceptions.variant import WrongMoveOrder, NotAValidMove, CausesCheck, GameIsOver, NoPiece, NotAValidPromotion
 
 if TYPE_CHECKING:
     from interface.piece import Piece
@@ -50,7 +52,7 @@ class Normal(Variant):
         return self.sides[(self.__half_moves - 1) % len(self.sides)]
 
     @property
-    def game_state(self) -> Optional[Set['Side']]:
+    def game_state(self) -> Optional[Set[Type['Side']]]:
         king_pos, _ = list(self.board.find_pieces(King(self.on_move)).items())[0]
         if not self.all_available_moves:
             if king_pos in self.attacked_fields_by_sides(set(self.sides).difference({self.on_move})):
@@ -98,26 +100,25 @@ class Normal(Variant):
 
         return self.board.get_fen()
 
-    def assert_move(self, move: 'StandardMove') -> bool:
+    def assert_move(self, move: 'StandardMove'):
         source, destination = move.source, move.destination
         piece = self.board.get_piece(source)
         if not piece:
-            return False
+            raise NoPiece("Any piece on %s, assertion failed" % source)
         if destination not in self.standard_moves(source).union(self.standard_captures(source)):
-            return False
+            raise NotAValidMove("%s is not a proper move for a %s %s" % (move, piece.side, piece.name))
         test_board = deepcopy(self.board)
         test_piece = test_board.remove_piece(source)
         test_board.put_piece(test_piece, destination)
-        pos, _ = list(test_board.find_pieces(King(self.on_move)).items())[0]
-        if pos in self.attacked_fields_by_sides(set(self.sides).difference({piece.side}), test_board):
-            return False
-        return True
+        king_pos, king = list(test_board.find_pieces(King(self.on_move)).items())[0]
+        if king_pos in self.attacked_fields_by_sides(set(self.sides).difference({piece.side}), test_board):
+            raise CausesCheck("%s move discover %s %s for a check from pieces: %s" % (move, king.side, king.name, self.who_can_step_here(king_pos, test_board)))
 
     def move(self, move: 'StandardMove') -> bool:
-        if not self.assert_move(move):
-            return False
-        if self.board.get_piece(position=move.source).side != self.on_move:
-            return False
+        self.assert_move(move)
+        moved_piece =self.board.get_piece(position=move.source)
+        if moved_piece.side != self.on_move:
+            raise WrongMoveOrder("You are trying to move %s when %s are on move" % (moved_piece.side, self.on_move))
         moved_piece = self.board.remove_piece(position=move.source)
         self.board.put_piece(piece=moved_piece, position=move.destination)
         self.moves_history.append(move)
@@ -211,6 +212,12 @@ class Normal(Variant):
                 for pos in self.attacked_fields(position, board)
                 for side in sides if piece.side == side}
 
+    def who_can_step_here(self, position: 'StandardPosition', board: 'StandardBoard' = None) -> Dict['StandardPosition', 'Piece']:
+        if not board:
+            board = self.board
+
+        return {pos: piece for pos, piece in board.pieces.items() if position in self.attacked_fields(pos, board)}
+
     @property
     def all_available_moves(self):
         moves = set()
@@ -219,7 +226,11 @@ class Normal(Variant):
                 continue
             for destination in self.standard_moves(pos):
                 move = StandardMove(pos, destination)
-                if self.assert_move(move):
+                try:
+                    self.assert_move(move)
+                except NotAValidMove:
+                    continue
+                else:
                     moves.add(move)
         return moves
 

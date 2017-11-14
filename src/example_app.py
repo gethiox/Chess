@@ -29,9 +29,11 @@ if __name__ == "__main__":
                 continue
 
             move = StandardMove(source=source, destination=destination)
-            moved = game.move(move)
-            if moved is False:
-                print('give me a valid chess move')
+            try:
+                game.move(move)
+            except Exception as err:
+                print(err)
+                print('try again and give me a valid chess move')
                 continue
             board_rendererer.normal(game.board)
             if game.variant.game_state:

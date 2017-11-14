@@ -6,6 +6,7 @@ from app.player import Player
 from app.position import StandardPosition
 from app.variants import Normal
 from cli import board_rendererer
+from exceptions.variant import NotAValidMove
 from interface.game import Game
 
 
@@ -20,14 +21,19 @@ if __name__ == "__main__":
 
     board_rendererer.tiny(variant.board)
     print()
+    g_start = time()
     for move in generate_moves(['f2f3', 'e7e6', 'g2g3', 'd8e7', 'g3g4', 'e7h4']):
-        t_start = time()
-        status = variant.move(move)
-        t_stop = time()
-        if status:
-            print('%s is a valid move' % move)
+
+        try:
+            t_start = time()
+            variant.move(move)
+            t_stop = time()
+        except NotAValidMove as err:
+            print(err)
+            print('%s is not a valid move, game state not changed\n' % move)
+            continue
         else:
-            print('%s is not a valid move, game state not changed' % move)
+            print('%s is a valid move\n' % move)
 
         board_rendererer.tiny(variant.board)
         t_p_start = time()
@@ -47,8 +53,8 @@ if __name__ == "__main__":
                       game_status=variant.game_state)
         )
         t_p_stop = time()
-        # print('          ( move validation and execution time: {:.4f} )\n'
-        #       ' ( data collection time for above informations: {:.4f} )'.format(
-        #     t_stop - t_start,
-        #     t_p_stop - t_p_start,
-        # ))
+        print('          ( move validation and execution time: {:.4f} )\n'
+              ' ( data collection time for above informations: {:.4f} )\n'.format(t_stop - t_start,
+                                                                                  t_p_stop - t_p_start))
+    g_stop = time()
+    print('total move execution time: {:.4f}'.format(g_stop - g_start))

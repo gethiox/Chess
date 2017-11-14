@@ -158,3 +158,6 @@ class StandardBoard(Board):
         if position.file >= self.files or position.rank >= self.ranks:
             return False
         return True
+
+    def __hash__(self):
+        return hash(tuple(piece for file in self.array for piece in file))

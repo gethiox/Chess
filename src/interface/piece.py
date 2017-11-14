@@ -20,7 +20,8 @@ class MoveDescription:
 
 
 class CaptureDescription:
-    def __init__(self, vector: Vector, any_direction: bool, distance: int, capture_break: bool = True, self_capture: bool = False):
+    def __init__(self, vector: Vector, any_direction: bool, distance: int, capture_break: bool = True,
+                 self_capture: bool = False):
         self.vector = vector
         self.any_direction = any_direction
         self.distance = distance
@@ -112,3 +113,6 @@ class Piece(metaclass=ABCMeta):
         if isinstance(other, type(self)):
             return not (isinstance(other, type(self)) and other.side == self.side)
         return True
+
+    def __hash__(self):
+        return hash((self.name, self.side))

@@ -9,9 +9,8 @@ from app.move import StandardMove
 from app.pieces import King, Pawn, Knight, Bishop, Rook, Queen
 from app.position import StandardPosition
 from app.sides import White, Black
+from exceptions.variant import WrongMoveOrder, NotAValidMove, CausesCheck, NoPiece
 from interface.variant import Variant
-
-from exceptions.variant import WrongMoveOrder, NotAValidMove, CausesCheck, GameIsOver, NoPiece, NotAValidPromotion
 
 if TYPE_CHECKING:
     from interface.piece import Piece
@@ -112,11 +111,13 @@ class Normal(Variant):
         test_board.put_piece(test_piece, destination)
         king_pos, king = list(test_board.find_pieces(King(self.on_move)).items())[0]
         if king_pos in self.attacked_fields_by_sides(set(self.sides).difference({piece.side}), test_board):
-            raise CausesCheck("%s move discover %s %s for a check from pieces: %s" % (move, king.side, king.name, self.who_can_step_here(king_pos, test_board)))
+            raise CausesCheck("{} move discover {} {} for a check from pieces: {}".format(
+                move, king.side, king.name, self.who_can_step_here(king_pos, test_board))
+            )
 
     def move(self, move: 'StandardMove') -> bool:
         self.assert_move(move)
-        moved_piece =self.board.get_piece(position=move.source)
+        moved_piece = self.board.get_piece(position=move.source)
         if moved_piece.side != self.on_move:
             raise WrongMoveOrder("You are trying to move %s when %s are on move" % (moved_piece.side, self.on_move))
         moved_piece = self.board.remove_piece(position=move.source)
@@ -204,7 +205,8 @@ class Normal(Variant):
 
         return new_positions
 
-    def attacked_fields_by_sides(self, sides: Set[Type['Side']], board: 'StandardBoard' = None) -> Set['StandardPosition']:
+    def attacked_fields_by_sides(self, sides: Set[Type['Side']], board: 'StandardBoard' = None) \
+            -> Set['StandardPosition']:
         if not board:
             board = self.board
 
@@ -212,7 +214,8 @@ class Normal(Variant):
                 for pos in self.attacked_fields(position, board)
                 for side in sides if piece.side == side}
 
-    def who_can_step_here(self, position: 'StandardPosition', board: 'StandardBoard' = None) -> Dict['StandardPosition', 'Piece']:
+    def who_can_step_here(self, position: 'StandardPosition', board: 'StandardBoard' = None) \
+            -> Dict['StandardPosition', 'Piece']:
         if not board:
             board = self.board
 
@@ -224,7 +227,7 @@ class Normal(Variant):
         for pos, piece in self.board.pieces.items():
             if piece.side != self.on_move:
                 continue
-            for destination in self.standard_moves(pos):
+            for destination in self.standard_moves(pos).union(self.standard_captures(pos)):
                 move = StandardMove(pos, destination)
                 try:
                     self.assert_move(move)
@@ -254,6 +257,9 @@ class Normal(Variant):
             return {(vector[0] * -1, vector[1] * -1)}
         else:
             return {vector}
+
+    def __hash__(self):
+        return hash(tuple(self.__moves_history))
 
 # class Chess960(Variant):
 #     pass

@@ -35,7 +35,7 @@ class NotAValidPromotion(NotAValidMove):
 
 class NotAValidPosition(Exception):
     """
-    generic exception raised when requested position is against the rules 
+    generic exception raised when requested position is against the rules
     """
 
 
@@ -55,7 +55,7 @@ class TooManyKings(NotAValidPosition):
 
 class PawnOnWrongRank(NotAValidPosition):
     """
-    raised when position with pawn on first/last rank is tried to establish 
+    raised when position with pawn on first/last rank is tried to establish
     """
     pass
 

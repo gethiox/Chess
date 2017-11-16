@@ -27,6 +27,10 @@ class Normal(Variant):
         self.__moves_history = []
         self.__board_history = []
 
+        self.__en_passant = None  # None or StandardPosition when pawn move trough two fields, any other set None value
+        self.__half_moves_since_pawn_moved = 0
+        # self.__castling
+
     @property
     def half_moves(self):
         return self.__half_moves
@@ -124,6 +128,10 @@ class Normal(Variant):
         self.board.put_piece(piece=moved_piece, position=move.destination)
         self.moves_history.append(move)
         self.__half_moves += 1
+        if isinstance(moved_piece, Pawn):
+            self.__half_moves_since_pawn_moved = 0
+        else:
+            self.__half_moves_since_pawn_moved += 1
         return True
 
     def standard_moves(self, position: 'StandardPosition', board: StandardBoard = None) -> Set['StandardPosition']:
@@ -258,8 +266,21 @@ class Normal(Variant):
         else:
             return {vector}
 
+    def fen(self):
+        return str(self)
+
     def __hash__(self):
         return hash(tuple(self.__moves_history))
+
+    def __str__(self):
+        return "{board} {on_move} {castling} {en_passant} {half_since_pawn} {moves}".format(
+            board=self.__board.get_fen(),
+            on_move=self.on_move.char,
+            castling=None,  # TODO: TODO
+            en_passant=str(self.__en_passant) if self.__en_passant else "-",  # TODO: implement en_passant
+            half_since_pawn=self.__half_moves_since_pawn_moved,
+            moves=self.moves,
+        )
 
 # class Chess960(Variant):
 #     pass

@@ -39,13 +39,15 @@ if __name__ == "__main__":
         t_p_start = time()
         print(
             "\n"
+            "FEN: {fen}\n"
             "half move: {half}\n"
             "move: {moves}\n"
             "on move: {on_move}\n"
             "last move: {last_move}\n"
             "available moves: {available_moves}\n"
             "winner side(s): {game_status}\n"
-            "".format(half=variant.half_moves,
+            "".format(fen=str(game.variant),
+                      half=variant.half_moves,
                       moves=variant.moves,
                       on_move=variant.on_move,
                       last_move=variant.last_move,

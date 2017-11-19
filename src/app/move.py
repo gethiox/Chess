@@ -1,4 +1,9 @@
+from typing import TYPE_CHECKING
+
 from interface.move import Move
+
+if TYPE_CHECKING:
+    from app.position import StandardPosition
 
 
 class StandardMove(Move):
@@ -7,11 +12,11 @@ class StandardMove(Move):
     """
 
     @property
-    def source(self):
+    def source(self) -> 'StandardPosition':
         return self._source
 
     @property
-    def destination(self):
+    def destination(self) -> 'StandardPosition':
         return self._destination
 
     @property

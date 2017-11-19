@@ -32,6 +32,10 @@ class Normal(Variant):
         # self.__castling
 
     @property
+    def en_passant(self):
+        return self.__en_passant
+
+    @property
     def half_moves(self):
         return self.__half_moves
 
@@ -120,6 +124,7 @@ class Normal(Variant):
             )
 
     def move(self, move: 'StandardMove') -> bool:
+        # TODO: Refactor or something
         self.assert_move(move)
         moved_piece = self.board.get_piece(position=move.source)
         if moved_piece.side != self.on_move:
@@ -129,8 +134,17 @@ class Normal(Variant):
         self.moves_history.append(move)
         self.__half_moves += 1
         if isinstance(moved_piece, Pawn):
+            if abs(move.source.rank - move.destination.rank) == 2:
+                self.__en_passant = StandardPosition(
+                    (move.source.file,
+                     int((move.source.rank + move.destination.rank) / 2))
+                )
+            else:
+                self.__en_passant = None
             self.__half_moves_since_pawn_moved = 0
         else:
+            if self.__en_passant:
+                self.__en_passant = None
             self.__half_moves_since_pawn_moved += 1
         return True
 
@@ -163,7 +177,26 @@ class Normal(Variant):
                         break
                     new_positions.add(new_position)
 
+        self.__special_moves(position, piece, new_positions, board)
         return new_positions
+
+    def __special_moves(self, position: 'StandardPosition', piece: 'Piece', new_positions: Set['StandardPosition'], board: StandardBoard = None):
+        if isinstance(piece, Pawn):
+            new_position = None
+            if piece == Pawn(Black) and position.rank == 6:
+                new_position = StandardPosition(
+                        (position[0],
+                         position[1] - 2)
+                )
+            elif piece == Pawn(White) and position.rank == 1:
+                new_position = StandardPosition(
+                    (position[0],
+                     position[1] + 2)
+                )
+            if new_position and board.validate_position(new_position):
+                new_piece = board.get_piece(new_position)
+                if new_piece is None:
+                    new_positions.add(new_position)
 
     def standard_captures(self, position: 'StandardPosition', board: StandardBoard = None) -> Set['StandardPosition']:
         if not board:

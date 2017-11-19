@@ -62,8 +62,8 @@ class Normal(Variant):
     def game_state(self) -> Optional[Set[Type['Side']]]:
         king_pos, _ = list(self.board.find_pieces(King(self.on_move)).items())[0]
         if not self.all_available_moves:
-            if king_pos in self.attacked_fields_by_sides(set(self.sides).difference({self.on_move})):
-                return set(self.sides).difference({self.on_move})
+            if king_pos in self.attacked_fields_by_sides(set(self.sides) - {self.on_move}):
+                return set(self.sides) - {self.on_move}
             else:
                 return set(self.sides)
         return None
@@ -112,13 +112,13 @@ class Normal(Variant):
         piece = self.board.get_piece(source)
         if not piece:
             raise NoPiece("Any piece on %s, assertion failed" % source)
-        if destination not in self.standard_moves(source).union(self.standard_captures(source)):
+        if destination not in self.standard_moves(source) | self.standard_captures(source):
             raise NotAValidMove("%s is not a proper move for a %s %s" % (move, piece.side, piece.name))
         test_board = deepcopy(self.board)
         test_piece = test_board.remove_piece(source)
         test_board.put_piece(test_piece, destination)
         king_pos, king = list(test_board.find_pieces(King(self.on_move)).items())[0]
-        if king_pos in self.attacked_fields_by_sides(set(self.sides).difference({piece.side}), test_board):
+        if king_pos in self.attacked_fields_by_sides(set(self.sides) - {piece.side}, test_board):
             raise CausesCheck("{} move discover {} {} for a check from pieces: {}".format(
                 move, king.side, king.name, self.who_can_step_here(king_pos, test_board))
             )
@@ -268,7 +268,7 @@ class Normal(Variant):
         for pos, piece in self.board.pieces.items():
             if piece.side != self.on_move:
                 continue
-            for destination in self.standard_moves(pos).union(self.standard_captures(pos)):
+            for destination in self.standard_moves(pos) | self.standard_captures(pos):
                 move = StandardMove(pos, destination)
                 try:
                     self.assert_move(move)

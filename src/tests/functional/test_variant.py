@@ -37,7 +37,7 @@ class MyTestCase(TestCase):
                           moves=self.variant.moves,
                           on_move=self.variant.on_move,
                           last_move=self.variant.last_move,
-                          available_moves=len(self.variant.all_available_moves),
+                          available_moves=len(self.variant.all_available_moves()),
                           game_status=self.variant.game_state)
             )
         self.assertEqual(

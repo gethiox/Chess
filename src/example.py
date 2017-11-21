@@ -2,9 +2,9 @@
 from time import time
 
 from app.move import StandardMove
+from app.variants import Normal
 from app.player import Player
 from app.position import StandardPosition
-from app.variants import Normal
 from cli import board_rendererer
 from exceptions.variant import NotAValidMove
 from interface.game import Game
@@ -51,7 +51,7 @@ if __name__ == "__main__":
                       moves=variant.moves,
                       on_move=variant.on_move,
                       last_move=variant.last_move,
-                      available_moves=len(variant.all_available_moves),
+                      available_moves=len(variant.all_available_moves()),
                       game_status=variant.game_state)
         )
         t_p_stop = time()

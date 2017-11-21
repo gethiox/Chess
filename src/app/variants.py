@@ -18,6 +18,10 @@ if TYPE_CHECKING:
 
 
 class Normal(Variant):
+    """
+    This is a base classic chess implementation, it could be inherited to implement similar chess variants
+    """
+
     def __init__(self, init_board_state: bool = True):
         self.__board = StandardBoard()
         if init_board_state:
@@ -61,7 +65,7 @@ class Normal(Variant):
     @property
     def game_state(self) -> Optional[Set[Type['Side']]]:
         king_pos, _ = list(self.board.find_pieces(King(self.on_move)).items())[0]
-        if not self.all_available_moves:
+        if not self.all_available_moves():
             if king_pos in self.attacked_fields_by_sides(set(self.sides) - {self.on_move}):
                 return set(self.sides) - {self.on_move}
             else:
@@ -78,6 +82,7 @@ class Normal(Variant):
 
     @property
     def pieces(self) -> Set[Type['Piece']]:
+        # TODO: not used, to remove or something
         return {King, Queen, Rook, Bishop, Knight, Pawn}
 
     def init_board_state(self):
@@ -112,7 +117,7 @@ class Normal(Variant):
         piece = self.board.get_piece(source)
         if not piece:
             raise NoPiece("Any piece on %s, assertion failed" % source)
-        if destination not in self.standard_moves(source) | self.standard_captures(source):
+        if destination not in self.standard_moves(source) | self.standard_captures(source) | self.special_moves(source):
             raise NotAValidMove("%s is not a proper move for a %s %s" % (move, piece.side, piece.name))
         test_board = deepcopy(self.board)
         test_piece = test_board.remove_piece(source)
@@ -124,7 +129,7 @@ class Normal(Variant):
             )
 
     def move(self, move: 'StandardMove') -> bool:
-        # TODO: Refactor or something
+        # TODO: Refactor or something, or maybe not
         self.assert_move(move)
         moved_piece = self.board.get_piece(position=move.source)
         if moved_piece.side != self.on_move:
@@ -149,12 +154,11 @@ class Normal(Variant):
         return True
 
     def standard_moves(self, position: 'StandardPosition', board: StandardBoard = None) -> Set['StandardPosition']:
-        # TODO: REFACTOR
         if not board:
             board = self.board
         piece = board.get_piece(position)
         if not piece:
-            raise ValueError('Any piece on %s' % position)
+            raise NoPiece('Any piece on %s' % position)
 
         new_positions = set()
         for m_desc in piece.movement.move:
@@ -177,16 +181,23 @@ class Normal(Variant):
                         break
                     new_positions.add(new_position)
 
-        self.__special_moves(position, piece, new_positions, board)
         return new_positions
 
-    def __special_moves(self, position: 'StandardPosition', piece: 'Piece', new_positions: Set['StandardPosition'], board: StandardBoard = None):
+    def special_moves(self, position: 'StandardPosition', board: StandardBoard = None) -> Set['StandardPosition']:
+        # TODO: replace for some more convenient solution
+        if not board:
+            board = self.board
+        piece = board.get_piece(position)
+        if not piece:
+            raise NoPiece('Any piece on %s' % position)
+
+        new_positions = set()
         if isinstance(piece, Pawn):
             new_position = None
             if piece == Pawn(Black) and position.rank == 6:
                 new_position = StandardPosition(
-                        (position[0],
-                         position[1] - 2)
+                    (position[0],
+                     position[1] - 2)
                 )
             elif piece == Pawn(White) and position.rank == 1:
                 new_position = StandardPosition(
@@ -197,27 +208,49 @@ class Normal(Variant):
                 new_piece = board.get_piece(new_position)
                 if new_piece is None:
                     new_positions.add(new_position)
+        return new_positions
 
     def standard_captures(self, position: 'StandardPosition', board: StandardBoard = None) -> Set['StandardPosition']:
         if not board:
             board = self.board
         piece = board.get_piece(position)
         if not piece:
-            raise ValueError('Any piece on %s' % position)
+            raise NoPiece('Any piece on %s' % position)
 
-        attacked_fields = self.attacked_fields(position, board)
-        return {
-            new_position for new_position, new_piece in board.pieces.items()
-            if new_piece.side != piece.side and new_position in attacked_fields
-        }
+        new_positions = set()
+        for c_desc in piece.movement.capture:
+            for vector in self.__transform_vector(c_desc.vector, c_desc.any_direction, piece.side):
+                if c_desc.distance is infinity:
+                    loop = itertools.count(1)
+                else:
+                    loop = range(1, c_desc.distance + 1)
+
+                for distance in loop:
+                    new_position = StandardPosition(
+                        (position[0] + int(vector[0] * distance),
+                         position[1] + int(vector[1] * distance))
+                    )
+                    if not board.validate_position(new_position):
+                        break
+
+                    new_piece = board.get_piece(new_position)
+                    if not new_piece:
+                        continue
+                    if new_piece and new_piece.side != piece.side:
+                        new_positions.add(new_position)
+                        if c_desc.capture_break:
+                            break
+                    elif new_piece and new_piece.side == piece.side:
+                        break
+
+        return new_positions
 
     def attacked_fields(self, position: 'StandardPosition', board: StandardBoard = None) -> Set['StandardPosition']:
-        # TODO: REFACTOR
         if not board:
             board = self.board
         piece = board.get_piece(position)
         if not piece:
-            raise ValueError('Any piece on %s' % position)
+            raise NoPiece('Any piece on %s' % position)
 
         new_positions = set()
         for c_desc in piece.movement.capture:
@@ -262,11 +295,13 @@ class Normal(Variant):
 
         return {pos: piece for pos, piece in board.pieces.items() if position in self.attacked_fields(pos, board)}
 
-    @property
-    def all_available_moves(self):
+    def all_available_moves(self, side: Type['Side'] = None):
+        if not side:
+            side = self.on_move
+
         moves = set()
         for pos, piece in self.board.pieces.items():
-            if piece.side != self.on_move:
+            if piece.side != side:
                 continue
             for destination in self.standard_moves(pos) | self.standard_captures(pos):
                 move = StandardMove(pos, destination)
@@ -315,19 +350,62 @@ class Normal(Variant):
             moves=self.moves,
         )
 
+
+class KingOfTheHill(Normal):
+    @property
+    def game_state(self) -> Optional[Set[Type['Side']]]:
+        # find kings position and return winner if king is standing on the hill (d4, e4, d5, e5)
+        kings = []
+        for side in self.sides:
+            king_pos, piece = list(self.board.find_pieces(King(side)).items())[0]
+            kings.append((king_pos, piece))
+
+        for king_pos, piece in kings:
+            if king_pos.file in (3, 4) and king_pos.rank in (3, 4):
+                return {piece.side}
+
+        # else return winner by standard chess rule
+        return super(KingOfTheHill, self).game_state
+
+
+class ThreeCheck(Normal):
+    def __init__(self):
+        super().__init__()
+        self.checks = {side: 0 for side in self.sides}
+
+    def move(self, move: 'StandardMove'):
+        piece = self.board.get_piece(move.source)
+        super(ThreeCheck, self).move(move)
+
+        our_side = piece.side
+        enemy_side_set = set(self.sides) - {our_side}
+        if len(enemy_side_set) != 1:
+            raise Exception("Something went wrong")  # TODO
+        enemy_side = enemy_side_set.pop()
+
+        enemy_kings_dict = self.board.find_pieces(King(enemy_side))
+        if len(enemy_kings_dict) != 1:
+            raise Exception("Something went even worse")  # TODO
+        enemy_king_position, enemy_king = list(enemy_kings_dict.items())[0]
+        if enemy_king_position in self.attacked_fields_by_sides({our_side}):
+            self.checks[our_side] += 1
+
+    @property
+    def game_state(self):
+        # determine winner by who get enough check attacks
+        for side, value in self.checks.items():
+            if value >= 3:
+                return {side}
+
+        # else determine by standard rules
+        return super(ThreeCheck, self).game_state
+
+#
 # class Chess960(Variant):
 #     pass
 #
 #
 # class Crazyhouse(Variant):
-#     pass
-#
-#
-# class KingOfTheHill(Variant):
-#     pass
-#
-#
-# class ThreeCheck(Variant):
 #     pass
 #
 #

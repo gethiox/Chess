@@ -65,7 +65,7 @@ class MyTestCase(TestCase):
         )
 
     def _get_available_move_strings(self, pos):
-        return {'{}'.format(x) for x in self.game.variant.standard_moves(pos)}
+        return {'{}'.format(x) for x in self.game.variant.standard_moves(pos) | self.game.variant.special_moves(pos)}
 
     def _get_available_capture_strings(self, pos):
         return {'{}'.format(x) for x in self.game.variant.standard_captures(pos)}

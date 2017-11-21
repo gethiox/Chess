@@ -303,7 +303,7 @@ class Normal(Variant):
         for pos, piece in self.board.pieces.items():
             if piece.side != side:
                 continue
-            for destination in self.standard_moves(pos) | self.standard_captures(pos):
+            for destination in self.standard_moves(pos) | self.standard_captures(pos) | self.special_moves(pos):
                 move = StandardMove(pos, destination)
                 try:
                     self.assert_move(move)

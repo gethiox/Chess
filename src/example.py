@@ -51,7 +51,7 @@ if __name__ == "__main__":
                       moves=variant.moves,
                       on_move=variant.on_move,
                       last_move=variant.last_move,
-                      available_moves=len(variant.all_available_moves()),
+                      available_moves='disabled',  # len(variant.all_available_moves()),  # Very inefficient
                       game_status=variant.game_state)
         )
         t_p_stop = time()

@@ -65,7 +65,7 @@ class Normal(Variant):
     @property
     def game_state(self) -> Optional[Set[Type['Side']]]:
         king_pos, _ = list(self.board.find_pieces(King(self.on_move)).items())[0]
-        if not self.all_available_moves():
+        if not self.can_i_make_a_move():
             if king_pos in self.attacked_fields_by_sides(set(self.sides) - {self.on_move}):
                 return set(self.sides) - {self.on_move}
             else:
@@ -296,6 +296,7 @@ class Normal(Variant):
         return {pos: piece for pos, piece in board.pieces.items() if position in self.attacked_fields(pos, board)}
 
     def all_available_moves(self, side: Type['Side'] = None):
+        # Warning! Very inefficient! TODO: Refactor or remove
         if not side:
             side = self.on_move
 
@@ -333,6 +334,18 @@ class Normal(Variant):
             return {(vector[0] * -1, vector[1] * -1)}
         else:
             return {vector}
+
+    def can_i_make_a_move(self) -> bool:
+        for pos, piece in self.board.pieces.items():
+            if piece and piece.side == self.on_move:
+                for moves in [self.standard_moves(pos), self.standard_captures(pos), self.special_moves(pos)]:
+                    for dest in moves:
+                        try:
+                            self.assert_move(StandardMove(pos, dest))
+                        except:
+                            continue
+                        return True
+        return False
 
     def fen(self):
         return str(self)

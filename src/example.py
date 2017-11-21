@@ -22,7 +22,7 @@ if __name__ == "__main__":
     board_rendererer.tiny(variant.board)
     print()
     g_start = time()
-    for move in generate_moves(['f2f3', 'e7e6', 'g2g3', 'd8e7', 'g3g4', 'e7h4']):
+    for move in generate_moves(['f2f3', 'e7e6', 'g2g4', 'd8h4']):
 
         try:
             t_start = time()

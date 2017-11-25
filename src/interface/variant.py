@@ -15,6 +15,11 @@ class Variant(metaclass=ABCMeta):
     def board(self) -> Type['Board']:
         pass
 
+    @property
+    @abstractmethod
+    def name(self) -> str:
+        pass
+
     @abstractmethod
     def init_board_state(self) -> str:
         """

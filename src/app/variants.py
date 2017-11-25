@@ -36,6 +36,10 @@ class Normal(Variant):
         # self.__castling
 
     @property
+    def name(self):
+        return "Classic Chess"
+
+    @property
     def en_passant(self):
         return self.__en_passant
 
@@ -116,7 +120,7 @@ class Normal(Variant):
         source, destination = move.source, move.destination
         piece = self.board.get_piece(source)
         if not piece:
-            raise NoPiece("Any piece on %s, assertion failed" % source)
+            raise NoPiece("Any piece on %s, you need to move pieces, not air." % source)
         if destination not in self.standard_moves(source) | self.standard_captures(source) | self.special_moves(source):
             raise NotAValidMove("%s is not a proper move for a %s %s" % (move, piece.side, piece.name))
         test_board = deepcopy(self.board)
@@ -124,9 +128,14 @@ class Normal(Variant):
         test_board.put_piece(test_piece, destination)
         king_pos, king = list(test_board.find_pieces(King(self.on_move)).items())[0]
         if king_pos in self.attacked_fields_by_sides(set(self.sides) - {piece.side}, test_board):
-            raise CausesCheck("{} move discover {} {} for a check from pieces: {}".format(
-                move, king.side, king.name, self.who_can_step_here(king_pos, test_board))
-            )
+            raise CausesCheck("{move} move causes {side} {name} ({pos}) check delivered by: [{atck}]".format(
+                move=move, side=king.side, name=king.name, pos=king_pos,
+                atck=', '.join(
+                    ["%s: %s" % (position, '%s %s' % (piece.side, piece.name))
+                     for position, piece
+                     in self.who_can_step_here(king_pos, test_board).items()]
+                )
+            ))
 
     def move(self, move: 'StandardMove') -> bool:
         # TODO: Refactor or something, or maybe not
@@ -366,6 +375,10 @@ class Normal(Variant):
 
 class KingOfTheHill(Normal):
     @property
+    def name(self):
+        return "King of The Hill"
+
+    @property
     def game_state(self) -> Optional[Set[Type['Side']]]:
         # find kings position and return winner if king is standing on the hill (d4, e4, d5, e5)
         kings = []
@@ -382,6 +395,10 @@ class KingOfTheHill(Normal):
 
 
 class ThreeCheck(Normal):
+    @property
+    def name(self):
+        return "King of The Hill"
+
     def __init__(self):
         super().__init__()
         self.checks = {side: 0 for side in self.sides}

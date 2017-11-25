@@ -20,7 +20,7 @@ def tiny(board: StandardBoard):
         if rank_counter > 0:
             board_str += '\n'
         rank_counter -= 1
-    print(board_str)
+    return board_str
 
 
 def normal(board: StandardBoard):
@@ -45,4 +45,4 @@ def normal(board: StandardBoard):
             board_str += '\n+---+---+---+---+---+---+---+---+\n'
         rank_counter -= 1
     board_str += '\n+---+---+---+---+---+---+---+---+'
-    print(board_str)
+    return board_str

@@ -13,18 +13,18 @@ if __name__ == "__main__":
           '3 - Three Check')
     answer = int(input("Selected mode: "))
     if answer == 1:
-        mode = Normal
+        mode = Normal()
     elif answer == 2:
-        mode = KingOfTheHill
+        mode = KingOfTheHill()
     elif answer == 3:
-        mode = ThreeCheck
+        mode = ThreeCheck()
     else:
-        raise NotImplementedError("you need to specify corrext int value, try harder next time!")
-    print("Playing %s game mode" % mode)
+        raise NotImplementedError("you need to specify correct int value, try harder next time!")
+    print("Playing %s game mode" % mode.name)
 
     player = Player("player")
 
-    game = Game(player1=player, player2=player, variant=mode())
+    game = Game(player1=player, player2=player, variant=mode)
     board_rendererer.normal(game.board)
     print("Insert move, eg. \"e2e4\" (tyoe \'board\' to show board)")
     try:
@@ -48,7 +48,6 @@ if __name__ == "__main__":
                 game.move(move)
             except Exception as err:
                 print(err)
-                print('try again and give me a valid chess move')
                 continue
             board_rendererer.normal(game.board)
             if game.variant.game_state:

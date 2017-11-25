@@ -1,5 +1,6 @@
 # see more: https://en.wikipedia.org/wiki/List_of_chess_variants
 import itertools
+from collections import defaultdict
 from copy import deepcopy
 from math import inf as infinity
 from typing import Type, TYPE_CHECKING, Tuple, Set, List, Optional, Dict
@@ -30,7 +31,7 @@ class Normal(Variant):
         self.__half_moves = 1
         self.__moves_history = []
         self.__board_history = []
-
+        self.__position_occurence = defaultdict(int)
         self.__en_passant = None  # None or StandardPosition when pawn move trough two fields, any other set None value
         self.__half_moves_since_pawn_moved = 0
         # self.__castling
@@ -68,6 +69,9 @@ class Normal(Variant):
 
     @property
     def game_state(self) -> Optional[Set[Type['Side']]]:
+        for hash_pos, occurence in self.__position_occurence.items():
+            if occurence >= 3:
+                return set(self.sides)
         king_pos, _ = list(self.board.find_pieces(King(self.on_move)).items())[0]
         if not self.can_i_make_a_move():
             if king_pos in self.attacked_fields_by_sides(set(self.sides) - {self.on_move}):
@@ -160,6 +164,7 @@ class Normal(Variant):
             if self.__en_passant:
                 self.__en_passant = None
             self.__half_moves_since_pawn_moved += 1
+        self.__position_occurence[hash(self.board)] += 1
         return True
 
     def standard_moves(self, position: 'StandardPosition', board: StandardBoard = None) -> Set['StandardPosition']:

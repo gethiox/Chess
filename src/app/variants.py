@@ -34,6 +34,7 @@ class Normal(Variant):
         self.__position_occurence = defaultdict(int)
         self.__en_passant = None  # None or StandardPosition when pawn move trough two fields, any other set None value
         self.__half_moves_since_pawn_moved = 0
+        self.__half_moves_since_capture = 0
         self.__castling = {King(White), Queen(White), King(Black), Queen(Black)}
 
     @property
@@ -69,6 +70,8 @@ class Normal(Variant):
 
     @property
     def game_state(self) -> Optional[Set[Type['Side']]]:
+        if self.__half_moves_since_pawn_moved >= 50 or self.__half_moves_since_capture >= 50:
+            return set(self.sides)
         for hash_pos, occurence in self.__position_occurence.items():
             if occurence >= 3:
                 return set(self.sides)
@@ -148,7 +151,7 @@ class Normal(Variant):
         if moved_piece.side != self.on_move:
             raise WrongMoveOrder("You are trying to move %s when %s are on move" % (moved_piece.side, self.on_move))
         moved_piece = self.board.remove_piece(position=move.source)
-        self.board.put_piece(piece=moved_piece, position=move.destination)
+        taken_piece = self.board.put_piece(piece=moved_piece, position=move.destination)
         self.moves_history.append(move)
         self.__half_moves += 1
         if isinstance(moved_piece, Pawn):
@@ -164,6 +167,10 @@ class Normal(Variant):
             if self.__en_passant:
                 self.__en_passant = None
             self.__half_moves_since_pawn_moved += 1
+        if not taken_piece:
+            self.__half_moves_since_capture += 1
+        else:
+            self.__half_moves_since_capture = 0
         self.__update_castling_info(move.source)
         self.__position_occurence[hash(self.board)] += 1
         return True

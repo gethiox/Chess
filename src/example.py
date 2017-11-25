@@ -64,22 +64,20 @@ if __name__ == "__main__":
             print('%s is not a valid move, game state not changed\n' % move)
             continue
 
-        board_str = board_rendererer.tiny(variant.board)
+        board_str = board_rendererer.normal(variant.board)
         t_p_start = time()
         stats = ("\n"
                  "FEN: {fen}\n"
-                 "executed move: {move}\n"
+                 "executed/last move: {move}\n"
                  "move count: {moves}\n"
                  "on move: {on_move}\n"
-                 "last move: {last_move}\n"
                  "available moves: {available_moves}\n"
                  "winner side(s): {game_status}\n"
                  "".format(fen=str(game.variant),
-                           move=move,
+                           move=variant.last_move,
                            moves=variant.moves,
                            on_move=variant.on_move,
-                           last_move=variant.last_move,
-                           available_moves='dis', #len(variant.all_available_moves()),  # Very inefficient
+                           available_moves='disabled',  # len(variant.all_available_moves()),  # Very inefficient
                            game_status=variant.game_state)
                  )
         t_p_stop = time()

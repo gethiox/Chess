@@ -34,7 +34,7 @@ class Normal(Variant):
         self.__position_occurence = defaultdict(int)
         self.__en_passant = None  # None or StandardPosition when pawn move trough two fields, any other set None value
         self.__half_moves_since_pawn_moved = 0
-        # self.__castling
+        self.__castling = {King(White), Queen(White), King(Black), Queen(Black)}
 
     @property
     def name(self):
@@ -164,8 +164,25 @@ class Normal(Variant):
             if self.__en_passant:
                 self.__en_passant = None
             self.__half_moves_since_pawn_moved += 1
+        self.__update_castling_info(move.source)
         self.__position_occurence[hash(self.board)] += 1
         return True
+
+    def __update_castling_info(self, source):
+        if self.__castling:
+            if source == StandardPosition('e1'):
+                self.__castling = self.__castling - {King(White), Queen(White)}
+            elif source == StandardPosition('a1'):
+                self.__castling = self.__castling - {Queen(White)}
+            elif source == StandardPosition('h1'):
+                self.__castling = self.__castling - {King(White)}
+
+            if source == StandardPosition('e8'):
+                self.__castling = self.__castling - {King(Black), Queen(Black)}
+            elif source == StandardPosition('a8'):
+                self.__castling = self.__castling - {Queen(Black)}
+            elif source == StandardPosition('h8'):
+                self.__castling = self.__castling - {King(Black)}
 
     def standard_moves(self, position: 'StandardPosition', board: StandardBoard = None) -> Set['StandardPosition']:
         if not board:
@@ -326,7 +343,7 @@ class Normal(Variant):
                     continue
                 else:
                     moves.add(move)
-        return moves
+        return list(moves)
 
     @staticmethod
     def __transform_vector(vector: Tuple[int, int], all_directions: bool, side) -> Set[Tuple[int, int]]:
@@ -371,7 +388,7 @@ class Normal(Variant):
         return "{board} {on_move} {castling} {en_passant} {half_since_pawn} {moves}".format(
             board=self.__board.get_fen(),
             on_move=self.on_move.char,
-            castling=None,  # TODO: TODO
+            castling=''.join(sorted((str(piece) for piece in self.__castling))) if self.__castling else "-",
             en_passant=str(self.__en_passant) if self.__en_passant else "-",  # TODO: implement en_passant
             half_since_pawn=self.__half_moves_since_pawn_moved,
             moves=self.moves,

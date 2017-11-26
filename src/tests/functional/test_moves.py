@@ -11,11 +11,11 @@ from interface.game import Game
 class MyTestCase(TestCase):
     def setUp(self):
         self.game = Game(player1=Player('white player'), player2=Player('black player'), variant=Normal())
-        for pos, _ in self.game.board.pieces.items():
+        for pos, _ in self.game.board.pieces:
             self.game.board.remove_piece(pos)
 
     def test_assert_empty_board(self):
-        self.assertEqual(self.game.board.pieces, {})
+        self.assertEqual(self.game.board.pieces, [])
 
     def test_white_pawn_two_moves(self):
         piece = Pawn(White)

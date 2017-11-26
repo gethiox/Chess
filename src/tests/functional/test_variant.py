@@ -6,6 +6,7 @@ from app.position import StandardPosition
 from app.sides import Black
 from app.variants import Normal
 from cli import board_rendererer
+from exceptions.variant import CausesCheck
 from interface.game import Game
 
 
@@ -17,7 +18,7 @@ class MyTestCase(TestCase):
     def test_some(self):
         board_rendererer.tiny(self.variant.board)
         print()
-        for move in self.generate_moves(['f2f3', 'e7e6', 'g2g4', 'd8h4']):
+        for move in self.moves_from_str(['f2f3', 'e7e6', 'g2g4', 'd8h4']):
             status = self.variant.move(move)
             if status:
                 print('Move execution %s ok' % move)
@@ -44,6 +45,23 @@ class MyTestCase(TestCase):
             self.variant.game_state, {Black}
         )
 
-    def generate_moves(self, str_moves):
-        for str_move in str_moves:
-            yield StandardMove(StandardPosition.from_str(str_move[:2]), StandardPosition.from_str(str_move[-2:]))
+    def test_CausesCheck(self):
+        self.game.move(self.move_from_str('e2e3'))
+        self.game.move(self.move_from_str('e7e6'))
+        self.game.move(self.move_from_str('d1h5'))
+
+        with self.assertRaises(CausesCheck):
+            self.game.move(self.move_from_str('f7f6'))
+
+    def moves_from_str(self, moves_str):
+        for move_str in moves_str:
+            yield StandardMove(
+                StandardPosition.from_str(move_str[:2]),
+                StandardPosition.from_str(move_str[-2:])
+            )
+
+    def move_from_str(self, move_str: str):
+        return StandardMove(
+            StandardPosition.from_str(move_str[:2]),
+            StandardPosition.from_str(move_str[2:])
+        )

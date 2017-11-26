@@ -141,7 +141,7 @@ class Normal(Variant):
         test_board = deepcopy(self.board)
         test_piece = test_board.remove_piece(source)
         test_board.put_piece(test_piece, destination)
-        king_pos, king = test_board.find_pieces(King(self.on_move))[0]
+        king_pos, king = test_board.find_pieces(requested_piece=King(self.on_move))[0]
         if king_pos in self.attacked_fields_by_sides(set(self.sides) - {piece.side}, test_board):
             raise CausesCheck("{move} move causes {side} {name} ({pos}) check delivered by: [{atck}]".format(
                 move=move, side=king.side, name=king.name, pos=king_pos,

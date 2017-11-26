@@ -1,5 +1,5 @@
 from abc import ABCMeta, abstractmethod
-from typing import Type, Optional, TYPE_CHECKING, Dict
+from typing import Type, Optional, TYPE_CHECKING, List, Tuple
 
 if TYPE_CHECKING:
     from interface.piece import Piece
@@ -73,7 +73,7 @@ class Board(metaclass=ABCMeta):
 
     @property
     @abstractmethod
-    def pieces(self) -> Dict['Position', 'Piece']:
+    def pieces(self) -> List[Tuple[Type['Position'], Type['Piece']]]:
         """
         :return: a sequence of tuples - (Piece, Position)
         """

@@ -131,7 +131,7 @@ class StandardBoard(Board):
 
     @property
     def pieces(self) -> List[Tuple['StandardPosition', 'Piece']]:
-        return self.find_pieces()
+        return self.find_pieces(None)
 
     def find_pieces(self, requested_piece: Optional['Piece'] = None) -> List[Tuple['StandardPosition', 'Piece']]:
         pieces = []
@@ -145,7 +145,7 @@ class StandardBoard(Board):
                     pieces.append(
                         (position, piece)
                     )
-                else:
+                elif not requested_piece:
                     pieces.append(
                         (position, piece)
                     )

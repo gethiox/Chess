@@ -46,4 +46,4 @@ class MyTestCase(TestCase):
 
     def generate_moves(self, str_moves):
         for str_move in str_moves:
-            yield StandardMove(StandardPosition(str_move[:2]), StandardPosition(str_move[-2:]))
+            yield StandardMove(StandardPosition.from_str(str_move[:2]), StandardPosition.from_str(str_move[-2:]))

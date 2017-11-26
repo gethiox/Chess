@@ -19,7 +19,7 @@ class MyTestCase(TestCase):
 
     def test_white_pawn_two_moves(self):
         piece = Pawn(White)
-        pos = StandardPosition('b2')
+        pos = StandardPosition.from_str('b2')
         self.game.board.put_piece(piece, pos)
         self.assertEqual(
             self._get_available_move_strings(pos),
@@ -32,7 +32,7 @@ class MyTestCase(TestCase):
 
     def test_white_pawn_one_move(self):
         piece = Pawn(White)
-        pos = StandardPosition('b3')
+        pos = StandardPosition.from_str('b3')
         self.game.board.put_piece(piece, pos)
         self.assertEqual(
             self._get_available_move_strings(pos),
@@ -45,16 +45,16 @@ class MyTestCase(TestCase):
 
     def test_white_pawn_capture_available(self):
         piece = Pawn(White)
-        pos = StandardPosition('b4')
+        pos = StandardPosition.from_str('b4')
         self.game.board.put_piece(piece, pos)
-        self.game.board.put_piece(Pawn(Black), StandardPosition('a5'))
-        self.game.board.put_piece(Pawn(Black), StandardPosition('b5'))
-        self.game.board.put_piece(Pawn(Black), StandardPosition('c5'))
-        self.game.board.put_piece(Pawn(Black), StandardPosition('a4'))
-        self.game.board.put_piece(Pawn(Black), StandardPosition('c4'))
-        self.game.board.put_piece(Pawn(Black), StandardPosition('a3'))
-        self.game.board.put_piece(Pawn(Black), StandardPosition('b3'))
-        self.game.board.put_piece(Pawn(Black), StandardPosition('c3'))
+        self.game.board.put_piece(Pawn(Black), StandardPosition.from_str('a5'))
+        self.game.board.put_piece(Pawn(Black), StandardPosition.from_str('b5'))
+        self.game.board.put_piece(Pawn(Black), StandardPosition.from_str('c5'))
+        self.game.board.put_piece(Pawn(Black), StandardPosition.from_str('a4'))
+        self.game.board.put_piece(Pawn(Black), StandardPosition.from_str('c4'))
+        self.game.board.put_piece(Pawn(Black), StandardPosition.from_str('a3'))
+        self.game.board.put_piece(Pawn(Black), StandardPosition.from_str('b3'))
+        self.game.board.put_piece(Pawn(Black), StandardPosition.from_str('c3'))
         self.assertEqual(
             self._get_available_move_strings(pos),
             set()

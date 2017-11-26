@@ -11,33 +11,33 @@ class BoardTestCase(unittest.TestCase):
         board = StandardBoard()
         old_piece = board.put_piece(
             piece=Rook(White),  # TODO: Understand the difference between Type[Something] and Something (typehints)
-            position=StandardPosition('e4')
+            position=StandardPosition.from_str('e4')
         )
         self.assertEqual(old_piece, None)
-        print(board.get_piece(StandardPosition('e3')))
+        print(board.get_piece(StandardPosition.from_str('e3')))
         print(Rook(White))
         self.assertNotEqual(
-            board.get_piece(StandardPosition('e3')),
+            board.get_piece(StandardPosition.from_str('e3')),
             Rook(White)
         )
         self.assertEqual(
-            board.get_piece(StandardPosition('e4')),
+            board.get_piece(StandardPosition.from_str('e4')),
             Rook(White)
         )
 
         old_piece = board.put_piece(
             piece=Queen(Black),
-            position=StandardPosition('e4')
+            position=StandardPosition.from_str('e4')
         )
         self.assertEqual(old_piece, Rook(White))
         self.assertEqual(
-            board.get_piece(StandardPosition('e4')),
+            board.get_piece(StandardPosition.from_str('e4')),
             Queen(Black)
         )
 
-        old_piece = board.remove_piece(StandardPosition('e4'))
+        old_piece = board.remove_piece(StandardPosition.from_str('e4'))
         self.assertEqual(
-            board.get_piece(StandardPosition('e4')),
+            board.get_piece(StandardPosition.from_str('e4')),
             None
         )
         self.assertEqual(old_piece, Queen(Black))
@@ -45,38 +45,38 @@ class BoardTestCase(unittest.TestCase):
     def test_read_fenstring(self):
         board = StandardBoard()
         board.put_piece(piece=King(White),
-                        position=StandardPosition('e1'))
+                        position=StandardPosition.from_str('e1'))
         self.assertEqual(board.get_fen(), '8/8/8/8/8/8/8/4K3')
 
         board.put_piece(piece=King(Black),
-                        position=StandardPosition('e8'))
+                        position=StandardPosition.from_str('e8'))
         self.assertEqual(board.get_fen(), '4k3/8/8/8/8/8/8/4K3')
 
         board.put_piece(piece=Queen(White),
-                        position=StandardPosition('d1'))
+                        position=StandardPosition.from_str('d1'))
         board.put_piece(piece=Queen(Black),
-                        position=StandardPosition('d8'))
+                        position=StandardPosition.from_str('d8'))
         self.assertEqual(board.get_fen(), '3qk3/8/8/8/8/8/8/3QK3')
 
         board.put_piece(piece=Rook(White),
-                        position=StandardPosition('a1'))
+                        position=StandardPosition.from_str('a1'))
         board.put_piece(piece=Rook(White),
-                        position=StandardPosition('h1'))
+                        position=StandardPosition.from_str('h1'))
         board.put_piece(piece=Rook(Black),
-                        position=StandardPosition('a8'))
+                        position=StandardPosition.from_str('a8'))
         board.put_piece(piece=Rook(Black),
-                        position=StandardPosition('h8'))
+                        position=StandardPosition.from_str('h8'))
 
         self.assertEqual(board.get_fen(), 'r2qk2r/8/8/8/8/8/8/R2QK2R')
 
     def test_write_fenstring(self):
         board = StandardBoard()
         board.set_fen('8/8/8/8/8/8/8/4K3')
-        self.assertEqual(board.get_piece(position=StandardPosition('e1')), King(White))
-        self.assertEqual(board.get_piece(position=StandardPosition('e8')), None)
+        self.assertEqual(board.get_piece(position=StandardPosition.from_str('e1')), King(White))
+        self.assertEqual(board.get_piece(position=StandardPosition.from_str('e8')), None)
 
         board.set_fen('4k3/8/8/8/8/8/8/4K3')
-        self.assertEqual(board.get_piece(position=StandardPosition('e1')), King(White))
-        self.assertEqual(board.get_piece(position=StandardPosition('e8')), King(Black))
-        self.assertNotEqual(board.get_piece(position=StandardPosition('e8')), King(White))
-        self.assertNotEqual(board.get_piece(position=StandardPosition('e8')), Rook(Black))
+        self.assertEqual(board.get_piece(position=StandardPosition.from_str('e1')), King(White))
+        self.assertEqual(board.get_piece(position=StandardPosition.from_str('e8')), King(Black))
+        self.assertNotEqual(board.get_piece(position=StandardPosition.from_str('e8')), King(White))
+        self.assertNotEqual(board.get_piece(position=StandardPosition.from_str('e8')), Rook(Black))

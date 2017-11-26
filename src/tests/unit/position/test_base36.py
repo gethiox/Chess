@@ -18,16 +18,16 @@ class MyTestCase(TestCase):
         self.assertEqual(str(pos), 'h1')
 
     def test_write(self):
-        pos = StandardPosition('a1')
+        pos = StandardPosition.from_str('a1')
         self.assertEqual(tuple(pos), (0, 0))
 
-        pos = StandardPosition('a8')
+        pos = StandardPosition.from_str('a8')
         self.assertEqual(tuple(pos), (0, 7))
 
-        pos = StandardPosition('h8')
+        pos = StandardPosition.from_str('h8')
         self.assertEqual(tuple(pos), (7, 7))
 
-        pos = StandardPosition('h1')
+        pos = StandardPosition.from_str('h1')
         self.assertEqual(tuple(pos), (7, 0))
 
     def test_read_above_standard(self):
@@ -47,17 +47,17 @@ class MyTestCase(TestCase):
         self.assertEqual(str(pos), 'baa100')
 
     def test_write_above_standard(self):
-        pos = StandardPosition('z100')
+        pos = StandardPosition.from_str('z100')
         self.assertEqual(tuple(pos), (25, 99))
 
-        pos = StandardPosition('ba100')
+        pos = StandardPosition.from_str('ba100')
         self.assertEqual(tuple(pos), (26, 99))
 
-        pos = StandardPosition('bz100')
+        pos = StandardPosition.from_str('bz100')
         self.assertEqual(tuple(pos), (51, 99))
 
-        pos = StandardPosition('ca100')
+        pos = StandardPosition.from_str('ca100')
         self.assertEqual(tuple(pos), (52, 99))
 
-        pos = StandardPosition('baa100')
+        pos = StandardPosition.from_str('baa100')
         self.assertEqual(tuple(pos), (676, 99))

@@ -75,7 +75,7 @@ class Normal(Variant):
         for hash_pos, occurence in self.__position_occurence.items():
             if occurence >= 3:
                 return set(self.sides)
-        king_pos, _ = list(self.board.find_pieces(King(self.on_move)).items())[0]
+        king_pos, _ = self.board.find_pieces(King(self.on_move))[0]
         if not self.can_i_make_a_move():
             if king_pos in self.attacked_fields_by_sides(set(self.sides) - {self.on_move}):
                 return set(self.sides) - {self.on_move}
@@ -85,7 +85,7 @@ class Normal(Variant):
 
     @property
     def is_check(self):
-        pos, king = list(self.board.find_pieces(King(self.on_move)).items())[0]
+        pos, king = self.board.find_pieces(King(self.on_move))[0]
         if pos in self.attacked_fields_by_sides(set(self.sides) - {self.on_move}):
             return True
         return False
@@ -140,7 +140,7 @@ class Normal(Variant):
         test_board = deepcopy(self.board)
         test_piece = test_board.remove_piece(source)
         test_board.put_piece(test_piece, destination)
-        king_pos, king = list(test_board.find_pieces(King(self.on_move)).items())[0]
+        king_pos, king = test_board.find_pieces(King(self.on_move))[0]
         if king_pos in self.attacked_fields_by_sides(set(self.sides) - {piece.side}, test_board):
             raise CausesCheck("{move} move causes {side} {name} ({pos}) check delivered by: [{atck}]".format(
                 move=move, side=king.side, name=king.name, pos=king_pos,
@@ -153,7 +153,7 @@ class Normal(Variant):
 
     def move(self, move: 'StandardMove') -> bool:
         # TODO: Refactor or something, or maybe not
-        self.assert_move(move)
+        # self.assert_move(move)
         moved_piece = self.board.get_piece(position=move.source)
         if moved_piece.side != self.on_move:
             raise WrongMoveOrder("You are trying to move %s when %s are on move" % (moved_piece.side, self.on_move))
@@ -329,7 +329,7 @@ class Normal(Variant):
         if not board:
             board = self.board
 
-        return {pos for position, piece in board.pieces.items()
+        return {pos for position, piece in board.pieces
                 for pos in self.attacked_fields(position, board)
                 for side in sides if piece.side == side}
 
@@ -338,7 +338,7 @@ class Normal(Variant):
         if not board:
             board = self.board
 
-        return {pos: piece for pos, piece in board.pieces.items() if position in self.attacked_fields(pos, board)}
+        return {pos: piece for pos, piece in board.pieces if position in self.attacked_fields(pos, board)}
 
     def all_available_moves(self, side: Type['Side'] = None):
         # Warning! Very inefficient! TODO: Refactor or remove
@@ -346,7 +346,7 @@ class Normal(Variant):
             side = self.on_move
 
         moves = set()
-        for pos, piece in self.board.pieces.items():
+        for pos, piece in self.board.pieces:
             if piece.side != side:
                 continue
             for destination in self.standard_moves(pos) | self.standard_captures(pos) | self.special_moves(pos):
@@ -381,7 +381,7 @@ class Normal(Variant):
             return {vector}
 
     def can_i_make_a_move(self) -> bool:
-        for pos, piece in self.board.pieces.items():
+        for pos, piece in self.board.pieces:
             if piece and piece.side == self.on_move:
                 for moves in [self.standard_moves(pos), self.standard_captures(pos), self.special_moves(pos)]:
                     for dest in moves:
@@ -419,7 +419,7 @@ class KingOfTheHill(Normal):
         # find kings position and return winner if king is standing on the hill (d4, e4, d5, e5)
         kings = []
         for side in self.sides:
-            king_pos, piece = list(self.board.find_pieces(King(side)).items())[0]
+            king_pos, piece = self.board.find_pieces(King(side))[0]
             kings.append((king_pos, piece))
 
         for king_pos, piece in kings:
@@ -449,10 +449,10 @@ class ThreeCheck(Normal):
             raise Exception("Something went wrong")  # TODO
         enemy_side = enemy_side_set.pop()
 
-        enemy_kings_dict = self.board.find_pieces(King(enemy_side))
-        if len(enemy_kings_dict) != 1:
+        enemy_kings_tuple = self.board.find_pieces(King(enemy_side))
+        if len(enemy_kings_tuple) != 1:
             raise Exception("Something went even worse")  # TODO
-        enemy_king_position, enemy_king = list(enemy_kings_dict.items())[0]
+        enemy_king_position, enemy_king = enemy_kings_tuple[0]
         if enemy_king_position in self.attacked_fields_by_sides({our_side}):
             self.checks[our_side] += 1
 

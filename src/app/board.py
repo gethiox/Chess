@@ -1,6 +1,6 @@
 import numpy
 from string import digits
-from typing import Optional, Tuple, Sequence, TYPE_CHECKING, Dict
+from typing import Optional, Tuple, Sequence, TYPE_CHECKING, Dict, List
 
 from app.pieces import from_str
 from app.position import StandardPosition
@@ -131,25 +131,25 @@ class StandardBoard(Board):
         return board_fen
 
     @property
-    def pieces(self) -> Dict['StandardPosition', 'Piece']:
-        return self.find_pieces(None)
+    def pieces(self) -> List[Tuple['StandardPosition', 'Piece']]:
+        return self.find_pieces()
 
-    def find_pieces(self, requested_piece: Optional['Piece']) -> Dict['StandardPosition', 'Piece']:
-        pieces = {}
+    def find_pieces(self, requested_piece: Optional['Piece'] = None) -> List[Tuple['StandardPosition', 'Piece']]:
+        pieces = []
         for rank in range(self.files):
             for file in range(self.ranks):
                 position = StandardPosition((file, rank))
                 piece = self.get_piece(position=position)
-                if requested_piece:
-                    if piece == requested_piece:
-                        pieces.update(
-                            {position: piece}
-                        )
+                if piece is None:
+                    continue
+                if requested_piece and requested_piece == piece:
+                    pieces.append(
+                        (position, piece)
+                    )
                 else:
-                    if piece:
-                        pieces.update(
-                            {position: piece}
-                        )
+                    pieces.append(
+                        (position, piece)
+                    )
         return pieces
 
     def validate_position(self, position: StandardPosition) -> bool:

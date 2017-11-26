@@ -3,7 +3,6 @@ import itertools
 from collections import defaultdict
 from copy import deepcopy
 from math import inf as infinity
-from time import sleep
 from typing import Type, TYPE_CHECKING, Tuple, Set, List, Optional, Dict
 
 from app.board import StandardBoard
@@ -153,7 +152,6 @@ class Normal(Variant):
             ))
 
     def move(self, move: 'StandardMove') -> bool:
-        # TODO: Refactor or something, or maybe not
         self.assert_move(move)
         moved_piece = self.board.get_piece(position=move.source)
         if moved_piece.side != self.on_move:
@@ -343,7 +341,7 @@ class Normal(Variant):
         return {pos: piece for pos, piece in board.pieces if position in self.attacked_fields(pos, board)}
 
     def all_available_moves(self, side: Type['Side'] = None):
-        # Warning! Very inefficient! TODO: Refactor or remove
+        # Warning! Very inefficient!
         if not side:
             side = self.on_move
 
@@ -389,7 +387,7 @@ class Normal(Variant):
                     for dest in moves:
                         try:
                             self.assert_move(StandardMove(pos, dest))
-                        except:
+                        except NotAValidMove:
                             continue
                         return True
         return False
@@ -405,7 +403,7 @@ class Normal(Variant):
             board=self.__board.get_fen(),
             on_move=self.on_move.char,
             castling=''.join(sorted((str(piece) for piece in self.__castling))) if self.__castling else "-",
-            en_passant=str(self.__en_passant) if self.__en_passant else "-",  # TODO: implement en_passant
+            en_passant=str(self.__en_passant) if self.__en_passant else "-",
             half_since_pawn=self.__half_moves_since_pawn_moved,
             moves=self.moves,
         )
@@ -446,15 +444,9 @@ class ThreeCheck(Normal):
         super(ThreeCheck, self).move(move)
 
         our_side = piece.side
-        enemy_side_set = set(self.sides) - {our_side}
-        if len(enemy_side_set) != 1:
-            raise Exception("Something went wrong")  # TODO
-        enemy_side = enemy_side_set.pop()
+        enemy_side = (set(self.sides) - {our_side}).pop()
 
-        enemy_kings_tuple = self.board.find_pieces(King(enemy_side))
-        if len(enemy_kings_tuple) != 1:
-            raise Exception("Something went even worse")  # TODO
-        enemy_king_position, enemy_king = enemy_kings_tuple[0]
+        enemy_king_position, _ = self.board.find_pieces(King(enemy_side))[0]
         if enemy_king_position in self.attacked_fields_by_sides({our_side}):
             self.checks[our_side] += 1
 

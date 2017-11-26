@@ -26,7 +26,7 @@ class Board(metaclass=ABCMeta):
         Read-only, direct access to the board array
         :return: n-dimensional array
         """
-        pass  # TODO: maybe make not only read-only
+        pass
 
     @abstractmethod
     def get_piece(self, position: Type['Position']) -> Optional[Type['Piece']]:

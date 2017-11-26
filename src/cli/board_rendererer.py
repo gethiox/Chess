@@ -2,7 +2,6 @@ from app.board import StandardBoard
 
 
 def tiny(board: StandardBoard):
-    # TODO: add support for variable board size
     board_str = ''
 
     rank_counter = 7
@@ -24,7 +23,6 @@ def tiny(board: StandardBoard):
 
 
 def normal(board: StandardBoard):
-    # TODO: add support for variable board size
     board_str = '+---+---+---+---+---+---+---+---+\n'
 
     rank_counter = 7

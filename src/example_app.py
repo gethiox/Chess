@@ -25,17 +25,17 @@ if __name__ == "__main__":
     player = Player("player")
 
     game = Game(player1=player, player2=player, variant=mode)
-    board_rendererer.normal(game.board)
+    print(board_rendererer.normal(game.board))
     print("Insert move, eg. \"e2e4\" (tyoe \'board\' to show board)")
     try:
         while True:
             move_str = input("Move: ")
             if move_str == "board":
-                board_rendererer.normal(game.board)
+                print(board_rendererer.normal(game.board))
                 continue
             try:
-                source = StandardPosition(move_str[:2])
-                destination = StandardPosition(move_str[2:])
+                source = StandardPosition.from_str(move_str[:2])
+                destination = StandardPosition.from_str(move_str[2:])
             except ValueError as err:
                 print("bad syntax (%s)" % err)
                 continue
@@ -49,7 +49,7 @@ if __name__ == "__main__":
             except Exception as err:
                 print(err)
                 continue
-            board_rendererer.normal(game.board)
+            print(board_rendererer.normal(game.board))
             if game.variant.game_state:
                 print('game is over! Winner: %s' % game.variant.game_state)
                 break

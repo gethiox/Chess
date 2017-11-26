@@ -84,6 +84,13 @@ class Normal(Variant):
         return None
 
     @property
+    def is_check(self):
+        pos, king = list(self.board.find_pieces(King(self.on_move)).items())[0]
+        if pos in self.attacked_fields_by_sides(set(self.sides) - {self.on_move}):
+            return True
+        return False
+
+    @property
     def board(self) -> StandardBoard:
         return self.__board
 
@@ -177,18 +184,18 @@ class Normal(Variant):
 
     def __update_castling_info(self, source):
         if self.__castling:
-            if source == StandardPosition('e1'):
+            if source == StandardPosition.from_str('e1'):
                 self.__castling = self.__castling - {King(White), Queen(White)}
-            elif source == StandardPosition('a1'):
+            elif source == StandardPosition.from_str('a1'):
                 self.__castling = self.__castling - {Queen(White)}
-            elif source == StandardPosition('h1'):
+            elif source == StandardPosition.from_str('h1'):
                 self.__castling = self.__castling - {King(White)}
 
-            if source == StandardPosition('e8'):
+            if source == StandardPosition.from_str('e8'):
                 self.__castling = self.__castling - {King(Black), Queen(Black)}
-            elif source == StandardPosition('a8'):
+            elif source == StandardPosition.from_str('a8'):
                 self.__castling = self.__castling - {Queen(Black)}
-            elif source == StandardPosition('h8'):
+            elif source == StandardPosition.from_str('h8'):
                 self.__castling = self.__castling - {King(Black)}
 
     def standard_moves(self, position: 'StandardPosition', board: StandardBoard = None) -> Set['StandardPosition']:

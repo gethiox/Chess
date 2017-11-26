@@ -1,3 +1,4 @@
+import numpy
 from string import digits
 from typing import Optional, Tuple, Sequence, TYPE_CHECKING, Dict
 
@@ -22,7 +23,10 @@ class StandardBoard(Board):
         self.__files = files
         self.__ranks = ranks
         self.__board_array = [[None for _ in range(self.ranks)] for _ in range(self.files)]
-        # TODO: Use legit arrays from numpy but maybe it is not necessary
+        # Actually not using numpy arrays because them are slower for this case.
+        # When board become bigger and have more dimension than 2-3 then you should consider use numpy arrays.
+        # indexing code for lists are much simpler than for numpy arrays, also arrays is specialised in calculation
+        # on various groups of values, not in getting/putting objects inside of it.
 
     @property
     def array(self) -> Sequence[Sequence[Optional['Piece']]]:
@@ -40,14 +44,13 @@ class StandardBoard(Board):
     def ranks(self) -> int:
         return self.__ranks
 
-    def get_piece(self, position: StandardPosition) -> Optional['Piece']:
+    def get_piece(self, position: 'StandardPosition') -> Optional['Piece']:
         """
         Get Piece on given Position
         :param position: Position object
         :return: Piece on given Position
         """
-        current = self.__board_array[position.file][position.rank]
-        return current
+        return self.__board_array[position.file][position.rank]
 
     def put_piece(self, piece: 'Piece', position: StandardPosition) -> Optional['Piece']:
         """
@@ -80,7 +83,6 @@ class StandardBoard(Board):
             raise NotImplemented
 
         board_tmp = [[None for _ in range(self.ranks)] for _ in range(self.files)]
-        # thumbs up for more AVR-Based code like this, maybe assembly inside Python?
 
         rank_counter = self.ranks - 1
         for rank in board_fen.split('/'):
@@ -104,7 +106,6 @@ class StandardBoard(Board):
             raise NotImplemented
 
         board_fen = ''
-        # Here we go into C programming style
 
         no_pieces_counter = 0
         rank_counter = self.ranks - 1
@@ -127,7 +128,6 @@ class StandardBoard(Board):
                 board_fen += '/'
             rank_counter -= 1
 
-        # Pretty easy to understand
         return board_fen
 
     @property

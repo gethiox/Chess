@@ -1,37 +1,27 @@
 import re
 from string import ascii_lowercase
-from typing import Union, Tuple, List, Iterator
+from typing import Iterator, Tuple
 
 from interface.position import Position
 
-location_regex = re.compile(r'^(?P<file>[a-zA-Z]+)(?P<rank>[0-9]+)$')
+location_regex = re.compile(r'^([a-zA-Z]+)([0-9]+)$')
 
 
 class StandardPosition(Position):
-    """
-    tuple with two board coordinates is too simple of course, here is a standard 2D Position object implementation.
-    """
+    def __init__(self, pos: Tuple[int, int]):
+        """
+        Initialize StandardPosition object
+        """
+        self.file, self.rank = pos
 
-    def __init__(self, pos: Union[str, Tuple[int, int], List[int]]):  # TODO: decide to support stable and one interface
-        if isinstance(pos, tuple) or isinstance(pos, list):
-            if len(pos) != 2:
-                raise ValueError('Position should be given as tuple/list with only two ints')
-            self.__file = pos[0]
-            self.__rank = pos[1]
-        elif isinstance(pos, str):
-            output = location_regex.search(pos)
-            if not output:
-                raise ValueError('Position should be given as two letter coordinates (file, rank)')
-            self.__rank = self.__rank_from_str_to_int(output.group('rank'))
-            self.__file = self.__file_from_str_to_int(output.group('file'))
-
-    @property
-    def file(self) -> int:
-        return self.__file
-
-    @property
-    def rank(self) -> int:
-        return self.__rank
+    @classmethod
+    def from_str(cls, pos: str) -> 'StandardPosition':
+        output = location_regex.search(pos)
+        if not output:
+            raise ValueError('Position should be given as two letter coordinates (file, rank)')
+        file = cls.__file_from_str_to_int(output.groups()[0])
+        rank = cls.__rank_from_str_to_int(output.groups()[1])
+        return cls((file, rank))
 
     @staticmethod
     def __rank_from_str_to_int(rank: str) -> int:

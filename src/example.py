@@ -12,16 +12,17 @@ from interface.game import Game
 
 def generate_moves(str_moves):
     for str_move in str_moves:
-        yield StandardMove(StandardPosition(str_move[:2]), StandardPosition(str_move[-2:]))
+        yield StandardMove(StandardPosition.from_str(str_move[:2]), StandardPosition.from_str(str_move[-2:]))
 
 
 if __name__ == "__main__":
     game = Game(Player('White Player'), Player('Black Player'), Normal())
     variant = game.variant
 
-    board_str = board_rendererer.tiny(variant.board)
+    board_str = board_rendererer.normal(variant.board)
     print(board_str + '\n')
     g_start = time()
+    validation_list, collection_list = [], []
     for move in generate_moves(
             ['e2e4', 'e7e5', 'g1f3', 'b8c6', 'b1c3', 'g8f6', 'f1c4', 'f8c5', 'a2a3', 'd7d6', 'd2d3', 'c8g4', 'c3d5',
              'f6d5', 'c4d5', 'c6d4', 'c2c3', 'd4f3', 'g2f3', 'g4d7', 'd5b7', 'a8b8', 'b7a6', 'd8f6', 'b2b4', 'd6d5',
@@ -71,12 +72,14 @@ if __name__ == "__main__":
                  "executed/last move: {move}\n"
                  "move count: {moves}\n"
                  "on move: {on_move}\n"
+                 "in check: {check}\n"
                  "available moves: {available_moves}\n"
                  "winner side(s): {game_status}\n"
                  "".format(fen=str(game.variant),
                            move=variant.last_move,
                            moves=variant.moves,
                            on_move=variant.on_move,
+                           check=variant.is_check,
                            available_moves='disabled',  # len(variant.all_available_moves()),  # Very inefficient
                            game_status=variant.game_state)
                  )
@@ -84,8 +87,15 @@ if __name__ == "__main__":
         print(board_str)
         print(stats)
 
-        print('          ( move validation and execution time: {:.4f} )\n'
-              ' ( data collection time for above informations: {:.4f} )\n'.format(t_stop - t_start,
-                                                                                  t_p_stop - t_p_start))
+        validation_time = t_stop - t_start
+        collection_time = t_p_stop - t_p_start
+
+        print(' ( move validation and execution time: {:.4f} )\n'
+              ' (     game statistic collection time: {:.4f} )\n'.format(validation_time,
+                                                                         collection_time))
+        validation_list.append(validation_time)
+        collection_list.append(collection_time)
     g_stop = time()
     print('total move execution time: {:.4f}'.format(g_stop - g_start))
+    print('slowest validation time: {:.4f} fastest: {:.4f}'.format(max(validation_list), min(validation_list)))
+    print('slowest data collection time: {:.4f} fastest: {:.4f}'.format(max(collection_list), min(collection_list)))

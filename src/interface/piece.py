@@ -37,7 +37,7 @@ class Movement:
     Movement is separated to two section - capture and move. It may determine different Piece mechanics, eg. for
     a pawn - can move forward but capture only diagonal in the front. This interface should be flexible to determine
     any type of movement, even as the stupidest as human being can imagine (as long as not depend on the game state).
-    If not, Use this interface to implement your stupid movement ability.
+    If not, Use this interface to implement your movement ability.
     """
 
     def __init__(self,

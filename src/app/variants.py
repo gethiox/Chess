@@ -3,6 +3,7 @@ import itertools
 from collections import defaultdict
 from copy import deepcopy
 from math import inf as infinity
+from time import sleep
 from typing import Type, TYPE_CHECKING, Tuple, Set, List, Optional, Dict
 
 from app.board import StandardBoard
@@ -75,8 +76,8 @@ class Normal(Variant):
         for hash_pos, occurence in self.__position_occurence.items():
             if occurence >= 3:
                 return set(self.sides)
-        king_pos, _ = self.board.find_pieces(King(self.on_move))[0]
         if not self.can_i_make_a_move():
+            king_pos, _ = self.board.find_pieces(King(self.on_move))[0]
             if king_pos in self.attacked_fields_by_sides(set(self.sides) - {self.on_move}):
                 return set(self.sides) - {self.on_move}
             else:
@@ -153,14 +154,12 @@ class Normal(Variant):
 
     def move(self, move: 'StandardMove') -> bool:
         # TODO: Refactor or something, or maybe not
-        # self.assert_move(move)
+        self.assert_move(move)
         moved_piece = self.board.get_piece(position=move.source)
         if moved_piece.side != self.on_move:
             raise WrongMoveOrder("You are trying to move %s when %s are on move" % (moved_piece.side, self.on_move))
         moved_piece = self.board.remove_piece(position=move.source)
         taken_piece = self.board.put_piece(piece=moved_piece, position=move.destination)
-        self.moves_history.append(move)
-        self.__half_moves += 1
         if isinstance(moved_piece, Pawn):
             if abs(move.source.rank - move.destination.rank) == 2:
                 self.__en_passant = StandardPosition(
@@ -180,6 +179,9 @@ class Normal(Variant):
             self.__half_moves_since_capture = 0
         self.__update_castling_info(move.source)
         self.__position_occurence[hash(self.board)] += 1
+
+        self.moves_history.append(move)
+        self.__half_moves += 1
         return True
 
     def __update_castling_info(self, source):

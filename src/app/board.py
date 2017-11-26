@@ -1,6 +1,5 @@
-import numpy
 from string import digits
-from typing import Optional, Tuple, Sequence, TYPE_CHECKING, Dict, List
+from typing import Optional, Tuple, Sequence, TYPE_CHECKING, List
 
 from app.pieces import from_str
 from app.position import StandardPosition

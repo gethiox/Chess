@@ -103,6 +103,6 @@ if __name__ == "__main__":
         collection_list.append(collection_time)
 
     g_stop = time()
-    print('    all moves execution time: {:.4f}'.format(g_stop - g_start))
+    print('    all moves execution time: {:.4f} ({:d} moves in total)'.format(g_stop - g_start, len(moves)))
     print('     slowest validation time: {:.4f} fastest: {:.5f}'.format(max(validation_list), min(validation_list)))
     print('slowest data collection time: {:.4f} fastest: {:.5f}'.format(max(collection_list), min(collection_list)))

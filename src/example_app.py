@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 from app.move import StandardMove
+from app.pieces import from_str
 from app.player import Player
 from app.position import StandardPosition
 from app.variants import Normal, KingOfTheHill, ThreeCheck
@@ -39,8 +40,9 @@ if __name__ == "__main__":
                 print(board_rendererer.normal(game.board))
                 continue
             try:
-                source = StandardPosition.from_str(move_str[:2])
-                destination = StandardPosition.from_str(move_str[2:])
+                source = StandardPosition.from_str(move_str[0:2])
+                destination = StandardPosition.from_str(move_str[2:4])
+                promotion_char = move_str[4:]
             except ValueError as err:
                 print("bad syntax (%s)" % err)
                 continue
@@ -48,7 +50,11 @@ if __name__ == "__main__":
                 print("You give position above actual board range (%dx%d)" % game.board.size)
                 continue
 
-            move = StandardMove(source=source, destination=destination)
+            if promotion_char:
+                move = StandardMove(source=source, destination=destination,
+                                    promotion=from_str(promotion_char, initialized=False))
+            else:
+                move = StandardMove(source=source, destination=destination)
             try:
                 game.move(move)
             except Exception as err:

@@ -10,7 +10,7 @@ from app.move import StandardMove
 from app.pieces import King, Pawn, Knight, Bishop, Rook, Queen
 from app.position import StandardPosition
 from app.sides import White, Black
-from exceptions.variant import WrongMoveOrder, NotAValidMove, CausesCheck, NoPiece
+from exceptions.variant import WrongMoveOrder, NotAValidMove, CausesCheck, NoPiece, NotAValidPromotion
 from interface.variant import Variant
 
 if TYPE_CHECKING:
@@ -150,6 +150,9 @@ class Normal(Variant):
                      in self.who_can_step_here(king_pos, test_board).items()]
                 )
             ))
+        if isinstance(piece, Pawn) and move.destination.rank in (7, 0):
+            if not move.promotion:
+                raise NotAValidPromotion("Proper promotion are required when promoting a pawn")
 
     def move(self, move: 'StandardMove') -> Optional['Piece']:
         self.assert_move(move)
@@ -168,6 +171,10 @@ class Normal(Variant):
             else:
                 self.__en_passant = None
             self.__half_moves_since_pawn_moved = 0
+
+            if move.destination.rank in (7, 0):
+                self.board.put_piece(move.promotion(self.on_move), move.destination)
+
         else:
             if self.__en_passant:
                 self.__en_passant = None

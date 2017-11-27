@@ -152,11 +152,14 @@ str_map = {
 }
 
 
-def from_str(piece: str) -> 'Piece':  # TODO: Use another solution
+def from_str(piece: str, initialized=True) -> 'Piece':  # TODO: Use another solution
     """
     Method designed to return Piece object from given one-letter string.
     Needed only for processing FEN board-state format.
     """
     if piece.lower() not in ('k', 'q', 'r', 'b', 'n', 'p'):
-        raise ValueError('"%s" not defined as Chess piece.', piece)
-    return str_map[piece.lower()](White) if piece.isupper() else str_map[piece.lower()](Black)
+        raise ValueError('"%s" not defined as Chess piece.' % piece)
+    if initialized:
+        return str_map[piece.lower()](White) if piece.isupper() else str_map[piece.lower()](Black)
+    return str_map[piece.lower()]
+

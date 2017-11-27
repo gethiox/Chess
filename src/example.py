@@ -3,6 +3,7 @@ from argparse import ArgumentParser
 from time import time, sleep
 
 from app.move import StandardMove
+from app.pieces import from_str
 from app.player import Player
 from app.position import StandardPosition
 from app.variants import Normal
@@ -13,7 +14,14 @@ from interface.game import Game
 
 def generate_moves(str_moves):
     for str_move in str_moves:
-        yield StandardMove(StandardPosition.from_str(str_move[:2]), StandardPosition.from_str(str_move[-2:]))
+        source = StandardPosition.from_str(str_move[0:2])
+        destination = StandardPosition.from_str(str_move[2:4])
+        promotion_char = str_move[4:]
+        if promotion_char:
+            yield StandardMove(source=source, destination=destination,
+                               promotion=from_str(promotion_char), initialized=False)
+        else:
+            yield StandardMove(source=source, destination=destination)
 
 
 def parse_args():

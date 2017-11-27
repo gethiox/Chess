@@ -33,6 +33,11 @@ if __name__ == "__main__":
             if move_str == "board":
                 print(board_rendererer.normal(game.board))
                 continue
+            elif move_str == "back":
+                i = int(input("How many moves do you want to rollback? "))
+                game.variant.load_history(i)
+                print(board_rendererer.normal(game.board))
+                continue
             try:
                 source = StandardPosition.from_str(move_str[:2])
                 destination = StandardPosition.from_str(move_str[2:])
@@ -50,6 +55,7 @@ if __name__ == "__main__":
                 print(err)
                 continue
             print(board_rendererer.normal(game.board))
+            print([str(move) for move in game.variant.all_available_moves()])
             if game.variant.game_state:
                 print('game is over! Winner: %s' % game.variant.game_state)
                 break

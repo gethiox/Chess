@@ -28,14 +28,14 @@ class Normal(Variant):
         if init_board_state:
             self.init_board_state()
 
-        self.__half_moves = 1
-        self.__moves_history = []
+        self.__half_moves: int = 1
+        self.__moves_history: List['StandardMove'] = []
         self.__board_history = []
-        self.__position_occurence = defaultdict(int)
-        self.__en_passant = None  # None or StandardPosition when pawn move trough two fields, any other set None value
-        self.__half_moves_since_pawn_moved = 0
-        self.__half_moves_since_capture = 0
-        self.__castling = {King(White), Queen(White), King(Black), Queen(Black)}
+        self.__position_occurence: Dict[int] = defaultdict(int)
+        self.__en_passant: Optional[StandardPosition] = None
+        self.__half_moves_since_pawn_moved: int = 0
+        self.__half_moves_since_capture: int = 0
+        self.__castling: Set[Side] = {King(White), Queen(White), King(Black), Queen(Black)}
 
     @property
     def name(self):
@@ -151,11 +151,12 @@ class Normal(Variant):
                 )
             ))
 
-    def move(self, move: 'StandardMove') -> bool:
+    def move(self, move: 'StandardMove') -> Optional['Piece']:
         self.assert_move(move)
         moved_piece = self.board.get_piece(position=move.source)
         if moved_piece.side != self.on_move:
             raise WrongMoveOrder("You are trying to move %s when %s are on move" % (moved_piece.side, self.on_move))
+        self.save_history()
         moved_piece = self.board.remove_piece(position=move.source)
         taken_piece = self.board.put_piece(piece=moved_piece, position=move.destination)
         if isinstance(moved_piece, Pawn):
@@ -171,6 +172,16 @@ class Normal(Variant):
             if self.__en_passant:
                 self.__en_passant = None
             self.__half_moves_since_pawn_moved += 1
+
+        if isinstance(moved_piece, King) and abs(move.source.file - move.destination.file) == 2:
+            rank = move.source.rank
+            if move.destination.file == 6:
+                moved_rook = self.board.remove_piece(position=StandardPosition((7, rank)))
+                self.board.put_piece(moved_rook, StandardPosition((5, rank)))
+            elif move.destination.file == 2:
+                moved_rook = self.board.remove_piece(position=StandardPosition((0, rank)))
+                self.board.put_piece(moved_rook, StandardPosition((3, rank)))
+
         if not taken_piece:
             self.__half_moves_since_capture += 1
         else:
@@ -180,7 +191,7 @@ class Normal(Variant):
 
         self.moves_history.append(move)
         self.__half_moves += 1
-        return True
+        return taken_piece
 
     def __update_castling_info(self, source):
         if self.__castling:
@@ -197,6 +208,34 @@ class Normal(Variant):
                 self.__castling = self.__castling - {Queen(Black)}
             elif source == StandardPosition.from_str('h8'):
                 self.__castling = self.__castling - {King(Black)}
+
+    def save_history(self):
+        self.__board_history.append(deepcopy(
+            (
+                self.__board,
+                self.__half_moves,
+                self.__position_occurence,
+                self.__en_passant,
+                self.__half_moves_since_pawn_moved,
+                self.__half_moves_since_capture,
+                self.__castling,
+            )
+        ))
+
+    def load_history(self, offset: int):
+        """Back in time and recover game state from the past"""
+        index = self.half_moves - offset - 1
+        print(index, offset, self.half_moves)
+        self.__board, \
+        self.__half_moves, \
+        self.__position_occurence, \
+        self.__en_passant, \
+        self.__half_moves_since_pawn_moved, \
+        self.__half_moves_since_capture, \
+        self.__castling = self.__board_history[index]
+        for _ in range(offset):
+            self.__moves_history.pop()
+            self.__board_history.pop()
 
     def standard_moves(self, position: 'StandardPosition', board: StandardBoard = None) -> Set['StandardPosition']:
         if not board:
@@ -253,6 +292,23 @@ class Normal(Variant):
                 new_piece = board.get_piece(new_position)
                 if new_piece is None:
                     new_positions.add(new_position)
+
+        elif isinstance(piece, King) and self.__castling and position.file == 4:
+            attacked_fields = self.attacked_fields_by_sides(set(self.sides) - {self.on_move})
+
+            if King(self.on_move) in self.__castling:
+                pos1 = StandardPosition((position.file + 1, position.rank))
+                pos2 = StandardPosition((position.file + 2, position.rank))
+                if not board.get_piece(pos1) and not board.get_piece(pos2) and not {pos1, pos2} & attacked_fields:
+                    new_positions.add(pos2)
+            if Queen(self.on_move) in self.__castling:
+                pos1 = StandardPosition((position.file - 1, position.rank))
+                pos2 = StandardPosition((position.file - 2, position.rank))
+                pos3 = StandardPosition((position.file - 2, position.rank))
+                if not board.get_piece(pos1) and not board.get_piece(pos2) and not board.get_piece(pos3) \
+                        and not {pos1, pos2} & attacked_fields:
+                    new_positions.add(pos2)
+
         return new_positions
 
     def standard_captures(self, position: 'StandardPosition', board: StandardBoard = None) -> Set['StandardPosition']:
@@ -340,7 +396,7 @@ class Normal(Variant):
 
         return {pos: piece for pos, piece in board.pieces if position in self.attacked_fields(pos, board)}
 
-    def all_available_moves(self, side: Type['Side'] = None):
+    def all_available_moves(self, side: Type['Side'] = None) -> List[StandardMove]:
         # Warning! Very inefficient!
         if not side:
             side = self.on_move
@@ -383,7 +439,7 @@ class Normal(Variant):
     def can_i_make_a_move(self) -> bool:
         for pos, piece in self.board.pieces:
             if piece and piece.side == self.on_move:
-                for moves in [self.standard_captures(pos), self.standard_moves(pos),  self.special_moves(pos)]:
+                for moves in [self.standard_captures(pos), self.standard_moves(pos), self.special_moves(pos)]:
                     for dest in moves:
                         try:
                             self.assert_move(StandardMove(pos, dest))
@@ -402,7 +458,7 @@ class Normal(Variant):
         return "{board} {on_move} {castling} {en_passant} {half_since_pawn} {moves}".format(
             board=self.__board.get_fen(),
             on_move=self.on_move.char,
-            castling=''.join(sorted((str(piece) for piece in self.__castling))) if self.__castling else "-",
+            castling=''.join(sorted((piece.fen for piece in self.__castling))) if self.__castling else "-",
             en_passant=str(self.__en_passant) if self.__en_passant else "-",
             half_since_pawn=self.__half_moves_since_pawn_moved,
             moves=self.moves,

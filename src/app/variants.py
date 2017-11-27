@@ -383,7 +383,7 @@ class Normal(Variant):
     def can_i_make_a_move(self) -> bool:
         for pos, piece in self.board.pieces:
             if piece and piece.side == self.on_move:
-                for moves in [self.standard_moves(pos), self.standard_captures(pos), self.special_moves(pos)]:
+                for moves in [self.standard_captures(pos), self.standard_moves(pos),  self.special_moves(pos)]:
                     for dest in moves:
                         try:
                             self.assert_move(StandardMove(pos, dest))

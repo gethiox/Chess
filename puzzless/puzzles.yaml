@@ -1,0 +1,42 @@
+- name: "Bodo Van Dehn"
+  fen: "7K/P1p1p1p1/2P1P1Pk/6pP/3p2P1/1P6/3P4/8 w - - 1 0"
+  url: "https://www.youtube.com/watch?v=BEQsg7kXmYU&list=PLQsLDm9Rq9bHvcSe573ZzdNjLkwyPoMP2"
+  best_scenerio: 'white win'
+- name: "J.G. Campbell"
+  fen: "8/1p6/1P1p4/1K1p4/P2P4/4B1pp/1P6/5k2 w - - 1 0"
+  url: "https://www.youtube.com/watch?v=iyL5Ll3qZTQ&list=PLQsLDm9Rq9bHvcSe573ZzdNjLkwyPoMP2&index=2"
+  best_scenerio: 'white draw'
+- name: "Richard Réti"
+  fen: "5K2/k7/4P1p1/8/8/8/4b3/8 w - - 1 0"
+  url: "https://www.youtube.com/watch?v=y1efKuyHTps&list=PLQsLDm9Rq9bHvcSe573ZzdNjLkwyPoMP2&index=3"
+  best_scenario: 'white draw'
+- name: "V. & M. Platov"
+  fen: "K6k/8/3p4/8/8/2R5/3p4/3b4 w - - 1 0"
+  url: "https://www.youtube.com/watch?v=T9gmSGFziVg&list=PLQsLDm9Rq9bHvcSe573ZzdNjLkwyPoMP2&index=4"
+  best_scenario: 'white draw'
+- name: "A. Kramer"
+  fen: "7k/5K2/7P/6pP/8/8/8/8 w - - 1 0"
+  url: "https://www.youtube.com/watch?v=trHO31jVzXw&list=PLQsLDm9Rq9bHvcSe573ZzdNjLkwyPoMP2&index=5"
+  best_scenario: 'white draw'
+- name: "A. S. Selesniev"
+  fen: "rk6/p2p4/KPRp4/8/3P4/8/8/8 w - - 1 0"
+  url: "https://www.youtube.com/watch?v=iSKtG-8TwI0&list=PLQsLDm9Rq9bHvcSe573ZzdNjLkwyPoMP2&index=6"
+  best_scenario: 'white win'
+- name: "L. Mitrofanov"
+  fen: "8/k7/P2b2P1/KP1Pn2P/4R3/8/6np/8 w - - 1 0"
+  url: "https://www.youtube.com/watch?v=EkC3jcsvCtA&list=PLQsLDm9Rq9bHvcSe573ZzdNjLkwyPoMP2&index=7"
+  best_scenario: 'white win'
+- name: "D. Joseph"
+  fen: "1k1K4/1p5P/1P6/8/8/8/p7/8 w - - 1 0"
+  url: "https://www.youtube.com/watch?v=PNNtskqKHfM&list=PLQsLDm9Rq9bHvcSe573ZzdNjLkwyPoMP2&index=8"
+  best_scenario: 'white win'
+- name: "The Tractor"
+  fen: "8/3P3k/n2K3p/2p3n1/1b4N1/2p1p1P1/8/3B4 w - - 1 0"
+  url: "https://www.youtube.com/watch?v=DTOpiIbUu0A"
+  best_scenerio: 'white win'
+- name: "Stockfish Problem"
+  fen: "8/8/8/2p5/1pp5/brpp4/qpprpK1P/1nkbn3 w - - 1 0"
+  url: "https://www.youtube.com/watch?v=bsxDI0pKlug"
+  best_scenerio: "white win"
+- fen: "3k4/8/7p/2p1p1pP/1pPpPpP1/1P1P1P2/N7/2K5 w - - 1 0"
+- fen: "K5R1/7p/1B3PP1/1k6/8/8/6r1/7r w - - 1 0"

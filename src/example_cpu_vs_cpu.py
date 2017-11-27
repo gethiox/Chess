@@ -42,6 +42,9 @@ if __name__ == "__main__":
     engine1 = EngineHandler(args.engine_path, threads=1, ponder=False)
     engine2 = EngineHandler(args.engine_path, threads=1, ponder=True)
 
+    engine1.start_engine()
+    engine2.start_engine()
+
     game = Game(player1=player1, player2=player2, variant=mode)
 
     print_state(game)
@@ -63,6 +66,10 @@ if __name__ == "__main__":
                 break
         print('Winner(s):', ','.join(str(side) for side in game.variant.game_state))
         print('moves:', [str(move) for move in game.variant.moves_history])
+
+        engine1.stop_engine()
+        engine2.stop_engine()
+
     except KeyboardInterrupt:
         print("\nGame interrupted by user")
     exit(0)

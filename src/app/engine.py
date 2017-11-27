@@ -16,7 +16,7 @@ class EngineHandler:
         :param multi_pv: MultiPV ¯\_(ツ)_/¯
         """
         self.path = path
-        self.process = None
+        self.process: subprocess.Popen = None
         self.logic_thread = None
         self.__sigterm = False
         self.__pondering = False
@@ -24,8 +24,6 @@ class EngineHandler:
         self.__threads = threads
         self.__hash_size = hash
         self.__multi_pv = multi_pv
-
-        self._run_engine()
 
     def _read(self):
         """Reading data from engine"""
@@ -41,7 +39,7 @@ class EngineHandler:
         self.process.stdin.write(string.encode())
         self.process.stdin.flush()
 
-    def _run_engine(self):
+    def start_engine(self):
         """Run subprocess and configure """
         args = [self.path]
         self.process = subprocess.Popen(args, stdout=subprocess.PIPE, stdin=subprocess.PIPE)
@@ -50,6 +48,13 @@ class EngineHandler:
         self._write('setoption name Ponder value %s' % str(self.__ponder).lower())
         self._write('setoption name MultiPV value %d' % self.__multi_pv)
         self._write('ucinewgame')
+
+    def stop_engine(self):
+        self._write('quit')
+        try:
+            self.process.wait(timeout=2)
+        except subprocess.TimeoutExpired:
+            self.process.terminate()
 
     def start_ponder(self):
         if not self.__pondering:

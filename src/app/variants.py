@@ -138,7 +138,7 @@ class Normal(Variant):
         if destination not in self.standard_moves(source) | self.standard_captures(source) | self.special_moves(source):
             raise NotAValidMove("%s is not a proper move for a %s %s" % (move, piece.side, piece.name))
         test_board = deepcopy(self.board)
-        test_piece = test_board.remove_piece(source)
+        test_piece = test_board.remove_piece(source)  # TODO: test special moves
         test_board.put_piece(test_piece, destination)
         king_pos, king = test_board.find_pieces(requested_piece=King(self.on_move))[0]
         if king_pos in self.attacked_fields_by_sides(set(self.sides) - {piece.side}, test_board):
@@ -163,6 +163,9 @@ class Normal(Variant):
         moved_piece = self.board.remove_piece(position=move.source)
         taken_piece = self.board.put_piece(piece=moved_piece, position=move.destination)
         if isinstance(moved_piece, Pawn):
+            if move.destination == self.en_passant:
+                self.board.remove_piece(StandardPosition((move.destination.file, move.source.rank)))
+
             if abs(move.source.rank - move.destination.rank) == 2:
                 self.__en_passant = StandardPosition(
                     (move.source.file,
@@ -326,6 +329,10 @@ class Normal(Variant):
             raise NoPiece('Any piece on %s' % position)
 
         new_positions = set()
+        if isinstance(piece, Pawn) and self.en_passant and self.en_passant in self.attacked_fields(position, board):
+            # TODO: move to "special captures" or something
+            new_positions.add(self.en_passant)
+
         for c_desc in piece.movement.capture:
             for vector in self.__transform_vector(c_desc.vector, c_desc.any_direction, piece.side):
                 if c_desc.distance is infinity:

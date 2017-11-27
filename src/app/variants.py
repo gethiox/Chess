@@ -140,6 +140,9 @@ class Normal(Variant):
         test_board = deepcopy(self.board)
         test_piece = test_board.remove_piece(source)  # TODO: test special moves
         test_board.put_piece(test_piece, destination)
+        if isinstance(test_piece, Pawn):
+            if destination == self.en_passant:
+                test_board.remove_piece(StandardPosition((destination.file, source.rank)))
         king_pos, king = test_board.find_pieces(requested_piece=King(self.on_move))[0]
         if king_pos in self.attacked_fields_by_sides(set(self.sides) - {piece.side}, test_board):
             raise CausesCheck("{move} move causes {side} {name} ({pos}) check delivered by: [{atck}]".format(
@@ -150,45 +153,46 @@ class Normal(Variant):
                      in self.who_can_step_here(king_pos, test_board).items()]
                 )
             ))
-        if isinstance(piece, Pawn) and move.destination.rank in (7, 0):
+        if isinstance(piece, Pawn) and destination.rank in (7, 0):
             if not move.promotion:
                 raise NotAValidPromotion("Proper promotion are required when promoting a pawn")
 
     def move(self, move: 'StandardMove') -> Optional['Piece']:
         self.assert_move(move)
-        moved_piece = self.board.get_piece(position=move.source)
+        source, destination = move.source, move.destination
+        moved_piece = self.board.get_piece(position=source)
         if moved_piece.side != self.on_move:
             raise WrongMoveOrder("You are trying to move %s when %s are on move" % (moved_piece.side, self.on_move))
         self.save_history()
-        moved_piece = self.board.remove_piece(position=move.source)
-        taken_piece = self.board.put_piece(piece=moved_piece, position=move.destination)
+        moved_piece = self.board.remove_piece(position=source)
+        taken_piece = self.board.put_piece(piece=moved_piece, position=destination)
         if isinstance(moved_piece, Pawn):
-            if move.destination == self.en_passant:
-                self.board.remove_piece(StandardPosition((move.destination.file, move.source.rank)))
+            if destination == self.en_passant:
+                self.board.remove_piece(StandardPosition((destination.file, source.rank)))
 
-            if abs(move.source.rank - move.destination.rank) == 2:
+            if abs(source.rank - destination.rank) == 2:
                 self.__en_passant = StandardPosition(
-                    (move.source.file,
-                     int((move.source.rank + move.destination.rank) / 2))
+                    (source.file,
+                     int((source.rank + destination.rank) / 2))
                 )
             else:
                 self.__en_passant = None
             self.__half_moves_since_pawn_moved = 0
 
-            if move.destination.rank in (7, 0):
-                self.board.put_piece(move.promotion(self.on_move), move.destination)
+            if destination.rank in (7, 0):
+                self.board.put_piece(move.promotion(self.on_move), destination)
 
         else:
             if self.__en_passant:
                 self.__en_passant = None
             self.__half_moves_since_pawn_moved += 1
 
-        if isinstance(moved_piece, King) and abs(move.source.file - move.destination.file) == 2:
-            rank = move.source.rank
+        if isinstance(moved_piece, King) and abs(source.file - destination.file) == 2:
+            rank = source.rank
             if move.destination.file == 6:
                 moved_rook = self.board.remove_piece(position=StandardPosition((7, rank)))
                 self.board.put_piece(moved_rook, StandardPosition((5, rank)))
-            elif move.destination.file == 2:
+            elif destination.file == 2:
                 moved_rook = self.board.remove_piece(position=StandardPosition((0, rank)))
                 self.board.put_piece(moved_rook, StandardPosition((3, rank)))
 
@@ -196,7 +200,7 @@ class Normal(Variant):
             self.__half_moves_since_capture += 1
         else:
             self.__half_moves_since_capture = 0
-        self.__update_castling_info(move.source)
+        self.__update_castling_info(source)
         self.__position_occurence[hash(self.board)] += 1
 
         self.moves_history.append(move)

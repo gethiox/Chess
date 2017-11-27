@@ -20,6 +20,7 @@ def parse_args():
     parser = ArgumentParser()
     parser.add_argument('--silent', dest='silent', action='store_true', default=False)
     parser.add_argument('-s', '--sleep', dest='sleep', type=float, default=0.0)
+    parser.add_argument(dest='moves', nargs='*')
     return parser.parse_args()
 
 
@@ -55,6 +56,8 @@ moves = ['e2e4', 'e7e5', 'g1f3', 'b8c6', 'b1c3', 'g8f6', 'f1c4', 'f8c5', 'a2a3',
 
 if __name__ == "__main__":
     args = parse_args()
+    if args.moves:
+        moves = args.moves
 
     game = Game(Player('White Player'), Player('Black Player'), Normal())
     variant = game.variant

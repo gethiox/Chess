@@ -50,18 +50,19 @@ class EngineHandler:
         self._write('ucinewgame')
 
     def stop_engine(self):
+        """Makes sure that subprocess is closed correctly"""
         self._write('quit')
         try:
             self.process.wait(timeout=2)
         except subprocess.TimeoutExpired:
             self.process.terminate()
 
-    def start_ponder(self):
+    def _start_ponder(self):
         if not self.__pondering:
             self._write('go ponder')
             self.__pondering = True
 
-    def stop_ponder(self):
+    def _stop_ponder(self):
         if self.__pondering:
             self._write('stop')
             output = self._read()
@@ -89,7 +90,7 @@ class EngineHandler:
 
         if fen:
             if self.__ponder:
-                self.stop_ponder()
+                self._stop_ponder()
             self._write('position fen %s' % fen)
             self._write(go_string)
             output = self._read()
@@ -97,12 +98,12 @@ class EngineHandler:
                 output = self._read()
             bestmove = output.split()[1]
             if self.__ponder:
-                self.start_ponder()
+                self._start_ponder()
             return bestmove
 
         elif moves_seq:
             if self.__ponder:
-                self.stop_ponder()
+                self._stop_ponder()
             if len(moves_seq) > 0:
                 self._write('position startpos moves %s' % moves_seq)
             else:
@@ -113,5 +114,5 @@ class EngineHandler:
                 output = self._read()
             bestmove = output.split()[1]
             if self.__ponder:
-                self.start_ponder()
+                self._start_ponder()
             return bestmove

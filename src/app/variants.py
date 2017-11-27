@@ -235,7 +235,6 @@ class Normal(Variant):
     def load_history(self, offset: int):
         """Back in time and recover game state from the past"""
         index = self.half_moves - offset - 1
-        print(index, offset, self.half_moves)
         self.__board, \
         self.__half_moves, \
         self.__position_occurence, \
@@ -503,7 +502,7 @@ class KingOfTheHill(Normal):
 class ThreeCheck(Normal):
     @property
     def name(self):
-        return "King of The Hill"
+        return "Three Check"
 
     def __init__(self):
         super().__init__()

@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+from argparse import ArgumentParser
+
 from app.move import StandardMove
 from app.pieces import from_str
 from app.player import Player
@@ -7,27 +9,38 @@ from app.variants import Normal, KingOfTheHill, ThreeCheck
 from cli import board_rendererer
 from interface.game import Game
 
+
+def parse_args():
+    parser = ArgumentParser()
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument('--normal', dest='normal', action='store_true', help='Classic Chess (default)')
+    group.add_argument('--hill', dest='hill', action='store_true', help='King of The Hill')
+    group.add_argument('--check', dest='check', action='store_true', help='Three Check')
+    return parser.parse_args()
+
+
 if __name__ == "__main__":
-    print('Which variant do you want to play?\n'
-          '1 - Normal\n'
-          '2 - King of The Hill\n'
-          '3 - Three Check')
-    answer = int(input("Selected mode: "))
-    if answer == 1:
+    args = parse_args()
+
+    if args.normal:
         mode = Normal()
-    elif answer == 2:
+    elif args.hill:
         mode = KingOfTheHill()
-    elif answer == 3:
+    elif args.check:
         mode = ThreeCheck()
     else:
-        raise NotImplementedError("you need to specify correct int value, try harder next time!")
+        mode = Normal()
+
     print("Playing %s game mode" % mode.name)
 
     player = Player("player")
 
     game = Game(player1=player, player2=player, variant=mode)
     print(board_rendererer.normal(game.board))
-    print("Insert move, eg. \"e2e4\" (tyoe \'board\' to show board)")
+    print("On move: {on_move!s:5s}, Avabile moves: {moves:d}".format(
+        on_move=game.variant.on_move,
+        moves=len(game.variant.all_available_moves())))
+    print("Insert move, eg. \"e2e4\" (tyoe \'board\' to show board, \'back\' to rollback last moves)")
     try:
         while True:
             move_str = input("Move: ")
@@ -36,7 +49,11 @@ if __name__ == "__main__":
                 continue
             elif move_str == "back":
                 i = int(input("How many moves do you want to rollback? "))
-                game.variant.load_history(i)
+                try:
+                    game.variant.load_history(i)
+                except IndexError:
+                    print("Given value are above of the length of moves history")
+                    continue
                 print(board_rendererer.normal(game.board))
                 continue
             try:
@@ -61,7 +78,7 @@ if __name__ == "__main__":
                 print(err)
                 continue
             print(board_rendererer.normal(game.board))
-            print([str(move) for move in game.variant.all_available_moves()])
+            print("Avabile moves: %d" % len(game.variant.all_available_moves()))
             if game.variant.game_state:
                 print('game is over! Winner: %s' % game.variant.game_state)
                 break

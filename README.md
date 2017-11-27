@@ -23,7 +23,7 @@ Playing King of The Hill game mode
 +---+---+---+---+---+---+---+---+
 | R | N | B | Q | K | B | N | R |
 +---+---+---+---+---+---+---+---+
-On move: White, Avabile moves: 20
+On move: White, Available moves: 20
 Insert move, eg. "e2e4" (tyoe 'board' to show board, 'back' to rollback last moves)
 Move: e2e4
 +---+---+---+---+---+---+---+---+
@@ -43,7 +43,7 @@ Move: e2e4
 +---+---+---+---+---+---+---+---+
 | R | N | B | Q | K | B | N | R |
 +---+---+---+---+---+---+---+---+
-Avabile moves: 20
+On move: Black, Available moves: 20
 Move: d7d5
 +---+---+---+---+---+---+---+---+
 | r | n | b | q | k | b | n | r |
@@ -62,7 +62,7 @@ Move: d7d5
 +---+---+---+---+---+---+---+---+
 | R | N | B | Q | K | B | N | R |
 +---+---+---+---+---+---+---+---+
-Avabile moves: 31
+On move: White, Available moves: 31
 Move: back
 How many moves do you want to rollback? 1
 +---+---+---+---+---+---+---+---+

@@ -20,6 +20,7 @@ class Move(metaclass=ABCMeta):
 
     def __str__(self):
         if self._promotion:
+            # TODO: fix converting move with promotion to string (object holds uninitialized children of Piece)
             return '%s%s%s' % (self._source, self._destination, self._promotion.char)
         else:
             return '%s%s' % (self._source, self._destination)

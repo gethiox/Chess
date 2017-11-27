@@ -37,7 +37,7 @@ if __name__ == "__main__":
 
     game = Game(player1=player, player2=player, variant=mode)
     print(board_rendererer.normal(game.board))
-    print("On move: {on_move!s:5s}, Avabile moves: {moves:d}".format(
+    print("On move: {on_move!s:5s}, Available moves: {moves:d}".format(
         on_move=game.variant.on_move,
         moves=len(game.variant.all_available_moves())))
     print("Insert move, eg. \"e2e4\" (tyoe \'board\' to show board, \'back\' to rollback last moves)")
@@ -78,7 +78,9 @@ if __name__ == "__main__":
                 print(err)
                 continue
             print(board_rendererer.normal(game.board))
-            print("Avabile moves: %d" % len(game.variant.all_available_moves()))
+            print("On move: {on_move!s:5s}, Available moves: {moves:d}".format(
+                on_move=game.variant.on_move,
+                moves=len(game.variant.all_available_moves())))
             if game.variant.game_state:
                 print('game is over! Winner: %s' % game.variant.game_state)
                 break

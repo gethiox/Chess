@@ -10,7 +10,7 @@ def tiny(board: StandardBoard):
         while file_counter <= 7:
             piece = board.array[file_counter][rank_counter]
             if piece:
-                board_str += str(piece)
+                board_str += piece.fen
             else:
                 board_str += '.'
             if file_counter < 7:
@@ -32,7 +32,7 @@ def normal(board: StandardBoard):
         while file_counter <= 7:
             piece = board.array[file_counter][rank_counter]
             if piece:
-                board_str += str(piece)
+                board_str += piece.fen
             else:
                 board_str += ' '
             if file_counter < 7:

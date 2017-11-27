@@ -28,7 +28,7 @@ class StandardBoard(Board):
         # on various groups of values, not in getting/putting objects inside of it.
 
     @property
-    def array(self) -> Sequence[Sequence[Optional['Piece']]]:
+    def array(self) -> List[List[Optional['Piece']]]:
         return self.__board_array
 
     @property
@@ -111,12 +111,12 @@ class StandardBoard(Board):
         while rank_counter >= 0:
             file_counter = 0
             while file_counter <= self.files - 1:
-                piece = self.__board_array[file_counter][rank_counter]
+                piece = self.array[file_counter][rank_counter]
                 if piece:
                     if no_pieces_counter > 0:
                         board_fen += str(no_pieces_counter)
                         no_pieces_counter = 0
-                    board_fen += str(piece)
+                    board_fen += piece.fen
                 else:
                     no_pieces_counter += 1
                 file_counter += 1

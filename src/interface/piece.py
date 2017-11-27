@@ -96,6 +96,10 @@ class Piece(metaclass=ABCMeta):
         pass
 
     @property
+    def fen(self):
+        return self.char.upper() if self.side.capitalize else self.char.lower()
+
+    @property
     def side(self) -> Type['Side']:
         return self.__side
 
@@ -103,7 +107,7 @@ class Piece(metaclass=ABCMeta):
         return '<%s %s>' % (self.side, self.name)
 
     def __str__(self):
-        return self.char.upper() if self.side.capitalize else self.char.lower()
+        return '%s %s' % (self.side, self.name)
 
     def __eq__(self, other):
         if isinstance(other, type(self)):

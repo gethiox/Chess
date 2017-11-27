@@ -1,8 +1,11 @@
 Branch is highly experimental and should be not considered as useful  
-Warning: en passant, castling, pawn promotion and pawn first two-field move is not yet implemented.
+Warning: ~~en passant~~, ~~castling~~, ~~pawn promotion~~ and ~~pawn first two-field move~~ is not yet implemented.
+Also logic engine is not tested!
 
-Simple chess app to play with pieces [example_app.py](src/example_app.py)  
+Simple chess app to play with yourself [example_app.py](src/example_app.py)
 ```
+sh-4.4$ ./src/example_app.py --hill
+Playing King of The Hill game mode
 +---+---+---+---+---+---+---+---+
 | r | n | b | q | k | b | n | r |
 +---+---+---+---+---+---+---+---+
@@ -20,10 +23,72 @@ Simple chess app to play with pieces [example_app.py](src/example_app.py)
 +---+---+---+---+---+---+---+---+
 | R | N | B | Q | K | B | N | R |
 +---+---+---+---+---+---+---+---+
-Insert move, eg. "e2e4" (tyoe 'board' to show board)
+On move: White, Avabile moves: 20
+Insert move, eg. "e2e4" (tyoe 'board' to show board, 'back' to rollback last moves)
 Move: e2e4
-give me a valid chess move
-Move: e2e3
++---+---+---+---+---+---+---+---+
+| r | n | b | q | k | b | n | r |
++---+---+---+---+---+---+---+---+
+| p | p | p | p | p | p | p | p |
++---+---+---+---+---+---+---+---+
+|   |   |   |   |   |   |   |   |
++---+---+---+---+---+---+---+---+
+|   |   |   |   |   |   |   |   |
++---+---+---+---+---+---+---+---+
+|   |   |   |   | P |   |   |   |
++---+---+---+---+---+---+---+---+
+|   |   |   |   |   |   |   |   |
++---+---+---+---+---+---+---+---+
+| P | P | P | P |   | P | P | P |
++---+---+---+---+---+---+---+---+
+| R | N | B | Q | K | B | N | R |
++---+---+---+---+---+---+---+---+
+Avabile moves: 20
+Move: d7d5
++---+---+---+---+---+---+---+---+
+| r | n | b | q | k | b | n | r |
++---+---+---+---+---+---+---+---+
+| p | p | p |   | p | p | p | p |
++---+---+---+---+---+---+---+---+
+|   |   |   |   |   |   |   |   |
++---+---+---+---+---+---+---+---+
+|   |   |   | p |   |   |   |   |
++---+---+---+---+---+---+---+---+
+|   |   |   |   | P |   |   |   |
++---+---+---+---+---+---+---+---+
+|   |   |   |   |   |   |   |   |
++---+---+---+---+---+---+---+---+
+| P | P | P | P |   | P | P | P |
++---+---+---+---+---+---+---+---+
+| R | N | B | Q | K | B | N | R |
++---+---+---+---+---+---+---+---+
+Avabile moves: 31
+Move: back
+How many moves do you want to rollback? 1
++---+---+---+---+---+---+---+---+
+| r | n | b | q | k | b | n | r |
++---+---+---+---+---+---+---+---+
+| p | p | p | p | p | p | p | p |
++---+---+---+---+---+---+---+---+
+|   |   |   |   |   |   |   |   |
++---+---+---+---+---+---+---+---+
+|   |   |   |   |   |   |   |   |
++---+---+---+---+---+---+---+---+
+|   |   |   |   | P |   |   |   |
++---+---+---+---+---+---+---+---+
+|   |   |   |   |   |   |   |   |
++---+---+---+---+---+---+---+---+
+| P | P | P | P |   | P | P | P |
++---+---+---+---+---+---+---+---+
+| R | N | B | Q | K | B | N | R |
++---+---+---+---+---+---+---+---+
+Move:
+```
+
+part of [example.py](src/example.py) for profiling purpose.
+
+```
+sh-4.4$ ./src/example.py
 +---+---+---+---+---+---+---+---+
 | r | n | b | q | k | b | n | r |
 +---+---+---+---+---+---+---+---+
@@ -35,143 +100,109 @@ Move: e2e3
 +---+---+---+---+---+---+---+---+
 |   |   |   |   |   |   |   |   |
 +---+---+---+---+---+---+---+---+
+|   |   |   |   |   |   |   |   |
++---+---+---+---+---+---+---+---+
+| P | P | P | P | P | P | P | P |
++---+---+---+---+---+---+---+---+
+| R | N | B | Q | K | B | N | R |
++---+---+---+---+---+---+---+---+
+
+
+FEN: rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1
+executed/last move: None
+move count: 1
+on move: White
+in check: False
+available moves: disabled
+winner side(s): None
+
+
+ (     game statistic collection time: 0.00643 )
+
++---+---+---+---+---+---+---+---+
+| r | n | b | q | k | b | n | r |
++---+---+---+---+---+---+---+---+
+| p | p | p | p | p | p | p | p |
++---+---+---+---+---+---+---+---+
+|   |   |   |   |   |   |   |   |
++---+---+---+---+---+---+---+---+
+|   |   |   |   |   |   |   |   |
++---+---+---+---+---+---+---+---+
 |   |   |   |   | P |   |   |   |
++---+---+---+---+---+---+---+---+
+|   |   |   |   |   |   |   |   |
 +---+---+---+---+---+---+---+---+
 | P | P | P | P |   | P | P | P |
 +---+---+---+---+---+---+---+---+
 | R | N | B | Q | K | B | N | R |
 +---+---+---+---+---+---+---+---+
-Move: e7e6
+
+FEN: rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1
+executed/last move: e2e4
+move count: 1
+on move: Black
+in check: False
+available moves: disabled
+winner side(s): None
+
+ ( move validation and execution time: 0.00457 )
+ (     game statistic collection time: 0.00593 )
+
 +---+---+---+---+---+---+---+---+
 | r | n | b | q | k | b | n | r |
 +---+---+---+---+---+---+---+---+
 | p | p | p | p |   | p | p | p |
 +---+---+---+---+---+---+---+---+
+|   |   |   |   |   |   |   |   |
++---+---+---+---+---+---+---+---+
 |   |   |   |   | p |   |   |   |
 +---+---+---+---+---+---+---+---+
-|   |   |   |   |   |   |   |   |
-+---+---+---+---+---+---+---+---+
-|   |   |   |   |   |   |   |   |
-+---+---+---+---+---+---+---+---+
 |   |   |   |   | P |   |   |   |
++---+---+---+---+---+---+---+---+
+|   |   |   |   |   |   |   |   |
 +---+---+---+---+---+---+---+---+
 | P | P | P | P |   | P | P | P |
 +---+---+---+---+---+---+---+---+
 | R | N | B | Q | K | B | N | R |
 +---+---+---+---+---+---+---+---+
-```
 
-The shortest possible game with some random statistics [example.py](src/example.py)
-
-```
-r n b q k b n r
-p p p p p p p p
-. . . . . . . .
-. . . . . . . .
-. . . . . . . .
-. . . . . . . .
-P P P P P P P P
-R N B Q K B N R
-
-f2f3 is a valid move
-r n b q k b n r
-p p p p p p p p
-. . . . . . . .
-. . . . . . . .
-. . . . . . . .
-. . . . . P . .
-P P P P P . P P
-R N B Q K B N R
-
-half move: 2
-move: 1
-on move: Black
-last move: f2f3
-available moves: 12
-winner side(s): None
-
-e7e6 is a valid move
-r n b q k b n r
-p p p p . p p p
-. . . . p . . .
-. . . . . . . .
-. . . . . . . .
-. . . . . P . .
-P P P P P . P P
-R N B Q K B N R
-
-half move: 3
-move: 2
+FEN: rnbqkbnr/pppp1ppp/8/4p3/4P3/8/PPPP1PPP/RNBQKBNR w KQkq e6 0 2
+executed/last move: e7e5
+move count: 2
 on move: White
-last move: e7e6
-available moves: 12
+in check: False
+available moves: disabled
 winner side(s): None
 
-g2g3 is a valid move
-r n b q k b n r
-p p p p . p p p
-. . . . p . . .
-. . . . . . . .
-. . . . . . . .
-. . . . . P P .
-P P P P P . . P
-R N B Q K B N R
+ ( move validation and execution time: 0.00494 )
+ (     game statistic collection time: 0.00636 )
 
-half move: 4
-move: 2
++---+---+---+---+---+---+---+---+
+| r | n | b | q | k | b | n | r |
++---+---+---+---+---+---+---+---+
+| p | p | p | p |   | p | p | p |
++---+---+---+---+---+---+---+---+
+|   |   |   |   |   |   |   |   |
++---+---+---+---+---+---+---+---+
+|   |   |   |   | p |   |   |   |
++---+---+---+---+---+---+---+---+
+|   |   |   |   | P |   |   |   |
++---+---+---+---+---+---+---+---+
+|   |   |   |   |   | N |   |   |
++---+---+---+---+---+---+---+---+
+| P | P | P | P |   | P | P | P |
++---+---+---+---+---+---+---+---+
+| R | N | B | Q | K | B |   | R |
++---+---+---+---+---+---+---+---+
+
+FEN: rnbqkbnr/pppp1ppp/8/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R b KQkq - 1 2
+executed/last move: g1f3
+move count: 2
 on move: Black
-last move: g2g3
-available moves: 23
+in check: False
+available moves: disabled
 winner side(s): None
 
-d8e7 is a valid move
-r n b . k b n r
-p p p p q p p p
-. . . . p . . .
-. . . . . . . .
-. . . . . . . .
-. . . . . P P .
-P P P P P . . P
-R N B Q K B N R
-
-half move: 5
-move: 3
-on move: White
-last move: d8e7
-available moves: 14
-winner side(s): None
-
-g3g4 is a valid move
-r n b . k b n r
-p p p p q p p p
-. . . . p . . .
-. . . . . . . .
-. . . . . . P .
-. . . . . P . .
-P P P P P . . P
-R N B Q K B N R
-
-half move: 6
-move: 3
-on move: Black
-last move: g3g4
-available moves: 21
-winner side(s): None
-
-e7h4 is a valid move
-r n b . k b n r
-p p p p . p p p
-. . . . p . . .
-. . . . . . . .
-. . . . . . P q
-. . . . . P . .
-P P P P P . . P
-R N B Q K B N R
-
-half move: 7
-move: 4
-on move: White
-last move: e7h4
-available moves: 0
-winner side(s): {<Black Side>}
+ ( move validation and execution time: 0.00530 )
+ (     game statistic collection time: 0.00656 )
 ```

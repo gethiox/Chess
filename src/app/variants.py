@@ -291,15 +291,17 @@ class Normal(Variant):
         new_positions = set()
         if isinstance(piece, Pawn):
             new_position = None
-            if piece == Pawn(Black) and position.rank == 6:
+            if piece == Pawn(Black) and position.rank == 6 and not board.get_piece(
+                    StandardPosition((position.file, 5))):
                 new_position = StandardPosition(
-                    (position[0],
-                     position[1] - 2)
+                    (position.file,
+                     position.rank - 2)
                 )
-            elif piece == Pawn(White) and position.rank == 1:
+            elif piece == Pawn(White) and position.rank == 1 and not board.get_piece(
+                    StandardPosition((position.file, 2))):
                 new_position = StandardPosition(
-                    (position[0],
-                     position[1] + 2)
+                    (position.file,
+                     position.rank + 2)
                 )
             if new_position and board.validate_position(new_position):
                 new_piece = board.get_piece(new_position)

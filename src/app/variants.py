@@ -200,27 +200,27 @@ class Normal(Variant):
             self.__half_moves_since_capture += 1
         else:
             self.__half_moves_since_capture = 0
-        self.__update_castling_info(source)
+        self.__update_castling_info(source, destination)
         self.__position_occurence[hash(self.board)] += 1
 
         self.moves_history.append(move)
         self.__half_moves += 1
         return taken_piece
 
-    def __update_castling_info(self, source):
+    def __update_castling_info(self, source, destination):
         if self.__castling:
-            if source == StandardPosition.from_str('e1'):
+            if StandardPosition.from_str('e1') in (source,):
                 self.__castling = self.__castling - {King(White), Queen(White)}
-            elif source == StandardPosition.from_str('a1'):
+            elif StandardPosition.from_str('a1') in (source, destination):
                 self.__castling = self.__castling - {Queen(White)}
-            elif source == StandardPosition.from_str('h1'):
+            elif StandardPosition.from_str('h1') in (source, destination):
                 self.__castling = self.__castling - {King(White)}
 
-            if source == StandardPosition.from_str('e8'):
+            if StandardPosition.from_str('e8') in (source,):
                 self.__castling = self.__castling - {King(Black), Queen(Black)}
-            elif source == StandardPosition.from_str('a8'):
+            elif StandardPosition.from_str('a8') in (source, destination):
                 self.__castling = self.__castling - {Queen(Black)}
-            elif source == StandardPosition.from_str('h8'):
+            elif StandardPosition.from_str('h8') in (source, destination):
                 self.__castling = self.__castling - {King(Black)}
 
     def save_history(self):

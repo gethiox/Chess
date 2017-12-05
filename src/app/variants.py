@@ -79,7 +79,7 @@ class Normal(Variant):
             if pieces == {King(White), King(Black), Knight(Black)}:
                 return set(self.sides)
             if pieces == {King(White), King(Black), Bishop(White)}:
-                 return set(self.sides)
+                return set(self.sides)
             if pieces == {King(White), King(Black), Bishop(Black)}:
                 return set(self.sides)
 

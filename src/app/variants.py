@@ -73,19 +73,14 @@ class Normal(Variant):
         pieces = {piece for _, piece in self.board.pieces}
         if len(pieces) < 4:
             if pieces == {King(White), King(Black)}:
-                print('KURWAXD')
                 return set(self.sides)
             if pieces == {King(White), King(Black), Knight(White)}:
-                print('KURWA1')
                 return set(self.sides)
             if pieces == {King(White), King(Black), Knight(Black)}:
-                print('KURWA2')
                 return set(self.sides)
             if pieces == {King(White), King(Black), Bishop(White)}:
-                print('KURWA3')
-                return set(self.sides)
+                 return set(self.sides)
             if pieces == {King(White), King(Black), Bishop(Black)}:
-                print('KURWA4')
                 return set(self.sides)
 
         if self.__half_moves_since_pawn_moved >= 50 or self.__half_moves_since_capture >= 50:

@@ -503,7 +503,7 @@ class KingOfTheHill(Normal):
         return "King of The Hill"
 
     @property
-    def game_state(self) -> Optional[Set[Type['Side']]]:
+    def game_state(self) -> Tuple[Optional[Set[Type['Side']]], Optional[str]]:
         # find kings position and return winner if king is standing on the hill (d4, e4, d5, e5)
         kings = []
         for side in self.sides:
@@ -512,7 +512,7 @@ class KingOfTheHill(Normal):
 
         for king_pos, piece in kings:
             if king_pos.file in (3, 4) and king_pos.rank in (3, 4):
-                return {piece.side}
+                return {piece.side}, 'king on the hill'
 
         # else return winner by standard chess rule
         return super(KingOfTheHill, self).game_state
@@ -539,11 +539,11 @@ class ThreeCheck(Normal):
             self.checks[our_side] += 1
 
     @property
-    def game_state(self):
+    def game_state(self) -> Tuple[Optional[Set[Type['Side']]], Optional[str]]:
         # determine winner by who get enough check attacks
         for side, value in self.checks.items():
             if value >= 3:
-                return {side}
+                return {side}, 'three check'
 
         # else determine by standard rules
         return super(ThreeCheck, self).game_state

@@ -69,32 +69,32 @@ class Normal(Variant):
         return self.sides[(self.__half_moves - 1) % len(self.sides)]
 
     @property
-    def game_state(self) -> Optional[Set[Type['Side']]]:
+    def game_state(self) -> Tuple[Optional[Set[Type['Side']]], Optional[str]]:
         pieces = {piece for _, piece in self.board.pieces}
         if len(pieces) < 4:
             if pieces == {King(White), King(Black)}:
-                return set(self.sides)
+                return set(self.sides), 'insufficient material'
             if pieces == {King(White), King(Black), Knight(White)} and not self.can_i_make_a_move():
-                return set(self.sides)
+                return set(self.sides), 'insufficient material'
             if pieces == {King(White), King(Black), Knight(Black)} and not self.can_i_make_a_move():
-                return set(self.sides)
+                return set(self.sides), 'insufficient material'
             if pieces == {King(White), King(Black), Bishop(White)} and not self.can_i_make_a_move():
-                return set(self.sides)
+                return set(self.sides), 'insufficient material'
             if pieces == {King(White), King(Black), Bishop(Black)} and not self.can_i_make_a_move():
-                return set(self.sides)
+                return set(self.sides), 'insufficient material'
 
         if self.__half_moves_since_pawn_moved >= 50 and self.__half_moves_since_capture >= 50:
-            return set(self.sides)
+            return set(self.sides), 'fifty-move rule'
         for hash_pos, occurence in self.__position_occurence.items():
             if occurence >= 3:
-                return set(self.sides)
+                return set(self.sides), 'threefold repetition'
         if not self.can_i_make_a_move():
             king_pos, _ = self.board.find_pieces(King(self.on_move))[0]
             if king_pos in self.attacked_fields_by_sides(set(self.sides) - {self.on_move}):
-                return set(self.sides) - {self.on_move}
+                return set(self.sides) - {self.on_move}, 'check mate'
             else:
-                return set(self.sides)
-        return None
+                return set(self.sides), 'stalemate'
+        return None, None
 
     @property
     def is_check(self):

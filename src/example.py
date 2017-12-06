@@ -41,13 +41,15 @@ def get_stats(variant):
             "in check: {check}\n"
             "available moves: {available_moves}\n"
             "winner side(s): {game_status}\n"
+            "game state description: {desc}\n"
             "".format(fen=str(variant),
                       move=variant.last_move,
                       moves=variant.moves,
                       on_move=variant.on_move,
                       check=variant.is_check,
                       available_moves='disabled',  # len(variant.all_available_moves()),  # Very inefficient
-                      game_status=variant.game_state)
+                      game_status=variant.game_state[0],
+                      desc=variant.game_state[1])
             )
 
 

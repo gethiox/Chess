@@ -81,8 +81,11 @@ if __name__ == "__main__":
             print("On move: {on_move!s:5s}, Available moves: {moves:d}".format(
                 on_move=game.variant.on_move,
                 moves=len(game.variant.all_available_moves())))
-            if game.variant.game_state:
-                print('game is over! Winner: %s' % game.variant.game_state)
+            if game.variant.game_state[0]:
+                print('State: {state}, Winner(s): {winner}'.format(
+                    state=game.variant.game_state[1],
+                    winner=','.join(str(side) for side in game.variant.game_state[0]))
+                )
                 break
 
     except KeyboardInterrupt:

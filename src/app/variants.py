@@ -74,16 +74,16 @@ class Normal(Variant):
         if len(pieces) < 4:
             if pieces == {King(White), King(Black)}:
                 return set(self.sides)
-            if pieces == {King(White), King(Black), Knight(White)}:
+            if pieces == {King(White), King(Black), Knight(White)} and not self.can_i_make_a_move():
                 return set(self.sides)
-            if pieces == {King(White), King(Black), Knight(Black)}:
+            if pieces == {King(White), King(Black), Knight(Black)} and not self.can_i_make_a_move():
                 return set(self.sides)
-            if pieces == {King(White), King(Black), Bishop(White)}:
+            if pieces == {King(White), King(Black), Bishop(White)} and not self.can_i_make_a_move():
                 return set(self.sides)
-            if pieces == {King(White), King(Black), Bishop(Black)}:
+            if pieces == {King(White), King(Black), Bishop(Black)} and not self.can_i_make_a_move():
                 return set(self.sides)
 
-        if self.__half_moves_since_pawn_moved >= 50 or self.__half_moves_since_capture >= 50:
+        if self.__half_moves_since_pawn_moved >= 50 and self.__half_moves_since_capture >= 50:
             return set(self.sides)
         for hash_pos, occurence in self.__position_occurence.items():
             if occurence >= 3:
@@ -492,7 +492,7 @@ class Normal(Variant):
             on_move=self.on_move.char,
             castling=''.join(sorted((piece.fen for piece in self.__castling))) if self.__castling else "-",
             en_passant=str(self.__en_passant) if self.__en_passant else "-",
-            half_since_pawn=self.__half_moves_since_pawn_moved,
+            half_since_pawn=min(self.__half_moves_since_pawn_moved, self.__half_moves_since_capture),
             moves=self.moves,
         )
 

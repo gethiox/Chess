@@ -12,13 +12,13 @@ from interface.game import Game
 def parse_args():
     parser = ArgumentParser()
     parser.add_argument(dest='engine_path', type=str, nargs='?', help='path of UCI chess engine')
-    parser.add_argument('-s', '--silent', dest='silent', action='store_true', help='path of UCI chess engine')
+    parser.add_argument('--silent', dest='silent', action='store_true', help='Display only ending game state')
     return parser.parse_args()
 
 
 def print_state(game):
     board_str = board_rendererer.normal(game.board)
-    fen = str(game.variant)
+    fen = "FEN: %s" % str(game.variant)
     data = "On move: {on_move!s:5s}, Available moves: {moves:s}".format(
         on_move=game.variant.on_move,
         moves='disabled',  # len(game.variant.all_available_moves())  # warning: inefficient!
@@ -36,14 +36,15 @@ if __name__ == "__main__":
         exit(1)
 
     mode = Normal()
-    print("Playing %s game mode" % mode.name)
+    if not args.silent:
+        print("Playing %s game mode" % mode.name)
 
     player1 = Player("CPU I")
     player2 = Player("CPU II")
 
     # engine is created for each side to prevent "self-seeing" moves, it simulate two different players instead of one
-    engine1 = EngineHandler(args.engine_path, threads=1, ponder=False)
-    engine2 = EngineHandler(args.engine_path, threads=1, ponder=False)
+    engine1 = EngineHandler(args.engine_path, threads=1, ponder=False, hash=64)
+    engine2 = EngineHandler(args.engine_path, threads=1, ponder=False, hash=64)
 
     engine1.start_engine()
     engine2.start_engine()
@@ -70,12 +71,17 @@ if __name__ == "__main__":
                 print_state(game)
             if game.variant.game_state[0]:
                 break
-        if args.silent:
+
+        winners, desc = game.variant.game_state
+        if len(winners) > 1:
+            winners = 'Draw'
+        else:
+            winners = winners.pop()
+        moves = len(game.variant.moves_history)
+
+        if not args.silent:
             print_state(game)
-        print('State: {state}, Winner(s): {winner}'.format(
-            state=game.variant.game_state[1],
-            winner=','.join(str(side) for side in game.variant.game_state[0]))
-        )
+        print('Winner(s): {!s:6s} Moves: {!s:3s} Description: {:s}'.format(winners, moves, desc))
         if not args.silent:
             print('moves:', [str(move) for move in game.variant.moves_history])
 
@@ -84,4 +90,14 @@ if __name__ == "__main__":
 
     except KeyboardInterrupt:
         print("\nGame interrupted by user")
+    except Exception:
+        print("Game interrupted by unexpected error")
+        print('already executed moves:')
+        print([str(move) for move in game.variant.moves_history])
+        print('move intended to execute by engine:', str_move)
+        print_state(game)
+        print("This chess implementation thinks next moves are available:",
+              ", ".join(str(x) for x in game.variant.all_available_moves()))
+
+        raise
     exit(0)

@@ -23,37 +23,37 @@ players and chessboards that has more than two dimensions.
 
 Arbitrary development status:
 - [x] Classic Chess implementation
-      - [x] Piece movement
-      - [x] en-passant
-      - [x] castling
+  - [x] Piece movement
+  - [x] en-passant
+  - [x] castling
 - [ ] Some useful features
-      - [x] Game end-state explanation (why game was interrupted, eg. insufficient material)
-      - [x] FEN I/O support
-      - [x] Chess engine handler (eg. for [stockfish](https://stockfishchess.org/))
-      - [x] Full game move validation (check if move is possible according to the variation rules)
-      - [x] Threefold repetition validation
-      - [x] 50-move-rule validation
-      - [x] simple insufficient material validation
-      - [x] available moves generator (Note: inefficient)
-      - [ ] chess-engine mode (Note: xD)
-      - [ ] PGN move notation support
-      - [ ] PGN game file reading/writing support
+  - [x] Game end-state explanation (why game was interrupted, eg. insufficient material)
+  - [x] FEN I/O support
+  - [x] Chess engine handler (eg. for [stockfish](https://stockfishchess.org/))
+  - [x] Full game move validation (check if move is possible according to the variation rules)
+  - [x] Threefold repetition validation
+  - [x] 50-move-rule validation
+  - [x] simple insufficient material validation
+  - [x] available moves generator (Note: inefficient)
+  - [ ] chess-engine mode (Note: xD)
+  - [ ] PGN move notation support
+  - [ ] PGN game file reading/writing support
 - [ ] Tests which given a proof that everything is working fine
-      - [x] Base26 encoding and decoding
-      - [ ] Game-logic tests
+  - [x] Base26 encoding and decoding
+  - [ ] Game-logic tests
 - [ ] Other variants
-      - [x] King of the Hill
-      - [x] Three Check
-      - [ ] Chess960
-      - [ ] CrazyHouse
-      - [ ] Horde
-      - [ ] PreChess
-      - [ ] UpsideDown
-      - [ ] Double Chess
-      - [ ] Anti Chess
-      - [ ] Racing Kings
-      - [ ] Four player Chess
-      - [ ] 3D Chess
+  - [x] King of the Hill
+  - [x] Three Check
+  - [ ] Chess960
+  - [ ] CrazyHouse
+  - [ ] Horde
+  - [ ] PreChess
+  - [ ] UpsideDown
+  - [ ] Double Chess
+  - [ ] Anti Chess
+  - [ ] Racing Kings
+  - [ ] Four player Chess
+  - [ ] 3D Chess
 
 Examples:
 Simple chess app to play with yourself ([example_app.py](src/example_app.py))

@@ -2,7 +2,9 @@ I don't know how you found this repository but I can guess that you
 probably looking for more supported solution: [python-chess](https://pypi.python.org/pypi/python-chess)
 
 It's my private and not very well supported chess implementation at the
-moment.
+moment. If you are looking for something to read, i propose to start
+over here: [variants.py](src/app/variants.py)
+
 My aim of that project is to improve my skills and experimenting with
 random things. Moreover the main goal of this implementation is to be
 as easy as possible to extend, eg. for adding new chess variants

@@ -100,7 +100,7 @@ class StandardPosition(Position):
         elif item == 1:
             return self.rank
         else:
-            raise IndexError("tuple index out of range")
+            raise IndexError("%s is two-dimensional, there is no %d index" % (repr(self), item))
 
     def __hash__(self):
         return hash((self.file, self.rank))

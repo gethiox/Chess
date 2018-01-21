@@ -1,5 +1,5 @@
 from string import digits
-from typing import Optional, Tuple, Sequence, TYPE_CHECKING, List
+from typing import Optional, Tuple, TYPE_CHECKING, List, Dict
 
 from app.pieces import from_str
 from app.position import StandardPosition
@@ -21,15 +21,15 @@ class StandardBoard(Board):
     def __init__(self, files: int = 8, ranks: int = 8):  # 8x8 as standard size of chess board
         self.__files = files
         self.__ranks = ranks
-        self.__board_array = [[None for _ in range(self.ranks)] for _ in range(self.files)]
-        # Actually not using numpy arrays because them are slower for this case.
-        # When board become bigger and have more dimension than 2-3 then you should consider use numpy arrays.
-        # indexing code for lists are much simpler than for numpy arrays, also arrays is specialised in calculation
-        # on various groups of values, not in getting/putting objects inside of it.
+        self.__pieces: Dict['StandardPosition', 'Piece'] = {}
 
     @property
     def array(self) -> List[List[Optional['Piece']]]:
-        return self.__board_array
+        array = [[None for _ in range(self.ranks)] for _ in range(self.files)]
+        for position, piece in self.__pieces.items():
+            array[position.file][position.rank] = piece
+
+        return array
 
     @property
     def size(self) -> Tuple[int, int]:
@@ -49,7 +49,10 @@ class StandardBoard(Board):
         :param position: Position object
         :return: Piece on given Position
         """
-        return self.__board_array[position.file][position.rank]
+        try:
+            return self.__pieces[position]
+        except KeyError:
+            return None
 
     def put_piece(self, piece: 'Piece', position: StandardPosition) -> Optional['Piece']:
         """
@@ -58,8 +61,12 @@ class StandardBoard(Board):
         :param position: Position object
         :return: Piece that was standing before putting new (None if none)
         """
-        current = self.__board_array[position.file][position.rank]
-        self.__board_array[position.file][position.rank] = piece
+
+        try:
+            current = self.__pieces[position]
+        except KeyError:
+            current = None
+        self.__pieces[position] = piece
         return current
 
     def remove_piece(self, position: StandardPosition) -> Optional['Piece']:
@@ -68,8 +75,11 @@ class StandardBoard(Board):
         :param position: Position object
         :return: Piece that are removed (None if none)
         """
-        current = self.__board_array[position.file][position.rank]
-        self.__board_array[position.file][position.rank] = None
+
+        try:
+            current = self.__pieces.pop(position)
+        except KeyError:
+            current = None
         return current
 
     def set_fen(self, board_fen: str):
@@ -81,21 +91,23 @@ class StandardBoard(Board):
         if self.files != 8 or self.ranks != 8:  # FEN is not supported on other-sized board than 8x8
             raise NotImplemented
 
-        board_tmp = [[None for _ in range(self.ranks)] for _ in range(self.files)]
+        pieces_tmp: List[Tuple['StandardPosition', 'Piece']] = []
 
         rank_counter = self.ranks - 1
         for rank in board_fen.split('/'):
             file_counter = 0
             for piece in rank:
                 if piece not in digits:
-                    board_tmp[file_counter][rank_counter] = from_str(piece)
+                    position_object = StandardPosition((file_counter, rank_counter))
+                    piece_object = from_str(piece)
+                    pieces_tmp.append((position_object, piece_object))
                     file_counter += 1
                 else:
                     for i in range(int(piece)):
                         file_counter += 1
             rank_counter -= 1
 
-        self.__board_array = board_tmp
+        self.__pieces = pieces_tmp
 
     def get_fen(self) -> str:
         """
@@ -131,32 +143,25 @@ class StandardBoard(Board):
 
     @property
     def pieces(self) -> List[Tuple['StandardPosition', 'Piece']]:
-        return self.find_pieces(None)
-
-    def find_pieces(self, requested_piece: Optional['Piece'] = None) -> List[Tuple['StandardPosition', 'Piece']]:
         pieces = []
-        for rank in range(self.files):
-            for file in range(self.ranks):
-                position = StandardPosition((file, rank))
-                piece = self.get_piece(position=position)
-                if piece is None:
-                    continue
-                if requested_piece and requested_piece == piece:
-                    pieces.append(
-                        (position, piece)
-                    )
-                elif not requested_piece:
-                    pieces.append(
-                        (position, piece)
-                    )
+        for position, piece in self.__pieces.items():
+            pieces.append((position, piece))
+        return pieces
+
+    def find_pieces(self, requested_piece: Optional['Piece']) -> List[Tuple['StandardPosition', 'Piece']]:
+        pieces = []
+        for position, piece in self.__pieces.items():
+            if requested_piece == piece:
+                pieces.append(
+                    (position, piece)
+                )
         return pieces
 
     def validate_position(self, position: StandardPosition) -> bool:
-        if position.file < 0 or position.rank < 0:
-            return False
-        if position.file >= self.files or position.rank >= self.ranks:
-            return False
-        return True
+        if self.files > position.file >= 0 and self.ranks > position.rank >= 0:
+            return True
+        return False
 
     def __hash__(self):
-        return hash(tuple(piece for file in self.array for piece in file))
+        # return hash(tuple(((position, piece)) for position, piece in self.__pieces.items()))
+        return hash(self.get_fen())  # TODO: it is not a good idea

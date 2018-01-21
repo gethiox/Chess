@@ -469,6 +469,7 @@ class Normal(Variant):
             return {vector}
 
     def can_i_make_a_move(self) -> bool:
+        # improvement to check if piece that causes check can be captured
         for pos, piece in self.board.pieces:
             if piece and piece.side == self.on_move:
                 for moves in [self.standard_captures(pos), self.standard_moves(pos), self.special_moves(pos)]:

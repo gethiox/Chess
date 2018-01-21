@@ -146,7 +146,9 @@ class StandardBoard(Board):
         pieces = []
         for position, piece in self.__pieces.items():
             pieces.append((position, piece))
-        return pieces
+        # sorting list by piece value helps a lot for move availability validation, king are checked at first
+        # in most popular "check" positions king is able to make a move and break rest of pieces validation.
+        return sorted(pieces, key=lambda x: x[1].points, reverse=True)
 
     def find_pieces(self, requested_piece: Optional['Piece']) -> List[Tuple['StandardPosition', 'Piece']]:
         pieces = []

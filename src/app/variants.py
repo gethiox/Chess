@@ -186,7 +186,7 @@ class Normal(Variant):
         taken_piece = self.board.put_piece(piece=moved_piece, position=destination)
         if isinstance(moved_piece, Pawn):
             if destination == self.en_passant:
-                self.board.remove_piece(StandardPosition((destination.file, source.rank)))
+                taken_piece = self.board.remove_piece(StandardPosition((destination.file, source.rank)))
 
             if abs(source.rank - destination.rank) == 2:
                 self.__en_passant = StandardPosition(

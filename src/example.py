@@ -41,6 +41,7 @@ def get_stats(variant):
             "in check: {check}\n"
             "available moves: {available_moves}\n"
             "winner side(s): {game_status}\n"
+            "captured pieces: \n{pocket}\n"
             "game state description: {desc}\n"
             "".format(fen=str(variant),
                       move=variant.last_move,
@@ -49,7 +50,12 @@ def get_stats(variant):
                       check=variant.is_check,
                       available_moves='disabled',  # len(variant.all_available_moves()),  # Very inefficient
                       game_status=variant.game_state[0],
-                      desc=variant.game_state[1])
+                      desc=variant.game_state[1],
+                      pocket='\n'.join(
+                          ['    %s' % str({side.name: [piece.name for piece in pocket]})
+                           for side, pocket
+                           in variant.pocket.items()])
+                      )
             )
 
 

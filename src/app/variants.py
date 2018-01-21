@@ -35,7 +35,8 @@ class Normal(Variant):
         self.__en_passant: Optional[StandardPosition] = None
         self.__half_moves_since_pawn_moved: int = 0
         self.__half_moves_since_capture: int = 0
-        self.__castling: Set[Side] = {King(White), Queen(White), King(Black), Queen(Black)}
+        self.__castling: Set['Side'] = {piece(side) for side in self.sides for piece in (King, Queen)}
+        self.__pocket: Dict[Type['Side'], List[Type['Piece']]] = {side: [] for side in self.sides}
 
     @property
     def name(self):
@@ -67,6 +68,10 @@ class Normal(Variant):
     @property
     def on_move(self) -> Type['Side']:
         return self.sides[(self.__half_moves - 1) % len(self.sides)]
+
+    @property
+    def pocket(self):
+        return self.__pocket
 
     @property
     def game_state(self) -> Tuple[Optional[Set[Type['Side']]], Optional[str]]:
@@ -213,6 +218,8 @@ class Normal(Variant):
             self.__half_moves_since_capture += 1
         else:
             self.__half_moves_since_capture = 0
+            self.__pocket[self.on_move].append(taken_piece)
+
         self.__update_castling_info(source, destination)
         self.__position_occurence[hash(self.board)] += 1
 

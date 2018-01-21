@@ -152,9 +152,11 @@ class Normal(Variant):
         source, destination = move.source, move.destination
         piece = self.board.get_piece(source)
         if not piece:
-            raise NoPiece("Any piece on %s, you need to move pieces, not air." % source)
-        if destination not in self.standard_moves(source) | self.standard_captures(source) | self.special_moves(source):
-            raise NotAValidMove("%s is not a proper move for a %s %s" % (move, piece.side, piece.name))
+            raise NoPiece("Any piece on %s, you need to move pieces, not an air." % source)
+        available_dest = self.standard_moves(source) | self.standard_captures(source) | self.special_moves(source)
+        if destination not in available_dest:
+            raise NotAValidMove("%s is not a proper move for a %s %s\npositions available for that piece: %s" % (
+                move, piece.side, piece.name, ', '.join({str(pos) for pos in available_dest})))
         test_board = deepcopy(self.board)
         test_piece = test_board.remove_piece(source)  # TODO: test special moves
         test_board.put_piece(test_piece, destination)

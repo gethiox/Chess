@@ -26,9 +26,14 @@ def generate_moves(str_moves):
 
 def parse_args():
     parser = ArgumentParser()
-    parser.add_argument('--silent', dest='silent', action='store_true', default=False)
-    parser.add_argument('-s', '--sleep', dest='sleep', type=float, default=0.0)
-    parser.add_argument(dest='moves', nargs='*')
+    parser.add_argument('--silent', dest='silent', action='store_true',
+                        help='return only average time statistics')
+    parser.add_argument('--count', dest='count', action='store_true',
+                        help='Count available moves, Very inefficient')
+    parser.add_argument('-s', '--sleep', dest='sleep', type=float, default=0.0,
+                        help='set sleep time between each move')
+    parser.add_argument(dest='moves', nargs='*',
+                        help='UCI move notation, each parameter is a move (eg. ./example.py e2e4 e7e5)')
     return parser.parse_args()
 
 
@@ -41,14 +46,14 @@ def get_stats(variant):
             "in check: {check}\n"
             "available moves: {available_moves}\n"
             "winner side(s): {game_status}\n"
-            "captured pieces: \n{pocket}\n"
+            "captured pieces: (by side)\n{pocket}\n"
             "game state description: {desc}\n"
             "".format(fen=str(variant),
                       move=variant.last_move,
                       moves=variant.moves,
                       on_move=variant.on_move,
                       check=variant.is_check,
-                      available_moves='disabled',  # len(variant.all_available_moves()),  # Very inefficient
+                      available_moves=len(variant.all_available_moves()) if args.count else None,
                       game_status=variant.game_state[0],
                       desc=variant.game_state[1],
                       pocket='\n'.join(

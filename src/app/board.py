@@ -165,5 +165,4 @@ class StandardBoard(Board):
         return False
 
     def __hash__(self):
-        # return hash(tuple(((position, piece)) for position, piece in self.__pieces.items()))
-        return hash(self.get_fen())  # TODO: it is not a good idea i guess
+        return hash(tuple((position, piece) for position, piece in self.__pieces.items()))

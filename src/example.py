@@ -39,15 +39,15 @@ def parse_args():
 
 def get_stats(variant):
     return ("\n"
-            "FEN: {fen}\n"
-            "executed/last move: {move}\n"
-            "move count: {moves}\n"
-            "on move: {on_move}\n"
-            "in check: {check}\n"
+            "            FEN: {fen}\n"
+            "      last move: {move}\n"
+            "   move counter: {moves}\n"
+            "        on move: {on_move}\n"
+            "       in check: {check}\n"
             "available moves: {available_moves}\n"
-            "winner side(s): {game_status}\n"
-            "captured pieces: (by side)\n{pocket}\n"
-            "game state description: {desc}\n"
+            " winner side(s): {game_status}\n"
+            "    explanation: {desc}\n"
+            "\ncaptured pieces: (by side)\n{pocket}\n"
             "".format(fen=str(variant),
                       move=variant.last_move,
                       moves=variant.moves,
@@ -57,7 +57,7 @@ def get_stats(variant):
                       game_status=variant.game_state[0],
                       desc=variant.game_state[1],
                       pocket='\n'.join(
-                          ['    %s' % str({side.name: [piece.name for piece in pocket]})
+                          ['    %s: %s' % (side.name, ', '.join([piece.name for piece in pocket]))
                            for side, pocket
                            in variant.pocket.items()])
                       )

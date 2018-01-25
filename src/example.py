@@ -53,11 +53,11 @@ def get_stats(variant):
                       moves=variant.moves,
                       on_move=variant.on_move,
                       check=variant.is_check,
-                      available_moves=len(variant.all_available_moves()) if args.count else None,
+                      available_moves=len(variant.all_available_moves()) if args.count else 'Disabled',
                       game_status=variant.game_state[0],
                       desc=variant.game_state[1],
                       pocket='\n'.join(
-                          ['    %s: %s' % (side.name, ', '.join([piece.name for piece in pocket]))
+                          ['    %s: %s' % (side.name, ', '.join([piece.name for piece in pocket]) if pocket else None)
                            for side, pocket
                            in variant.pocket.items()])
                       )

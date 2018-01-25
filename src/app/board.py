@@ -91,7 +91,7 @@ class StandardBoard(Board):
         if self.files != 8 or self.ranks != 8:  # FEN is not supported on other-sized board than 8x8
             raise NotImplemented
 
-        pieces_tmp: List[Tuple['StandardPosition', 'Piece']] = []
+        pieces_tmp: Dict['StandardPosition', 'Piece'] = {}
 
         rank_counter = self.ranks - 1
         for rank in board_fen.split('/'):
@@ -100,7 +100,7 @@ class StandardBoard(Board):
                 if piece not in digits:
                     position_object = StandardPosition((file_counter, rank_counter))
                     piece_object = from_str(piece)
-                    pieces_tmp.append((position_object, piece_object))
+                    pieces_tmp.update({position_object: piece_object})
                     file_counter += 1
                 else:
                     for i in range(int(piece)):

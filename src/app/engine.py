@@ -70,17 +70,17 @@ class EngineHandler:
                 output = self._read()
             self.__pondering = False
 
-    def best_move(self, fen: str = '', moves_seq: str = '', btime: int = 0, wtime: int = 0):
+    def best_move(self, fen: str = None, moves_seq: str = None, btime: int = 0, wtime: int = 0):
         """
         Required is at least "fen" or "moves_seq" parameter, "btime" and "wtime" is optional to determine how much
         time left for each side (in miliseconds)
         :param fen: fenstring of game 
-        :param moves_seq: string of primitive move format (eg. e7e8q) separated by comma
+        :param moves_seq: string of primitive move format (eg. e7e8q) separated by spaces
         :param btime: miliseconds of left time of the black side (optional)
         :param wtime: miliseconds of left time of the white side (optional)
         :return: 
         """
-        if not fen and not moves_seq:
+        if fen is None and moves_seq is None:
             raise ValueError('you need to specify fenstring or move sequence of the board state.')
 
         if btime > 0 and wtime > 0:
@@ -88,7 +88,7 @@ class EngineHandler:
         else:
             go_string = 'go'
 
-        if fen:
+        if fen is not None:
             if self.__ponder:
                 self._stop_ponder()
             self._write('position fen %s' % fen)
@@ -101,7 +101,7 @@ class EngineHandler:
                 self._start_ponder()
             return bestmove
 
-        elif moves_seq:
+        elif moves_seq is not None:
             if self.__ponder:
                 self._stop_ponder()
             if len(moves_seq) > 0:

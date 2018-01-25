@@ -11,8 +11,22 @@ from interface.game import Game
 
 def parse_args():
     parser = ArgumentParser()
-    parser.add_argument(dest='engine_path', type=str, nargs='?', help='path of UCI chess engine')
-    parser.add_argument('--silent', dest='silent', action='store_true', help='Display only ending game state')
+    parser.add_argument(dest='engine_path', type=str, nargs='?',
+                        help='path of UCI chess engine')
+    parser.add_argument('--wtime', dest='wtime', type=int, default=1000,
+                        help='time for white in ms (default: 1000)')
+    parser.add_argument('--btime', dest='btime', type=int, default=1000,
+                        help='time for black in ms (default: 1000)')
+    parser.add_argument('--wthreads', dest='wthreads', type=int, default=1,
+                        help='threads for white side engine (default: 1)')
+    parser.add_argument('--bthreads', dest='bthreads', type=int, default=1,
+                        help='threads for black side engine (default: 1)')
+    parser.add_argument('--wponder', dest='wponder', action='store_true',
+                        help='allow white\'s engine to ponder when black on move')
+    parser.add_argument('--bponder', dest='bponder', action='store_true',
+                        help='allow black\'s engine to ponder when white on move')
+    parser.add_argument('--silent', dest='silent', action='store_true',
+                        help='Display only ending game state')
     return parser.parse_args()
 
 
@@ -43,8 +57,8 @@ if __name__ == "__main__":
     player2 = Player("CPU II")
 
     # engine is created for each side to prevent "self-seeing" moves, it simulate two different players instead of one
-    engine1 = EngineHandler(args.engine_path, threads=1, ponder=False, hash=64)
-    engine2 = EngineHandler(args.engine_path, threads=1, ponder=False, hash=64)
+    engine1 = EngineHandler(args.engine_path, threads=args.wthreads, ponder=args.wponder, hash=64)
+    engine2 = EngineHandler(args.engine_path, threads=args.bthreads, ponder=args.bponder, hash=64)
 
     engine1.start_engine()
     engine2.start_engine()
@@ -56,7 +70,11 @@ if __name__ == "__main__":
 
     try:
         while True:
-            str_move = engine1.best_move(str(game.variant), wtime=100, btime=100)
+            str_move = engine1.best_move(
+                moves_seq=' '.join([str(move) for move in game.variant.moves_history]),
+                wtime=args.wtime,
+                btime=args.btime
+            )
             move = StandardMove.from_str(str_move)
             game.move(move)
             if not args.silent:
@@ -64,7 +82,11 @@ if __name__ == "__main__":
             if game.variant.game_state[0]:
                 break
 
-            str_move = engine2.best_move(str(game.variant), wtime=100, btime=100)
+            str_move = engine2.best_move(
+                moves_seq=' '.join([str(move) for move in game.variant.moves_history]),
+                wtime=args.wtime,
+                btime=args.btime
+            )
             move = StandardMove.from_str(str_move)
             game.move(move)
             if not args.silent:
@@ -90,7 +112,8 @@ if __name__ == "__main__":
 
     except KeyboardInterrupt:
         print("\nGame interrupted by user")
-    except Exception:
+    except Exception as err:
+        print('Catched exception:', err)
         print("Game interrupted by unexpected error")
         print('already executed moves:')
         print([str(move) for move in game.variant.moves_history])

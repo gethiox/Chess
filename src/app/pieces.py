@@ -5,9 +5,7 @@ from interface.piece import Piece, Movement, MoveDescription, CaptureDescription
 
 
 class King(Piece):
-    @property
-    def char(self):
-        return "k"
+    char = "k"
 
     @property
     def points(self):
@@ -28,13 +26,11 @@ class King(Piece):
 
 
 class Queen(Piece):
+    char = "q"
+
     @property
     def points(self) -> int:
         return 9
-
-    @property
-    def char(self) -> str:
-        return "q"
 
     @property
     def name(self) -> str:
@@ -51,13 +47,11 @@ class Queen(Piece):
 
 
 class Rook(Piece):
+    char = 'r'
+
     @property
     def points(self) -> int:
         return 5
-
-    @property
-    def char(self) -> str:
-        return 'r'
 
     @property
     def name(self) -> str:
@@ -73,13 +67,11 @@ class Rook(Piece):
 
 
 class Bishop(Piece):
+    char = 'b'
+
     @property
     def points(self) -> int:
         return 3
-
-    @property
-    def char(self) -> str:
-        return 'b'
 
     @property
     def name(self) -> str:
@@ -95,13 +87,11 @@ class Bishop(Piece):
 
 
 class Knight(Piece):
+    char = "n"
+
     @property
     def points(self) -> int:
         return 3
-
-    @property
-    def char(self) -> str:
-        return "n"
 
     @property
     def name(self) -> str:
@@ -117,13 +107,11 @@ class Knight(Piece):
 
 
 class Pawn(Piece):
+    char = "p"
+
     @property
     def points(self) -> int:
         return 1
-
-    @property
-    def char(self) -> str:
-        return "p"
 
     @property
     def name(self) -> str:
@@ -162,4 +150,3 @@ def from_str(piece: str, initialized=True) -> 'Piece':  # TODO: Use another solu
     if initialized:
         return str_map[piece.lower()](White) if piece.isupper() else str_map[piece.lower()](Black)
     return str_map[piece.lower()]
-

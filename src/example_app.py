@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 from argparse import ArgumentParser
+from random import shuffle
 
 from app.move import StandardMove
 from app.pieces import from_str
@@ -16,6 +17,8 @@ def parse_args():
     group.add_argument('--normal', dest='normal', action='store_true', help='Classic Chess (default)')
     group.add_argument('--hill', dest='hill', action='store_true', help='King of The Hill')
     group.add_argument('--check', dest='check', action='store_true', help='Three Check')
+    parser.add_argument('-r', '--random-response', dest='random_response', action='store_true',
+                        help='make random computer response on every successfully player\'s move')
     return parser.parse_args()
 
 
@@ -87,6 +90,23 @@ if __name__ == "__main__":
                     winner=','.join(str(side) for side in game.variant.game_state[0]))
                 )
                 break
+
+            if args.random_response:
+                # Copy Paste for computer random move
+                possible_moves = game.variant.all_available_moves()
+                shuffle(possible_moves)
+                cpu_move = possible_moves[0]
+                game.move(cpu_move)
+                print(board_rendererer.normal(game.board))
+                print("On move: {on_move!s:5s}, Available moves: {moves:d}".format(
+                    on_move=game.variant.on_move,
+                    moves=len(game.variant.all_available_moves())))
+                if game.variant.game_state[0]:
+                    print('State: {state}, Winner(s): {winner}'.format(
+                        state=game.variant.game_state[1],
+                        winner=','.join(str(side) for side in game.variant.game_state[0]))
+                    )
+                    break
 
     except KeyboardInterrupt:
         print('\nThanks for moving pieces!')

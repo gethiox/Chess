@@ -104,8 +104,6 @@ if __name__ == "__main__":
             winners = winners.pop()
         moves = len(game.variant.moves_history)
 
-        if not args.silent:
-            print_state(game)
         print('Winner(s): {!s:6s} Moves: {!s:3s} Description: {:s}'.format(winners, moves, desc))
         if not args.silent:
             print('moves:', [str(move) for move in game.variant.moves_history])

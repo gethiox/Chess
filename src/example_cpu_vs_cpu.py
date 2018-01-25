@@ -27,18 +27,21 @@ def parse_args():
                         help='allow black\'s engine to ponder when white on move')
     parser.add_argument('--silent', dest='silent', action='store_true',
                         help='Display only ending game state')
+    parser.add_argument('--count', dest='count', action='store_true',
+                        help='Enable counting of available moves')
     return parser.parse_args()
 
 
 def print_state(game):
     board_str = board_rendererer.normal(game.board)
     fen = "FEN: %s" % str(game.variant)
-    data = "On move: {on_move!s:5s}, Available moves: {moves:s}".format(
+    data = "On move: {on_move!s:5s}, last move: {last_move!s:5s} Available moves: {moves!s:s}".format(
         on_move=game.variant.on_move,
-        moves='disabled',  # len(game.variant.all_available_moves())  # warning: inefficient!
+        last_move=game.variant.last_move,
+        moves=len(game.variant.all_available_moves()) if args.count else 'Disabled',
     )
-    print(fen)
     print(board_str)
+    print(fen)
     print(data)
     print()
 

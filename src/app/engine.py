@@ -74,6 +74,7 @@ class EngineHandler:
         """
         Required is at least "fen" or "moves_seq" parameter, "btime" and "wtime" is optional to determine how much
         time left for each side (in miliseconds)
+        Note: moves_seq is a preferred way to inform about position because repetition can be avoided if possible
         :param fen: fenstring of game 
         :param moves_seq: string of primitive move format (eg. e7e8q) separated by spaces
         :param btime: miliseconds of left time of the black side (optional)

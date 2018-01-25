@@ -18,7 +18,7 @@ class MyTestCase(TestCase):
     def test_some(self):
         board_rendererer.tiny(self.variant.board)
         print()
-        for move in self.moves_from_str(['f2f3', 'e7e6', 'g2g4', 'd8h4']):
+        for move in self.moves_from_str(['f2f3', 'e7e6', 'g2g4', 'd8h4']):  # the fastest possible checkmate
             status = self.variant.move(move)
             if status:
                 print('Move execution %s ok' % move)
@@ -42,7 +42,7 @@ class MyTestCase(TestCase):
                           game_status=self.variant.game_state)
             )
         self.assertEqual(
-            self.variant.game_state, {Black}
+            self.variant.game_state[0], {Black}
         )
 
     def test_CausesCheck(self):

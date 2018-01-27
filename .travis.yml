@@ -10,6 +10,4 @@ install:
 
 script:
   - pytest --cov=src/ src/tests/ --cov-fail-under=100
-
-after_success:
   - codecov

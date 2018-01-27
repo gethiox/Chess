@@ -3,7 +3,7 @@ from argparse import ArgumentParser
 from random import shuffle
 
 from app.move import StandardMove
-from app.pieces import from_str
+from app.pieces import from_str, King
 from app.player import Player
 from app.position import StandardPosition
 from app.variants import Normal, KingOfTheHill, ThreeCheck
@@ -23,6 +23,7 @@ def parse_args():
 
 
 if __name__ == "__main__":
+    # TODO: REFACTOR
     args = parse_args()
 
     if args.normal:
@@ -39,6 +40,8 @@ if __name__ == "__main__":
     player = Player("player")
 
     game = Game(player1=player, player2=player, variant=mode)
+    variant = game.variant
+
     print(board_rendererer.normal(game.board))
     print("On move: {on_move!s:5s}, Available moves: {moves:d}".format(
         on_move=game.variant.on_move,
@@ -80,7 +83,12 @@ if __name__ == "__main__":
             except Exception as err:
                 print(err)
                 continue
-            print(board_rendererer.normal(game.board))
+            print(board_rendererer.normal(
+                variant.board,
+                info_fields=[variant.last_move.source, variant.last_move.destination],
+                warn_fields=[x[0] for x in
+                             variant.board.find_pieces(King(variant.on_move))] if variant.is_check else []
+            ))
             print("On move: {on_move!s:5s}, Available moves: {moves:d}".format(
                 on_move=game.variant.on_move,
                 moves=len(game.variant.all_available_moves())))
@@ -97,7 +105,12 @@ if __name__ == "__main__":
                 shuffle(possible_moves)
                 cpu_move = possible_moves[0]
                 game.move(cpu_move)
-                print(board_rendererer.normal(game.board))
+                print(board_rendererer.normal(
+                    variant.board,
+                    info_fields=[variant.last_move.source, variant.last_move.destination],
+                    warn_fields=[x[0] for x in
+                                 variant.board.find_pieces(King(variant.on_move))] if variant.is_check else []
+                ))
                 print("On move: {on_move!s:5s}, Available moves: {moves:d}".format(
                     on_move=game.variant.on_move,
                     moves=len(game.variant.all_available_moves())))

@@ -1,33 +1,52 @@
+from typing import List
+
 from app.board import StandardBoard
+from app.position import StandardPosition
 
 
 class Colors:
+    SCHEMA_24BIT = '\033[%s;2;%s;%s;%sm'
+
+    FOREGROUND = '38'
+    BACKGROUND = '48'
+
+    END = '\033[0m'
+
     HEADER = '\033[95m'
     OKBLUE = '\033[94m'
     OKGREEN = '\033[92m'
     WARNING = '\033[93m'
     FAIL = '\033[91m'
-    ENDC = '\033[0m'
+
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
+    YELLOW_BGD = '\033[43m'
 
 
 class Colorize:
     @staticmethod
+    def colorize_24bit(string, rgb):
+        return Colors.SCHEMA_24BIT % (Colors.BACKGROUND, rgb[0], rgb[1], rgb[2]) + string + Colors.END
+
+    @staticmethod
     def red(string):
-        return '{}{}{}'.format(Colors.FAIL, string, Colors.ENDC)
+        return '{}{}{}'.format(Colors.FAIL, string, Colors.END)
 
     @staticmethod
     def yellow(string):
-        return '{}{}{}'.format(Colors.WARNING, string, Colors.ENDC)
+        return '{}{}{}'.format(Colors.WARNING, string, Colors.END)
 
     @staticmethod
     def green(string):
-        return '{}{}{}'.format(Colors.OKGREEN, string, Colors.ENDC)
+        return '{}{}{}'.format(Colors.OKGREEN, string, Colors.END)
 
     @staticmethod
     def blue(string):
-        return '{}{}{}'.format(Colors.OKBLUE, string, Colors.ENDC)
+        return '{}{}{}'.format(Colors.OKBLUE, string, Colors.END)
+
+    @staticmethod
+    def yellow_bgd(string):
+        return '{}{}{}'.format(Colors.YELLOW_BGD, string, Colors.END)
 
 
 def tiny(board: StandardBoard, description: bool = True):
@@ -51,7 +70,18 @@ def tiny(board: StandardBoard, description: bool = True):
     return board_str
 
 
-def normal(board: StandardBoard, description: bool = True, colorize: bool = True):
+INFO_COLOR = (10, 10, 50)
+WARN_COLOR = (50, 20, 10)
+
+
+def normal(board: StandardBoard,
+           description: bool = True,
+           colorize: bool = True,
+           info_fields: List[StandardPosition] = None,
+           warn_fields: List[StandardPosition] = None):
+    info_array = [(pos.file, pos.rank) for pos in info_fields] if info_fields else []
+    warn_array = [(pos.file, pos.rank) for pos in warn_fields] if warn_fields else []
+
     if description:
         if colorize:
             board_str = '+-{}-+-{}-+-{}-+-{}-+-{}-+-{}-+-{}-+-{}-+\n'.format(
@@ -67,31 +97,39 @@ def normal(board: StandardBoard, description: bool = True, colorize: bool = True
     while rank_counter >= 0:
         if description:
             if colorize:
-                board_str += Colorize.green('%d ' % (rank_counter + 1))
+                board_str += Colorize.green('%d' % (rank_counter + 1))
             else:
-                board_str += '%d ' % (rank_counter + 1)
+                board_str += '%d' % (rank_counter + 1)
         else:
-            board_str += '| '
+            board_str += '|'
         file_counter = 0
         while file_counter <= 7:
             piece = board.array[file_counter][rank_counter]
             if piece:
+                field = ' %s ' % piece.fen
+
                 if colorize:
-                    board_str += Colorize.red(piece.fen) if piece.fen.islower() else Colorize.yellow(piece.fen)
-                else:
-                    board_str += piece.fen
+                    field = Colorize.red(field) if piece.fen.islower() else Colorize.yellow(field)
             else:
-                board_str += ' '
+                field = '   '
+
+            if colorize and (file_counter, rank_counter) in info_array:
+                board_str += Colorize.colorize_24bit(field, INFO_COLOR)
+            elif colorize and (file_counter, rank_counter) in warn_array:
+                board_str += Colorize.colorize_24bit(field, WARN_COLOR)
+            else:
+                board_str += field
+
             if file_counter < 7:
-                board_str += ' | '
+                board_str += '|'
             file_counter += 1
         if description:
             if colorize:
-                board_str += Colorize.green(' %d' % (rank_counter + 1))
+                board_str += Colorize.green('%d' % (rank_counter + 1))
             else:
-                board_str += ' %d' % (rank_counter + 1)
+                board_str += '%d' % (rank_counter + 1)
         else:
-            board_str += ' |'
+            board_str += '|'
         if rank_counter > 0:
             board_str += '\n+---+---+---+---+---+---+---+---+\n'
         rank_counter -= 1

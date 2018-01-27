@@ -3,6 +3,7 @@ from argparse import ArgumentParser
 
 from app.engine import EngineHandler
 from app.move import StandardMove
+from app.pieces import King
 from app.player import Player
 from app.variants import Normal
 from cli import board_rendererer
@@ -33,7 +34,12 @@ def parse_args():
 
 
 def print_state(game):
-    board_str = board_rendererer.normal(game.board)
+    board_str = board_rendererer.normal(
+        game.variant.board,
+        info_fields=[game.variant.last_move.source, game.variant.last_move.destination] if game.variant.last_move else [],
+        warn_fields=[x[0] for x in
+                     game.variant.board.find_pieces(King(game.variant.on_move))] if game.variant.is_check else []
+    )
     fen = "FEN: %s" % str(game.variant)
     data = "On move: {on_move!s:5s}, last move: {last_move!s:5s} Available moves: {moves!s:s}".format(
         on_move=game.variant.on_move,

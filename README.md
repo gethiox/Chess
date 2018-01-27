@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/gethiox/Chess.svg?branch=dev)](https://travis-ci.org/gethiox/Chess)
+[![codecov](https://codecov.io/gh/gethiox/Chess/branch/dev/graph/badge.svg)](https://codecov.io/gh/gethiox/Chess)
 
 I don't know how you found this repository but I can guess that you
 probably looking for more supported solution: [python-chess](https://pypi.python.org/pypi/python-chess)

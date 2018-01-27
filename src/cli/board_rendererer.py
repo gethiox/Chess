@@ -70,8 +70,8 @@ def tiny(board: StandardBoard, description: bool = True):
     return board_str
 
 
-INFO_COLOR = (10, 10, 50)
-WARN_COLOR = (50, 20, 10)
+INFO_COLOR = (10, 40, 100)
+WARN_COLOR = (100, 40, 10)
 
 
 def normal(board: StandardBoard,

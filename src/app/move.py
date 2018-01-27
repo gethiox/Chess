@@ -1,6 +1,6 @@
-from app.pieces import from_str
-from app.position import StandardPosition
-from interface.move import Move
+from src.app.pieces import from_str
+from src.app.position import StandardPosition
+from src.interface.move import Move
 
 
 class StandardMove(Move):

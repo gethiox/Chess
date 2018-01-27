@@ -1,12 +1,12 @@
 from string import digits
 from typing import Optional, Tuple, TYPE_CHECKING, List, Dict
 
-from app.pieces import from_str
-from app.position import StandardPosition
-from interface.board import Board
+from src.app.pieces import from_str
+from src.app.position import StandardPosition
+from src.interface.board import Board
 
 if TYPE_CHECKING:
-    from interface.piece import Piece
+    from src.interface.piece import Piece
 
 
 class StandardBoard(Board):

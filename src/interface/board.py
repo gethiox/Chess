@@ -2,8 +2,8 @@ from abc import ABCMeta, abstractmethod
 from typing import Type, Optional, TYPE_CHECKING, List, Tuple
 
 if TYPE_CHECKING:
-    from interface.piece import Piece
-    from interface.position import Position
+    from src.interface.piece import Piece
+    from src.interface.position import Position
 
 
 class Board(metaclass=ABCMeta):

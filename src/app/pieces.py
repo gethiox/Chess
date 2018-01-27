@@ -1,7 +1,7 @@
 from math import inf as infinity
 
-from app.sides import White, Black
-from interface.piece import Piece, Movement, MoveDescription, CaptureDescription
+from src.app.sides import White, Black
+from src.interface.piece import Piece, Movement, MoveDescription, CaptureDescription
 
 
 class King(Piece):

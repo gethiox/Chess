@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 from argparse import ArgumentParser
 
-from app.engine import EngineHandler
-from app.move import StandardMove
-from app.pieces import King
-from app.player import Player
-from app.variants import Normal
-from cli import board_rendererer
-from interface.game import Game
+from src.app.engine import EngineHandler
+from src.app.move import StandardMove
+from src.app.pieces import King
+from src.app.player import Player
+from src.app.variants import Normal
+from src.cli import board_rendererer
+from src.interface.game import Game
 
 
 def parse_args():

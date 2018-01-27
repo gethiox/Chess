@@ -5,17 +5,17 @@ from copy import deepcopy
 from math import inf as infinity
 from typing import Type, TYPE_CHECKING, Tuple, Set, List, Optional, Dict
 
-from app.board import StandardBoard
-from app.move import StandardMove
-from app.pieces import King, Pawn, Knight, Bishop, Rook, Queen
-from app.position import StandardPosition
-from app.sides import White, Black
-from exceptions.variant import WrongMoveOrder, NotAValidMove, CausesCheck, NoPiece, NotAValidPromotion
-from interface.variant import Variant
+from src.app.board import StandardBoard
+from src.app.move import StandardMove
+from src.app.pieces import King, Pawn, Knight, Bishop, Rook, Queen
+from src.app.position import StandardPosition
+from src.app.sides import White, Black
+from src.exceptions.variant import WrongMoveOrder, NotAValidMove, CausesCheck, NoPiece, NotAValidPromotion
+from src.interface.variant import Variant
 
 if TYPE_CHECKING:
-    from interface.piece import Piece
-    from interface.side import Side
+    from src.interface.piece import Piece
+    from src.interface.side import Side
 
 
 class Normal(Variant):

@@ -1,13 +1,13 @@
 from unittest import TestCase
 
-from app.move import StandardMove
-from app.player import Player
-from app.position import StandardPosition
-from app.sides import Black
-from app.variants import Normal
-from cli import board_rendererer
-from exceptions.variant import CausesCheck
-from interface.game import Game
+from src.app.move import StandardMove
+from src.app.player import Player
+from src.app.position import StandardPosition
+from src.app.sides import Black
+from src.app.variants import Normal
+from src.cli import board_rendererer
+from src.exceptions.variant import CausesCheck
+from src.interface.game import Game
 
 
 class MyTestCase(TestCase):

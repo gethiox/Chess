@@ -1,4 +1,4 @@
-from interface.side import Side
+from src.interface.side import Side
 
 
 class WhiteSide(Side):

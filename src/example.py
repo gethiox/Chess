@@ -2,14 +2,14 @@
 from argparse import ArgumentParser
 from time import time, sleep
 
-from app.move import StandardMove
-from app.pieces import from_str, King
-from app.player import Player
-from app.position import StandardPosition
-from app.variants import Normal
-from cli import board_rendererer
-from exceptions.variant import NotAValidMove
-from interface.game import Game
+from src.app.move import StandardMove
+from src.app.pieces import from_str, King
+from src.app.player import Player
+from src.app.position import StandardPosition
+from src.app.variants import Normal
+from src.cli import board_rendererer
+from src.exceptions.variant import NotAValidMove
+from src.interface.game import Game
 
 
 def generate_moves(str_moves):

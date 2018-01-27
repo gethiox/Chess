@@ -38,30 +38,33 @@ def parse_args():
 
 
 def get_stats(variant):
-    return ("\n"
-            "            FEN: {fen}\n"
-            "      last move: {move}\n"
-            "   move counter: {moves}\n"
-            "        on move: {on_move}\n"
-            "       in check: {check}\n"
-            "available moves: {available_moves}\n"
-            " winner side(s): {game_status}\n"
-            "    explanation: {desc}\n"
-            "\ncaptured pieces: (by side)\n{pocket}\n"
-            "".format(fen=str(variant),
-                      move=variant.last_move,
-                      moves=variant.moves,
-                      on_move=variant.on_move,
-                      check=variant.is_check,
-                      available_moves=len(variant.all_available_moves()) if args.count else 'Disabled',
-                      game_status=variant.game_state[0],
-                      desc=variant.game_state[1],
-                      pocket='\n'.join(
-                          ['    %s: %s' % (side.name, ', '.join([piece.name for piece in pocket]) if pocket else None)
-                           for side, pocket
-                           in variant.pocket.items()])
-                      )
+    return (
+        "\n"
+        "            FEN: {fen}\n"
+        "      last move: {move}\n"
+        "   move counter: {moves}\n"
+        "        on move: {on_move}\n"
+        "       in check: {check}\n"
+        "available moves: {available_moves}\n"
+        " winner side(s): {game_status}\n"
+        "    explanation: {desc}\n"
+        "\ncaptured pieces: (by side)\n{pocket}\n"
+        "".format(
+            fen=str(variant),
+            move=variant.last_move,
+            moves=variant.moves,
+            on_move=variant.on_move,
+            check=variant.is_check,
+            available_moves=len(variant.all_available_moves()) if args.count else 'Disabled',
+            game_status=variant.game_state[0],
+            desc=variant.game_state[1],
+            pocket='\n'.join(
+                ['    %s: %s' % (side.name, ', '.join([piece.name for piece in pocket]) if pocket else None)
+                 for side, pocket
+                 in variant.pocket.items()]
             )
+        )
+    )
 
 
 moves = [
@@ -89,6 +92,24 @@ moves = [
     'b5c5', 'f3e4', 'c5b5', 'd3c3', 'b5a5', 'c3b3', 'a5a4', 'e4d4', 'a4a5', 'd4c5', 'a5a4', 'b3b2', 'a4a3', 'b2a2'
 ]
 
+# another nice move sequence
+# moves = [
+#     'e2e4', 'e7e5', 'g1f3', 'b8c6', 'f1b5', 'a7a6', 'b5c6', 'd7c6', 'e1g1', 'f7f6', 'd2d4', 'e5d4', 'f3d4', 'f8d6',
+#     'c1e3', 'g8e7', 'd1h5', 'e7g6', 'f2f4', 'e8g8', 'c2c3', 'g6e7', 'h5e2', 'c6c5', 'd4b3', 'b7b6', 'b3d2', 'a6a5',
+#     'b1a3', 'c8a6', 'a3c4', 'e7c6', 'f1f3', 'd8e8', 'f3h3', 'a8d8', 'a2a4', 'f8f7', 'b2b3', 'g7g6', 'a1f1', 'd6f8',
+#     'h3f3', 'f7d7', 'e4e5', 'f8g7', 'd2e4', 'f6f5', 'e4f2', 'e8e6', 'f3g3', 'd8e8', 'e3c1', 'c6d8', 'h2h4', 'd8f7',
+#     'g3e3', 'h7h5', 'f2h3', 'f7h6', 'h3g5', 'e6d5', 'e2f3', 'd7d8', 'f3d5', 'd8d5', 'e3e1', 'd5d3', 'f1f3', 'd3d8',
+#     'c4a3', 'h6g4', 'c3c4', 'a6b7', 'f3h3', 'e8e7', 'a3b5', 'g7h6', 'h3g3', 'h6g5', 'h4g5', 'g8f7', 'b5c3', 'f7e6',
+#     'e1f1', 'b7e4', 'c3b5', 'e4c6', 'g3h3', 'c6b5', 'c4b5', 'e7d7', 'f1e1', 'd7d4', 'g1f1', 'd4b4', 'h3c3', 'd8d7',
+#     'g2g3', 'd7h7', 'f1g2', 'h5h4', 'e1h1', 'h4h3', 'h1h3', 'h7h3', 'g2h3', 'g4f2', 'h3g2', 'f2e4', 'c3d3', 'c5c4',
+#     'b3c4', 'b4c4', 'c1e3', 'c4a4', 'g2f3', 'a4c4', 'e3d4', 'c4c1', 'd4e3', 'c1f1', 'f3g2', 'f1b1', 'g2f3', 'a5a4',
+#     'g3g4', 'e4c5', 'd3d8', 'b1b3', 'g4f5', 'e6f5', 'd8f8', 'f5e6', 'f4f5', 'e6e5', 'f5g6', 'c5e6', 'f8e8', 'e5d6',
+#     'e8d8', 'd6e7', 'd8c8', 'b3b5', 'g6g7', 'e6g7', 'c8c7', 'e7f8', 'c7c8', 'f8f7', 'c8c7', 'f7g8', 'c7c8', 'g8h7',
+#     'c8c7', 'b5b3', 'f3e4', 'h7g6', 'c7c6', 'g6h5', 'e3b6', 'b3b4', 'b6d4', 'h5g5', 'e4d3', 'g7f5', 'd4c3', 'b4b3',
+#     'c6c5', 'b3a3', 'd3c4', 'g5f4', 'c4b4', 'a3a2', 'c5c8', 'f5e3', 'c8f8', 'f4e4', 'f8e8', 'e4f3', 'e8f8', 'f3e2',
+#     'f8d8', 'a2c2', 'c3d4', 'c2d2', 'b4a4', 'e2d1', 'a4b4', 'e3c2', 'b4c3', 'c2d4', 'd8d4', 'd2d4', 'c3d4'
+# ]
+
 if __name__ == "__main__":
     args = parse_args()
     if args.moves:
@@ -99,7 +120,7 @@ if __name__ == "__main__":
 
     if not args.silent:
         board_str = board_rendererer.normal(variant.board)
-        print(board_str + '\n')
+        print(board_str)
 
         t_p_start = time()
         stats = get_stats(variant=variant)

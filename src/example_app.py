@@ -17,9 +17,25 @@ def parse_args():
     group.add_argument('--normal', dest='normal', action='store_true', help='Classic Chess (default)')
     group.add_argument('--hill', dest='hill', action='store_true', help='King of The Hill')
     group.add_argument('--check', dest='check', action='store_true', help='Three Check')
+    parser.add_argument('--count', dest='count', action='store_true', help='Count all available moves')
     parser.add_argument('-r', '--random-response', dest='random_response', action='store_true',
                         help='make random computer response on every successfully player\'s move')
     return parser.parse_args()
+
+
+def print_board(variant):
+    board_str = board_rendererer.normal(
+        variant.board,
+        info_fields=[variant.last_move.source, variant.last_move.destination] if variant.last_move else None,
+        warn_fields=[x[0] for x in
+                     variant.board.find_pieces(King(variant.on_move))] if variant.is_check else []
+    )
+    status = "On move: {on_move!s:5s}, Available moves: {moves:d}".format(
+        on_move=game.variant.on_move,
+        moves=len(game.variant.all_available_moves())
+    )
+    print(board_str)
+    print(status)
 
 
 if __name__ == "__main__":
@@ -42,10 +58,7 @@ if __name__ == "__main__":
     game = Game(player1=player, player2=player, variant=mode)
     variant = game.variant
 
-    print(board_rendererer.normal(game.board))
-    print("On move: {on_move!s:5s}, Available moves: {moves:d}".format(
-        on_move=game.variant.on_move,
-        moves=len(game.variant.all_available_moves())))
+    print_board(variant)
     print("Insert move, eg. \"e2e4\" (tyoe \'board\' to show board, \'back\' to rollback last moves)")
     try:
         while True:
@@ -83,15 +96,9 @@ if __name__ == "__main__":
             except Exception as err:
                 print(err)
                 continue
-            print(board_rendererer.normal(
-                variant.board,
-                info_fields=[variant.last_move.source, variant.last_move.destination],
-                warn_fields=[x[0] for x in
-                             variant.board.find_pieces(King(variant.on_move))] if variant.is_check else []
-            ))
-            print("On move: {on_move!s:5s}, Available moves: {moves:d}".format(
-                on_move=game.variant.on_move,
-                moves=len(game.variant.all_available_moves())))
+
+            if not args.random_response:
+                print_board(variant)
             if game.variant.game_state[0]:
                 print('State: {state}, Winner(s): {winner}'.format(
                     state=game.variant.game_state[1],
@@ -100,20 +107,12 @@ if __name__ == "__main__":
                 break
 
             if args.random_response:
-                # Copy Paste for computer random move
                 possible_moves = game.variant.all_available_moves()
                 shuffle(possible_moves)
                 cpu_move = possible_moves[0]
                 game.move(cpu_move)
-                print(board_rendererer.normal(
-                    variant.board,
-                    info_fields=[variant.last_move.source, variant.last_move.destination],
-                    warn_fields=[x[0] for x in
-                                 variant.board.find_pieces(King(variant.on_move))] if variant.is_check else []
-                ))
-                print("On move: {on_move!s:5s}, Available moves: {moves:d}".format(
-                    on_move=game.variant.on_move,
-                    moves=len(game.variant.all_available_moves())))
+
+                print_board(variant)
                 if game.variant.game_state[0]:
                     print('State: {state}, Winner(s): {winner}'.format(
                         state=game.variant.game_state[1],
@@ -122,5 +121,5 @@ if __name__ == "__main__":
                     break
 
     except KeyboardInterrupt:
-        print('\nThanks for moving pieces!')
+        print('\nThanks for playing!')
         exit(0)

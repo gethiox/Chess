@@ -9,9 +9,9 @@ class EngineHandler:
 
     def __init__(self, path: str, ponder: bool = False, threads: int = 4, hash: int = 256, multi_pv: int = 1):
         """
-        :param path: path to binary of UCI chess engine (stockfish is recommended) 
+        :param path: path to binary of UCI chess engine (stockfish is recommended)
         :param ponder: True if pondering on enemy turn is expected
-        :param threads: How many threads are sacrificed for the engine 
+        :param threads: How many threads are sacrificed for the engine
         :param hash: memory size for hash table
         :param multi_pv: MultiPV ¯\_(ツ)_/¯
         """
@@ -75,11 +75,11 @@ class EngineHandler:
         Required is at least "fen" or "moves_seq" parameter, "btime" and "wtime" is optional to determine how much
         time left for each side (in miliseconds)
         Note: moves_seq is a preferred way to inform about position because repetition can be avoided if possible
-        :param fen: fenstring of game 
+        :param fen: fenstring of game
         :param moves_seq: string of primitive move format (eg. e7e8q) separated by spaces
         :param btime: miliseconds of left time of the black side (optional)
         :param wtime: miliseconds of left time of the white side (optional)
-        :return: 
+        :return:
         """
         if fen is None and moves_seq is None:
             raise ValueError('you need to specify fenstring or move sequence of the board state.')

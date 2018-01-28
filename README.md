@@ -28,12 +28,11 @@ or create your own. Of course `setup.py` will be prepared in the near future.
 Note:
 If you read the code you could feel something weird about everything
 that touches the Players and some other things. My approach is to
-project flexible implementation, even for chess for more than two
-players and chessboards that has more than two dimensions.
+create very flexible implementation, even for more than two players
+and chessboards that has more than two dimensions.  
 Also I am going to remove most of `@property` decorators.
 
 ### Arbitrary development status
-
 - [x] Classic Chess implementation
   - [x] Piece movement
   - [x] en-passant

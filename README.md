@@ -63,7 +63,7 @@ Arbitrary development status:
   - [ ] 3D Chess
 
 Examples:
-Simple chess app to play with yourself ([example_app.py](chess/examples/example_app.py))
+Simple chess app to play with yourself ([example_app.py](example_app.py))
 ```
 sh-4.4$ ./src/example_app.py --hill
 Playing King of The Hill game mode
@@ -146,7 +146,7 @@ How many moves do you want to rollback? 1
 Move:
 ```
 
-part of [example.py](chess/examples/example.py) for profiling purpose.
+part of [example.py](example.py) for profiling purpose.
 
 ```
 sh-4.4$ ./src/example.py

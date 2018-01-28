@@ -1,7 +1,7 @@
 from typing import List
 
-from src.app.board import StandardBoard
-from src.app.position import StandardPosition
+from chess.app.board import StandardBoard
+from chess.app.position import StandardPosition
 
 
 class Colors:

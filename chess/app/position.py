@@ -2,7 +2,7 @@ import re
 from string import ascii_lowercase
 from typing import Iterator, Tuple
 
-from src.interface.position import Position
+from chess.interface.position import Position
 
 location_regex = re.compile(r'^([a-zA-Z]+)([0-9]+)$')
 

@@ -1,9 +1,9 @@
 import unittest
 
-from src.app.board import StandardBoard
-from src.app.pieces import King, Queen, Rook
-from src.app.position import StandardPosition
-from src.app.sides import White, Black
+from chess.app.board import StandardBoard
+from chess.app.pieces import King, Queen, Rook
+from chess.app.position import StandardPosition
+from chess.app.sides import White, Black
 
 
 class BoardTestCase(unittest.TestCase):

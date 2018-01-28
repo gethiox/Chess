@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from src.app.position import StandardPosition
+from chess.app.position import StandardPosition
 
 
 class MyTestCase(TestCase):

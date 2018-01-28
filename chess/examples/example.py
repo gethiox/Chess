@@ -2,14 +2,14 @@
 from argparse import ArgumentParser
 from time import time, sleep
 
-from src.app.move import StandardMove
-from src.app.pieces import from_str, King
-from src.app.player import Player
-from src.app.position import StandardPosition
-from src.app.variants import Normal
-from src.cli import board_rendererer
-from src.exceptions.variant import NotAValidMove
-from src.interface.game import Game
+from chess.app.move import StandardMove
+from chess.app.pieces import from_str, King
+from chess.app.player import Player
+from chess.app.position import StandardPosition
+from chess.app.variants import Normal
+from chess.cli import board_rendererer
+from chess.exceptions.variant import NotAValidMove
+from chess.interface.game import Game
 
 
 def generate_moves(str_moves):

@@ -1,12 +1,12 @@
 from string import digits
 from typing import Optional, Tuple, TYPE_CHECKING, List, Dict
 
-from src.app.pieces import from_str
-from src.app.position import StandardPosition
-from src.interface.board import Board
+from chess.app.pieces import from_str
+from chess.app.position import StandardPosition
+from chess.interface.board import Board
 
 if TYPE_CHECKING:
-    from src.interface.piece import Piece
+    from chess.interface.piece import Piece
 
 
 class StandardBoard(Board):

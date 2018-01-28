@@ -6,7 +6,7 @@ probably looking for more supported solution: [python-chess](https://pypi.python
 
 It's my private and not very well supported chess implementation at the
 moment. If you are looking for something to read, i propose to start
-over here: [variants.py](src/app/variants.py)
+over here: [variants.py](chess/app/variants.py)
 
 ![](doc/example_py_cli_animation.gif)
 
@@ -63,7 +63,7 @@ Arbitrary development status:
   - [ ] 3D Chess
 
 Examples:
-Simple chess app to play with yourself ([example_app.py](src/example_app.py))
+Simple chess app to play with yourself ([example_app.py](chess/examples/example_app.py))
 ```
 sh-4.4$ ./src/example_app.py --hill
 Playing King of The Hill game mode
@@ -146,7 +146,7 @@ How many moves do you want to rollback? 1
 Move:
 ```
 
-part of [example.py](src/example.py) for profiling purpose.
+part of [example.py](chess/examples/example.py) for profiling purpose.
 
 ```
 sh-4.4$ ./src/example.py

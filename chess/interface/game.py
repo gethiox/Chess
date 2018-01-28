@@ -1,13 +1,13 @@
 from datetime import datetime
 from typing import Type, Tuple, TYPE_CHECKING
 
-from src.app.sides import White, Black
+from chess.app.sides import White, Black
 
 if TYPE_CHECKING:
-    from src.interface.move import Move
-    from src.interface.board import Board
-    from src.interface.variant import Variant
-    from src.app.player import Player
+    from chess.interface.move import Move
+    from chess.interface.board import Board
+    from chess.interface.variant import Variant
+    from chess.app.player import Player
 
 
 class Game:

@@ -1,11 +1,11 @@
 from unittest import TestCase
 
-from src.app.pieces import Pawn
-from src.app.player import Player
-from src.app.position import StandardPosition
-from src.app.sides import White, Black
-from src.app.variants import Normal
-from src.interface.game import Game
+from chess.app.pieces import Pawn
+from chess.app.player import Player
+from chess.app.position import StandardPosition
+from chess.app.sides import White, Black
+from chess.app.variants import Normal
+from chess.interface.game import Game
 
 
 class MyTestCase(TestCase):

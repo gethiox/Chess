@@ -2,11 +2,11 @@ from abc import ABCMeta, abstractmethod
 from typing import Sequence, Type, TYPE_CHECKING, Set, List
 
 if TYPE_CHECKING:
-    from src.interface.board import Board
-    from src.interface.move import Move
-    from src.interface.piece import Piece
-    from src.interface.side import Side
-    from src.interface.position import Position
+    from chess.interface.board import Board
+    from chess.interface.move import Move
+    from chess.interface.piece import Piece
+    from chess.interface.side import Side
+    from chess.interface.position import Position
 
 
 class Variant(metaclass=ABCMeta):

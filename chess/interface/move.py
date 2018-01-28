@@ -2,8 +2,8 @@ from abc import ABCMeta, abstractmethod
 from typing import TYPE_CHECKING, Type
 
 if TYPE_CHECKING:
-    from src.interface.piece import Piece
-    from src.interface.position import Position
+    from chess.interface.piece import Piece
+    from chess.interface.position import Position
 
 
 class Move(metaclass=ABCMeta):

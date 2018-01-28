@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 from argparse import ArgumentParser
 
-from src.app.engine import EngineHandler
-from src.app.move import StandardMove
-from src.app.pieces import King
-from src.app.player import Player
-from src.app.variants import Normal
-from src.cli import board_rendererer
-from src.interface.game import Game
+from chess.app.engine import EngineHandler
+from chess.app.move import StandardMove
+from chess.app.pieces import King
+from chess.app.player import Player
+from chess.app.variants import Normal
+from chess.cli import board_rendererer
+from chess.interface.game import Game
 
 
 def parse_args():

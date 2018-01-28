@@ -1,6 +1,6 @@
-from src.app.pieces import from_str
-from src.app.position import StandardPosition
-from src.interface.move import Move
+from chess.app.pieces import from_str
+from chess.app.position import StandardPosition
+from chess.interface.move import Move
 
 
 class StandardMove(Move):

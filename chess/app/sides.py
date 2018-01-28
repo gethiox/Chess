@@ -1,4 +1,4 @@
-from src.interface.side import Side
+from chess.interface.side import Side
 
 
 class WhiteSide(Side):

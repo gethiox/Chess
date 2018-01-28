@@ -2,7 +2,7 @@ from abc import ABCMeta, abstractmethod
 from typing import Type, TYPE_CHECKING, Tuple, Sequence
 
 if TYPE_CHECKING:
-    from src.interface.side import Side
+    from chess.interface.side import Side
 
 Vector = Tuple[int, int]  # Determine movement vector
 AnyDirection = bool  # Determine if movement Vector cover all combinations in any direction

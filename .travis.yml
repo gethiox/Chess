@@ -9,5 +9,6 @@ install:
   - pip install pytest-cov codecov
 
 script:
-  - pytest ./tests --cov ./chess/
+  - pytest ./tests/unit  --cov=./chess/
+  - pytest ./test/functional
   - codecov

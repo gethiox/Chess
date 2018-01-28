@@ -9,5 +9,5 @@ install:
   - pip install pytest-cov codecov
 
 script:
-  - pytest --cov=./chess/ ./chess/tests/ --cov-fail-under=100
+  - pytest --cov=./chess/ ./tests/ --cov-fail-under=100
   - codecov

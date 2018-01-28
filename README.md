@@ -59,7 +59,7 @@ Also I am going to remove most of `@property` decorators.
   - [ ] CrazyHouse
   - [ ] Horde
   - [ ] PreChess
-  - [ ] UpsideDown
+  - [x] UpsideDown
   - [ ] Double Chess
   - [ ] Anti Chess
   - [x] Racing Kings

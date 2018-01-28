@@ -1,16 +1,15 @@
-# see more: https://en.wikipedia.org/wiki/List_of_chess_variants
 import itertools
 from collections import defaultdict
 from copy import deepcopy
 from math import inf as infinity
-from typing import Type, TYPE_CHECKING, Tuple, Set, List, Optional, Dict
+from typing import List, Dict, Optional, Set, Type, Tuple, TYPE_CHECKING
 
 from chess.app.board import StandardBoard
 from chess.app.move import StandardMove
-from chess.app.pieces import King, Pawn, Knight, Bishop, Rook, Queen
+from chess.app.pieces import King, Queen, Rook, Bishop, Knight, Pawn
 from chess.app.position import StandardPosition
 from chess.app.sides import White, Black
-from chess.exceptions.variant import WrongMoveOrder, NotAValidMove, CausesCheck, NoPiece, NotAValidPromotion
+from chess.exceptions.variant import NoPiece, NotAValidMove, CausesCheck, NotAValidPromotion, WrongMoveOrder
 from chess.interface.variant import Variant
 
 if TYPE_CHECKING:
@@ -597,133 +596,3 @@ class Normal(Variant):
             half_since_pawn=min(self.__half_moves_since_pawn_moved, self.__half_moves_since_capture),
             moves=self.moves,
         )
-
-
-class KingOfTheHill(Normal):
-    @property
-    def name(self):
-        return "King of The Hill"
-
-    @property
-    def game_state(self) -> Tuple[Optional[Set[Type['Side']]], Optional[str]]:
-        # find kings position and return winner if king is standing on the hill (d4, e4, d5, e5)
-        kings = []
-        for side in self.sides:
-            king_pos, piece = self.board.find_pieces(King(side))[0]
-            kings.append((king_pos, piece))
-
-        for king_pos, piece in kings:
-            if king_pos.file in (3, 4) and king_pos.rank in (3, 4):
-                return {piece.side}, 'king on the hill'
-
-        # else return winner by standard chess rule
-        return super(KingOfTheHill, self).game_state
-
-
-class ThreeCheck(Normal):
-    @property
-    def name(self):
-        return "Three Check"
-
-    def __init__(self):
-        super().__init__()
-        self.checks = {side: 0 for side in self.sides}
-
-    def move(self, move: 'StandardMove'):
-        piece = self.board.get_piece(move.source)
-        super(ThreeCheck, self).move(move)
-
-        our_side = piece.side
-        enemy_side = (set(self.sides) - {our_side}).pop()
-
-        enemy_king_position, _ = self.board.find_pieces(King(enemy_side))[0]
-        if enemy_king_position in self.attacked_fields_by_sides({our_side}):
-            self.checks[our_side] += 1
-
-    @property
-    def game_state(self) -> Tuple[Optional[Set[Type['Side']]], Optional[str]]:
-        # determine winner by who get enough check attacks
-        for side, value in self.checks.items():
-            if value >= 3:
-                return {side}, 'three check'
-
-        # else determine by standard rules
-        return super(ThreeCheck, self).game_state
-
-
-class RacingKings(Normal):
-    @property
-    def name(self):
-        return "Racing Kings"
-
-    def init_board_state(self):
-        self.board.put_piece(King(Black), StandardPosition.from_str('a2'))
-        self.board.put_piece(Queen(Black), StandardPosition.from_str('a1'))
-        self.board.put_piece(Rook(Black), StandardPosition.from_str('b2'))
-        self.board.put_piece(Rook(Black), StandardPosition.from_str('b1'))
-        self.board.put_piece(Bishop(Black), StandardPosition.from_str('c2'))
-        self.board.put_piece(Bishop(Black), StandardPosition.from_str('c1'))
-        self.board.put_piece(Knight(Black), StandardPosition.from_str('d2'))
-        self.board.put_piece(Knight(Black), StandardPosition.from_str('d1'))
-
-        self.board.put_piece(King(White), StandardPosition.from_str('h2'))
-        self.board.put_piece(Queen(White), StandardPosition.from_str('h1'))
-        self.board.put_piece(Rook(White), StandardPosition.from_str('g2'))
-        self.board.put_piece(Rook(White), StandardPosition.from_str('g1'))
-        self.board.put_piece(Bishop(White), StandardPosition.from_str('f2'))
-        self.board.put_piece(Bishop(White), StandardPosition.from_str('f1'))
-        self.board.put_piece(Knight(White), StandardPosition.from_str('e2'))
-        self.board.put_piece(Knight(White), StandardPosition.from_str('e1'))
-
-        return self.board.get_fen()
-
-    @property
-    def game_state(self) -> Tuple[Optional[Set[Type['Side']]], Optional[str]]:
-        # find kings position and return winner if king is standing on the eight rank
-        kings = []
-        for side in self.sides:
-            king_pos, piece = self.board.find_pieces(King(side))[0]
-            kings.append((king_pos, piece))
-
-        for king_pos, piece in kings:
-            if king_pos.rank == 7:
-                return {piece.side}, 'king ends the race'
-
-        # else return winner by standard chess rule
-        return super(RacingKings, self).game_state
-
-
-class UpsideDown(Normal):
-    @property
-    def name(self):
-        return "Upside Down"
-
-    def init_board_state(self):
-        """
-        Set board start position for classic chess variant
-        """
-        self.board.put_piece(piece=Rook(Black), position=StandardPosition((0, 0)))
-        self.board.put_piece(piece=Rook(Black), position=StandardPosition((7, 0)))
-        self.board.put_piece(piece=Knight(Black), position=StandardPosition((1, 0)))
-        self.board.put_piece(piece=Knight(Black), position=StandardPosition((6, 0)))
-        self.board.put_piece(piece=Bishop(Black), position=StandardPosition((2, 0)))
-        self.board.put_piece(piece=Bishop(Black), position=StandardPosition((5, 0)))
-        self.board.put_piece(piece=Queen(Black), position=StandardPosition((3, 0)))
-        self.board.put_piece(piece=King(Black), position=StandardPosition((4, 0)))
-
-        for i in range(8):
-            self.board.put_piece(piece=Pawn(Black), position=StandardPosition((i, 1)))
-
-        for i in range(8):
-            self.board.put_piece(piece=Pawn(White), position=StandardPosition((i, 6)))
-
-        self.board.put_piece(piece=Rook(White), position=StandardPosition((0, 7)))
-        self.board.put_piece(piece=Rook(White), position=StandardPosition((7, 7)))
-        self.board.put_piece(piece=Knight(White), position=StandardPosition((1, 7)))
-        self.board.put_piece(piece=Knight(White), position=StandardPosition((6, 7)))
-        self.board.put_piece(piece=Bishop(White), position=StandardPosition((2, 7)))
-        self.board.put_piece(piece=Bishop(White), position=StandardPosition((5, 7)))
-        self.board.put_piece(piece=Queen(White), position=StandardPosition((3, 7)))
-        self.board.put_piece(piece=King(White), position=StandardPosition((4, 7)))
-
-        return self.board.get_fen()

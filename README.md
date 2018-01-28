@@ -7,7 +7,7 @@ probably looking for some more popular and stable solution: [python-chess](https
 ### What is that?
 It's my private and not very well supported chess implementation at the
 moment. If you are looking for something to read, i propose to start
-over [variants.py](chess/app/variants.py) module or example files in the
+over [variants.py](chess/app/variants/classic.py) module or example files in the
 root directory. Comments and pull requests are welcome.
 
 ![cli_animation.gif](doc/cli_animation.gif)
@@ -65,6 +65,7 @@ Also I am going to remove most of `@property` decorators.
   - [x] Racing Kings
   - [ ] Four player Chess
   - [ ] 3D Chess
+  - And maybe others: https://en.wikipedia.org/wiki/List_of_chess_variants
 
 ### Examples
 

@@ -6,7 +6,7 @@ from chess.app.move import StandardMove
 from chess.app.pieces import from_str, King
 from chess.app.player import Player
 from chess.app.position import StandardPosition
-from chess.app.variants import Normal
+from chess.app.variants.classic import Normal
 from chess.cli import board_rendererer
 from chess.exceptions.variant import NotAValidMove
 from chess.interface.game import Game

@@ -4,7 +4,7 @@ from chess.app.pieces import Pawn
 from chess.app.player import Player
 from chess.app.position import StandardPosition
 from chess.app.sides import White, Black
-from chess.app.variants import Normal
+from chess.app.variants.classic import Normal
 from chess.interface.game import Game
 
 

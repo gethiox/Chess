@@ -6,7 +6,12 @@ from chess.app.move import StandardMove
 from chess.app.pieces import from_str, King
 from chess.app.player import Player
 from chess.app.position import StandardPosition
-from chess.app.variants import Normal, KingOfTheHill, ThreeCheck, RacingKings, UpsideDown
+from chess.app.variants.classic import Normal
+from chess.app.variants.king_of_the_hill import KingOfTheHill
+from chess.app.variants.racing_kings import RacingKings
+from chess.app.variants.three_check import ThreeCheck
+from chess.app.variants.upside_down import UpsideDown
+
 from chess.cli import board_rendererer
 from chess.interface.game import Game
 
@@ -52,10 +57,10 @@ if __name__ == "__main__":
         mode = Normal()
     elif args.hill:
         mode = KingOfTheHill()
-    elif args.check:
-        mode = ThreeCheck()
     elif args.racing:
         mode = RacingKings()
+    elif args.check:
+        mode = ThreeCheck()
     elif args.upsidedown:
         mode = UpsideDown()
     else:

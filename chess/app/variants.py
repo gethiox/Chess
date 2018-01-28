@@ -675,6 +675,8 @@ class RacingKings(Normal):
         self.board.put_piece(Knight(White), StandardPosition.from_str('e2'))
         self.board.put_piece(Knight(White), StandardPosition.from_str('e1'))
 
+        return self.board.get_fen()
+
     @property
     def game_state(self) -> Tuple[Optional[Set[Type['Side']]], Optional[str]]:
         # find kings position and return winner if king is standing on the eight rank

@@ -12,7 +12,8 @@ from chess.interface.game import Game
 
 
 def parse_args():
-    parser = ArgumentParser()
+    parser = ArgumentParser(description="It is a simple script that can show how this chess implementation "
+                                        "can be handled in the practice.")
     group = parser.add_mutually_exclusive_group()
     group.add_argument('--normal', dest='normal', action='store_true', help='Classic Chess (default)')
     group.add_argument('--hill', dest='hill', action='store_true', help='King of The Hill')

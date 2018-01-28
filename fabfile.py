@@ -45,12 +45,12 @@ def qa():
         ))
 
 
-def profile(sort = None):
+def profile(sort=None):
     flags = ''
     if sort:
         flags = '--sort=%s' % sort
     with lcd(SRC_DIR):
-        local('python -B -m cProfile {flags} example.py'.format(flags=flags))
+        local('python -B -m cProfile {flags} example_profile.py'.format(flags=flags))
 
 
 def fmt():

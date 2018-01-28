@@ -11,9 +11,10 @@ from chess.interface.game import Game
 
 
 def parse_args():
-    parser = ArgumentParser()
+    parser = ArgumentParser(description="Simple chess engine handler implementation, UCI-compatible chess engine, "
+                                        "Stockfish is recommended and tested.")
     parser.add_argument(dest='engine_path', type=str, nargs='?',
-                        help='path of UCI chess engine')
+                        help='path of UCI chess engine (required)')
     parser.add_argument('--wtime', dest='wtime', type=int, default=1000,
                         help='time for white in ms (default: 1000)')
     parser.add_argument('--btime', dest='btime', type=int, default=1000,
@@ -30,6 +31,8 @@ def parse_args():
                         help='Display only ending game state')
     parser.add_argument('--count', dest='count', action='store_true',
                         help='Enable counting of available moves')
+    parser.add_argument('--sequence', dest='sequence', action='store_true',
+                        help='Print move sequence at the end of the game.')
     return parser.parse_args()
 
 
@@ -111,7 +114,7 @@ if __name__ == "__main__":
         moves = len(game.variant.moves_history)
 
         print('Winner(s): {!s:6s} Moves: {!s:3s} Description: {:s}'.format(winners, moves, desc))
-        if not args.silent:
+        if not args.silent and args.sequence:
             print('moves:', [str(move) for move in game.variant.moves_history])
 
         engine1.stop_engine()

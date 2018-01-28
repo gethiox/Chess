@@ -25,7 +25,8 @@ def generate_moves(str_moves):
 
 
 def parse_args():
-    parser = ArgumentParser()
+    parser = ArgumentParser(description="This script is mainly used to profile chess implementation "
+                                        "and find inefficient pieces of code")
     parser.add_argument('--silent', dest='silent', action='store_true',
                         help='return only average time statistics')
     parser.add_argument('--count', dest='count', action='store_true',
@@ -33,7 +34,7 @@ def parse_args():
     parser.add_argument('-s', '--sleep', dest='sleep', type=float, default=0.0,
                         help='set sleep time between each move')
     parser.add_argument(dest='moves', nargs='*',
-                        help='UCI move notation, each parameter is a move (eg. ./example.py e2e4 e7e5)')
+                        help='UCI move notation, each parameter is a move (eg. ./example_profile.py e2e4 e7e5)')
     return parser.parse_args()
 
 

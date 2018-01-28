@@ -14,12 +14,15 @@ from chess.interface.game import Game
 def parse_args():
     parser = ArgumentParser(description="It is a simple script that can show how this chess implementation "
                                         "can be handled in the practice.")
-    group = parser.add_mutually_exclusive_group()
+
+    modes = parser.add_argument_group(title='Variants', description='Available chess variants')
+    group = modes.add_mutually_exclusive_group()
     group.add_argument('--normal', dest='normal', action='store_true', help='Classic Chess (default)')
     group.add_argument('--hill', dest='hill', action='store_true', help='King of The Hill')
     group.add_argument('--check', dest='check', action='store_true', help='Three Check')
     group.add_argument('--racing', dest='racing', action='store_true', help='Racing Kings')
     group.add_argument('--upsidedown', dest='upsidedown', action='store_true', help='Upside Down')
+
     parser.add_argument('--count', dest='count', action='store_true', help='Count all available moves')
     parser.add_argument('-r', '--random-response', dest='random_response', action='store_true',
                         help='make random computer response on every successfully player\'s move')

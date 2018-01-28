@@ -10,7 +10,7 @@ moment. If you are looking for something to read, i propose to start
 over [variants.py](chess/app/variants.py) module or example files in the
 root directory. Comments and pull requests are welcome.
 
-![](doc/example_py_cli_animation.gif)
+![cli_animation.gif](doc/cli_animation.gif)
 
 ### Why?
 My aim of that project is to improve my skills and experimenting with

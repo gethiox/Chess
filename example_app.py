@@ -6,7 +6,7 @@ from chess.app.move import StandardMove
 from chess.app.pieces import from_str, King
 from chess.app.player import Player
 from chess.app.position import StandardPosition
-from chess.app.variants import Normal, KingOfTheHill, ThreeCheck
+from chess.app.variants import Normal, KingOfTheHill, ThreeCheck, RacingKings
 from chess.cli import board_rendererer
 from chess.interface.game import Game
 
@@ -18,6 +18,7 @@ def parse_args():
     group.add_argument('--normal', dest='normal', action='store_true', help='Classic Chess (default)')
     group.add_argument('--hill', dest='hill', action='store_true', help='King of The Hill')
     group.add_argument('--check', dest='check', action='store_true', help='Three Check')
+    group.add_argument('--racing', dest='racing', action='store_true', help='Racing Kings')
     parser.add_argument('--count', dest='count', action='store_true', help='Count all available moves')
     parser.add_argument('-r', '--random-response', dest='random_response', action='store_true',
                         help='make random computer response on every successfully player\'s move')
@@ -49,6 +50,8 @@ if __name__ == "__main__":
         mode = KingOfTheHill()
     elif args.check:
         mode = ThreeCheck()
+    elif args.racing:
+        mode = RacingKings()
     else:
         mode = Normal()
 

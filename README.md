@@ -62,7 +62,7 @@ Also I am going to remove most of `@property` decorators.
   - [ ] UpsideDown
   - [ ] Double Chess
   - [ ] Anti Chess
-  - [ ] Racing Kings
+  - [x] Racing Kings
   - [ ] Four player Chess
   - [ ] 3D Chess
 

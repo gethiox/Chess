@@ -1,0 +1,13 @@
+[report]
+fail_under=100
+exclude_lines =
+  pragma: no cover
+  def __repr__
+omit:
+  # chess-engine handler is not a part of chess logic implementation
+  chess/app/engine.py
+
+[paths]
+source =
+  ./chess/
+

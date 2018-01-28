@@ -7,7 +7,7 @@ probably looking for some more popular and stable solution: [python-chess](https
 ### What is that?
 It's my private and not very well supported chess implementation at the
 moment. If you are looking for something to read, i propose to start
-over [variants.py](chess/app/variants/classic.py) module or example files in the
+over [classic.py](chess/app/variants/classic.py) module or example files in the
 root directory. Comments and pull requests are welcome.
 
 ![cli_animation.gif](doc/cli_animation.gif)

@@ -8,6 +8,9 @@ if TYPE_CHECKING:
 
 class Move(metaclass=ABCMeta):
     def __init__(self, source: 'Position', destination: 'Position', promotion: 'Piece' = None):
+        if source == destination:
+            raise ValueError('Source and destination fields required to be different.')
+
         self._source = source
         self._destination = destination
         self._promotion = promotion

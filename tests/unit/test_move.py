@@ -42,3 +42,6 @@ def test_init_move_from_uci():
     for move_str in bad_moves:
         with pytest.raises(ValueError, message='Not a proper UCI format should be declined'):
             StandardMove.from_str(move_str)
+
+    with pytest.raises(ValueError, message="Source and destination should be not the same field"):
+        StandardMove.from_str('e2e2')

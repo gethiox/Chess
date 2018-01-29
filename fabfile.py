@@ -8,19 +8,28 @@ ROOT_DIR = dirname(env['real_fabfile'])
 SRC_DIR = '{}/chess/'.format(ROOT_DIR)
 
 
-def test(cov=None):
+def test(*args, **kwargs):
     """
     Run test suite
     """
     flags = []
-    if cov:
+    targets = []
+
+    if 'cov' in args:
         flags.append('--cov=./chess')
-    if cov == 'html':
-        flags.append('--cov-report=html')
+    if kwargs.get('cov') == 'html':
+        flags.append('--cov=./chess --cov-report=html')
+
+    if 'unit' in args:
+        targets.append('./tests/unit/')
+
+    if 'functional' in args:
+        targets.append('./tests/functional/')
 
     with lcd(ROOT_DIR):
-        local("pytest {flags} ./tests".format(
-            flags=' '.join(flags)
+        local("pytest {flags} {targets}".format(
+            flags=' '.join(flags),
+            targets=' '.join(targets) if targets else './tests/'
         ))
 
 

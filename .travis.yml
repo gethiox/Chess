@@ -1,0 +1,14 @@
+language: python
+python:
+  # TODO: add tyiping support for older python versions
+  # - "3.4"
+  # - "3.5"
+  - "3.6"
+
+install:
+  - pip install pytest-cov codecov
+
+script:
+  - pytest ./tests/unit  --cov=./chess/
+  - pytest ./tests/functional
+  - codecov
